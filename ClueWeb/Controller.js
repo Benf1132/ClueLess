@@ -1,5 +1,5 @@
 // Import necessary classes and enums
-import { GameBoard } from './GameBoard.js';
+import { Gameboard } from './Gameboard.js';
 import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
 import { CharacterName, WeaponName, RoomName, TileType } from './GameEnums.js';
