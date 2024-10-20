@@ -1,3 +1,5 @@
+import { Suggestion } from './Suggestion.js';
+
 class Accusation extends Suggestion {
     constructor(playerList, room, weapon, suspect, envelope) {
         super(playerList, room, weapon, suspect);
