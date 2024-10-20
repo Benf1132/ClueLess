@@ -1,5 +1,5 @@
 // Import necessary classes and enums
-import { Gameboard } from './Gameboard.js';
+import { Gameboard , CharacterName } from './Gameboard.js';
 import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
 import { CharacterName, WeaponName, RoomName, TileType } from './GameEnums.js';
@@ -33,12 +33,12 @@ class Controller {
         ];
 
         const characters = [
-            new Character(startingSquares[0], CharacterName.MS_SCARLET),
-            new Character(startingSquares[1], CharacterName.PROFESSOR_PLUM),
-            new Character(startingSquares[2], CharacterName.COLONEL_MUSTARD),
-            new Character(startingSquares[3], CharacterName.MRS_PEACOCK),
-            new Character(startingSquares[4], CharacterName.MR_GREEN),
-            new Character(startingSquares[5], CharacterName.MRS_WHITE)
+            new Character(startingSquares[0], 'MS_SCARLET'),
+            new Character(startingSquares[1], 'PROFESSOR_PLUM'),
+            new Character(startingSquares[2], 'COLONEL_MUSTARD'),
+            new Character(startingSquares[3], 'MRS_PEACOCK'),
+            new Character(startingSquares[4], 'MR_GREEN'),
+            new Character(startingSquares[5], 'MRS_WHITE')
         ];
 
         // Initialize players and place characters on the board
