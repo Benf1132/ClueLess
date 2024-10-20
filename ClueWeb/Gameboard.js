@@ -197,6 +197,19 @@ class Gameboard {
             newTileElement.appendChild(characterImg);
         }
     }
+
+    // Debugging method to log neighbors of each tile
+    debugNeighbors() {
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.columns; col++) {
+                const tile = this.getTile(row, col);
+                if (tile) {
+                    const neighbors = tile.getNeighbors().map(neighbor => `(${neighbor.row}, ${neighbor.column})`).join(', ');
+                    console.log(`Tile (${row}, ${col}) neighbors: ${neighbors}`);
+                }
+            }
+        }
+    }
 }
 
 export { Gameboard };
