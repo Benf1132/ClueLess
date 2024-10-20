@@ -1,5 +1,6 @@
 import { CardType, CharacterName, WeaponName, RoomName } from './GameEnums.js';
 import Card from './Card.js';
+import Envelope from './Envelope.js';
 
 class Deck {
     constructor() {
