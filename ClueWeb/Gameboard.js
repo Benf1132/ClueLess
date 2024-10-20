@@ -55,7 +55,9 @@ class Gameboard {
 
     initializePlaceholderPlayers() {
         for (let i = 0; i < 6; i++) {
-            this.players.push(new Player());
+            const player = new Player();
+            player.setCharacter("");  // Set character to an empty string initially
+            this.players.push(player);
         }
     }
 
