@@ -74,8 +74,6 @@ class Controller {
     
             const startingTile = chosenCharacter.getCurrentTile();
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
-    
-            console.log(`Player ${i + 1}: ${username}, ${chosenCharacter.getCharacterName()}`);
         }
     
         // Sort players so that the player with Miss Scarlet goes first
