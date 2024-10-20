@@ -20,7 +20,6 @@ class Controller {
 
         this.initializePlayers();
         this.initializeButtons();
-        this.updateTurnIndicator();
     }
 
     updateTurnIndicator() {
