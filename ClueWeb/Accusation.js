@@ -17,7 +17,9 @@ class Accusation extends Suggestion {
     }
 
     // Method to determine if the accusation is correct
-    isAccusationCorrect() {
+    isAccusationValid() {  // Changed the method name to avoid confusion with the property
         return this.isAccusationCorrect;
     }
 }
+
+export { Accusation };
