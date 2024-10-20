@@ -148,12 +148,12 @@ class Gameboard {
     }
 
     initializeWeapons() {
-        const weaponNames = Object.values(WeaponName);
+        const weaponNames = Object.keys(WeaponName);  // Get the keys (names) of the weapons
         const shuffledRooms = [...this.rooms].sort(() => Math.random() - 0.5);  // Shuffle rooms
     
         weaponNames.forEach((weaponName, index) => {
             const randomRoom = shuffledRooms[index];
-            const weapon = new Weapon(randomRoom, weaponName);  // Create the weapon object
+            const weapon = new Weapon(randomRoom, weaponName);  // Pass the weapon name as a string
             this.weapons.push(weapon);
             randomRoom.addWeapon(weapon);
     
@@ -163,8 +163,7 @@ class Gameboard {
             weaponImg.classList.add('weapon-image');
             randomRoom.element.appendChild(weaponImg);  // Append the img to the room's tile
         });
-}
-
+    }
 
     movePlayer(player, newTile) {
         const character = player.getCharacter();
