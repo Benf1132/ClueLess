@@ -128,6 +128,9 @@ class Controller {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
         if (this.tileMoved) {
+            if (character.getCurrentTile() instanceof Hallway) {
+                character.getCurrentTile().setOccupied(false);
+            }
             character.undoMove();
             this.tileMoved = false;
             this.updateCharacterPosition(character);
@@ -352,6 +355,30 @@ class Controller {
             return this.gameBoard.rooms.find(room => room.getRoomName() === oppositeRoomName);
         }
         return null;
+    }
+    
+    endTurnButton() {
+        const currentPlayer = this.getCurrentPlayer();
+        const currentTile = currentPlayer.character.getCurrentTile();
+    
+        if (currentTile instanceof StartSquare) {
+            this.showErrorAlert("Invalid End Turn", "You must move to the nearest hallway before ending your turn.");
+            return;
+        }
+    
+        if (currentTile instanceof Hallway && !this.tileMoved) {
+            this.showErrorAlert("Invalid End Turn", "You must move to a nearby room before ending your turn.");
+            return;
+        }
+    
+        if (currentTile instanceof Room && !this.tileMoved && !this.suggestionMade && !this.accusationMade) {
+            this.showErrorAlert("Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
+            return;
+        }
+    
+        this.resetTurnFlags();
+        this.nextPlayer();
+        this.updateTurnIndicator();
     }
 
     logoutButton() {
