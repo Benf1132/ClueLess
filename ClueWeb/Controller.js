@@ -125,7 +125,12 @@ class Controller {
 
     showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
-        const playerHand = currentPlayer.getHand().getCards(); // Ensure getHand() method exists
+        const playerHand = currentPlayer.getHand().getCards();
+    
+        // Create an overlay
+        const overlay = document.createElement('div');
+        overlay.classList.add('modal-overlay');
+    
         const handDialog = document.createElement('div');
         handDialog.classList.add('hand-dialog');
     
@@ -137,7 +142,7 @@ class Controller {
     
         // Event listener to close the dialog when the close button is clicked
         closeButton.addEventListener('click', () => {
-            document.body.removeChild(handDialog);
+            document.body.removeChild(overlay);
         });
     
         // Create a container for the cards
@@ -153,8 +158,10 @@ class Controller {
             cardsContainer.appendChild(img);
         });
     
-        document.body.appendChild(handDialog);
+        overlay.appendChild(handDialog);
+        document.body.appendChild(overlay);
     }
+
 
     suggestionButton() {
         if (this.suggestionMade) {
