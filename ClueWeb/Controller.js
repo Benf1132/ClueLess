@@ -18,28 +18,10 @@ class Controller {
         this.suggestionMade = false;
         this.accusationMade = false;
 
-        this.initializePlayers();
-        this.initializeButtons();
+        // Removed calls to initializePlayers() and initializeButtons()
+        // because initializePlayers() is asynchronous and cannot be awaited in the constructor.
     }
 
-    updateTurnIndicator() {
-        const currentPlayer = this.getCurrentPlayer();
-        this.turnIndicator.textContent = `${currentPlayer.username.trim()}'s Turn (${currentPlayer.character.getCharacterName()})`;
-    }
-
-    initializeButtons() {
-        document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer(0, -1));
-        document.getElementById('downButton').addEventListener('click', () => this.moveCurrentPlayer(0, 1));
-        document.getElementById('leftButton').addEventListener('click', () => this.moveCurrentPlayer(-1, 0));
-        document.getElementById('rightButton').addEventListener('click', () => this.moveCurrentPlayer(1, 0));
-        document.getElementById('backButton').addEventListener('click', () => this.backButton());
-        document.getElementById('endTurnButton').addEventListener('click', () => this.endTurnButton());
-        document.getElementById('showHandButton').addEventListener('click', () => this.showHandButton());
-        document.getElementById('suggestionButton').addEventListener('click', () => this.suggestionButton());
-        document.getElementById('accusationButton').addEventListener('click', () => this.accusationButton());
-        document.getElementById('shortcutButton').addEventListener('click', () => this.shortcutButton());
-        document.getElementById('logoutButton').addEventListener('click', () => this.logoutButton());
-    }
     async initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
@@ -88,9 +70,27 @@ class Controller {
         // Find the index of the player who chose Miss Scarlet
         const msScarletIndex = this.gameBoard.players.findIndex(player => player.getCharacter().getCharacterName() === 'MS_SCARLET');
         this.currentPlayerIndex = msScarletIndex;
-    
-        // Update the turn indicator
-        this.updateTurnIndicator();
+
+        // No need to call updateTurnIndicator() here; we'll call it after initializePlayers() completes
+    }
+
+    updateTurnIndicator() {
+        const currentPlayer = this.getCurrentPlayer();
+        this.turnIndicator.textContent = `${currentPlayer.username.trim()}'s Turn (${currentPlayer.character.getCharacterName()})`;
+    }
+
+    initializeButtons() {
+        document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer(0, -1));
+        document.getElementById('downButton').addEventListener('click', () => this.moveCurrentPlayer(0, 1));
+        document.getElementById('leftButton').addEventListener('click', () => this.moveCurrentPlayer(-1, 0));
+        document.getElementById('rightButton').addEventListener('click', () => this.moveCurrentPlayer(1, 0));
+        document.getElementById('backButton').addEventListener('click', () => this.backButton());
+        document.getElementById('endTurnButton').addEventListener('click', () => this.endTurnButton());
+        document.getElementById('showHandButton').addEventListener('click', () => this.showHandButton());
+        document.getElementById('suggestionButton').addEventListener('click', () => this.suggestionButton());
+        document.getElementById('accusationButton').addEventListener('click', () => this.accusationButton());
+        document.getElementById('shortcutButton').addEventListener('click', () => this.shortcutButton());
+        document.getElementById('logoutButton').addEventListener('click', () => this.logoutButton());
     }
 
     askForPlayerDetails(availableCharacters) {
@@ -149,6 +149,7 @@ class Controller {
             document.body.appendChild(dialog);
         });
     }
+
     moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
@@ -247,7 +248,8 @@ class Controller {
         this.nextPlayer();
         this.updateTurnIndicator();
     }
-        showHandButton() {
+
+    showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.getHand().getCards();
 
@@ -400,7 +402,8 @@ class Controller {
 
         document.body.appendChild(dialog);
     }
-        endGame(player, suspect, weapon, room) {
+
+    endGame(player, suspect, weapon, room) {
         alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
         this.resetGame();
     }
@@ -408,7 +411,7 @@ class Controller {
     resetGame() {
         window.location.reload();
     }
-    
+
     getCurrentPlayer() {
         const currentPlayer = this.gameBoard.getPlayers()[this.currentPlayerIndex];
         return currentPlayer;
@@ -419,7 +422,7 @@ class Controller {
         this.suggestionMade = false;
         this.accusationMade = false;
     }
-    
+
     nextPlayer() {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.gameBoard.getPlayers().length;
         this.updateTurnIndicator();
@@ -509,12 +512,28 @@ class Controller {
 
 // Wait for the DOM to load before initializing the game
 document.addEventListener('DOMContentLoaded', () => {
-    const gridPane = document.getElementById('grid-container');
-    const turnIndicator = document.getElementById('turnIndicator');
+    // Wrap the initialization in an async function
+    const initGame = async () => {
+        const gridPane = document.getElementById('grid-container');
+        const turnIndicator = document.getElementById('turnIndicator');
 
-    const gameBoard = new Gameboard(7, 7);
-    gameBoard.debugNeighbors();
-    new Controller(gameBoard, gridPane, turnIndicator);
+        const gameBoard = new Gameboard(7, 7);
+        gameBoard.debugNeighbors();
+
+        const controller = new Controller(gameBoard, gridPane, turnIndicator);
+
+        // Await the asynchronous initialization of players
+        await controller.initializePlayers();
+
+        // Initialize buttons after players have been set up
+        controller.initializeButtons();
+
+        // Update the turn indicator
+        controller.updateTurnIndicator();
+    };
+
+    // Call the async initialization function
+    initGame();
 });
 
 export { Controller };
