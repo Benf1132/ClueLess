@@ -57,7 +57,6 @@ class Gameboard {
 
             this.tiles[row][col] = tileObj;
             tileObj.element = tile;  // Attach the DOM element to the tile object
-            console.log(`Tile at row ${row}, col ${col} initialized as ${tileObj.constructor.name}`);
         });
     }
 
