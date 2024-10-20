@@ -85,15 +85,14 @@ class Controller {
 
     askForInput(title, content) {
         let input = null;
-        while (!input || input.trim().isEmpty()) {
+        while (!input || input.trim() === "") {
             input = prompt(`${title}\n${content}`);
-            if (!input || input.trim().isEmpty()) {
+            if (!input || input.trim() === "") {
                 alert(`You must enter a valid ${content.toLowerCase()}!`);
             }
         }
         return input;
     }
-
     askForCharacter(availableCharacters) {
         let chosenCharacter = null;
         while (!chosenCharacter) {
