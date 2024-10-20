@@ -16,7 +16,8 @@ class Weapon {
 
     // Method to get the image path of the weapon
     getImagePath() {
-        return `images/weapons/${this.name.toLowerCase().replace(/\s+/g, '_')}.png`;
+        // Access the correct image path from WeaponName object
+        return WeaponName[this.name]?.imagePath || 'images/weapons/default.png';
     }
 
     // Get the current tile of the weapon
