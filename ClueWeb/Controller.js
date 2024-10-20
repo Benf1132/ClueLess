@@ -3,9 +3,9 @@ import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
 import { CharacterName, WeaponName, RoomName, TileType } from './GameEnums.js';
 import Character from './Character.js';
-import StartSquare from './StartSquare.js'; // Import StartSquare
-import Hallway from './Hallway.js'; // Import Hallway
-import Room from './Room.js'; // Import Room
+import StartSquare from './StartSquare.js';
+import Hallway from './Hallway.js';
+import Room from './Room.js';
 
 class Controller {
     constructor(gameBoard, gridPane, turnIndicator) {
@@ -309,6 +309,17 @@ class Controller {
 
     showErrorAlert(title, message) {
         alert(`${title}: ${message}`);
+    }
+
+    shortcutButton() {
+        // Implement the logic for the shortcut button
+        // This method should handle the logic for using shortcuts in the game
+        console.log("Shortcut button pressed");
+    }
+
+    logoutButton() {
+        // Implement the logic for the logout button
+        console.log("Logout button pressed");
     }
 }
 
