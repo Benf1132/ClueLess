@@ -43,7 +43,7 @@ body {
     top: 50%; /* Center the image vertically */
     left: 50%; /* Center the image horizontally */
     transform: translate(-50%, -50%); /* Adjust to ensure proper centering */
-    z-index: 1;
+    z-index: 2;
 }
 
 /* Background images for each tile class */
