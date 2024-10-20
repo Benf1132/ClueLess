@@ -31,29 +31,20 @@ class Controller {
             this.gameBoard.getTile(6, 4)   // Mrs. White
         ];
 
-        const characters = [
-            new Character(startingSquares[0], 'MS_SCARLET'),
-            new Character(startingSquares[1], 'PROFESSOR_PLUM'),
-            new Character(startingSquares[2], 'COLONEL_MUSTARD'),
-            new Character(startingSquares[3], 'MRS_PEACOCK'),
-            new Character(startingSquares[4], 'MR_GREEN'),
-            new Character(startingSquares[5], 'MRS_WHITE')
+        const characterNames = [
+            'MS_SCARLET',
+            'PROFESSOR_PLUM',
+            'COLONEL_MUSTARD',
+            'MRS_PEACOCK',
+            'MR_GREEN',
+            'MRS_WHITE'
         ];
+
         // Initialize players and place characters on the board
         this.gameBoard.players.forEach((player, index) => {
-            player.setCharacter(characters[index]);
-            const character = characters[index];
-            const startingTile = character.getCurrentTile();
-            const tileElement = startingTile.element; // Get the tile's DOM element
-            const characterImageView = character.getCharacterImageView();
-    
-            // Append the character image to the tile element
-            tileElement.appendChild(characterImageView);
-    
-            // Optionally, set CSS classes or styles if needed
-            characterImageView.classList.add('character-image');
-    
-            console.log(`Placed ${character.getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
+            const character = new Character(startingSquares[index], characterNames[index]);
+            player.setCharacter(character);
+            console.log(`Placed ${character.getCharacterName()} at row ${startingSquares[index].row}, column ${startingSquares[index].column}`);
         });
     }
 
