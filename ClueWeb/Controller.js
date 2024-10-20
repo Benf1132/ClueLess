@@ -22,7 +22,7 @@ class Controller {
     }
 
     initializePlayers() {
-            const startingSquares = [
+        const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
             this.gameBoard.getTile(2, 0),  // Professor Plum
             this.gameBoard.getTile(2, 6),  // Colonel Mustard
@@ -30,7 +30,7 @@ class Controller {
             this.gameBoard.getTile(6, 2),  // Mr. Green
             this.gameBoard.getTile(6, 4)   // Mrs. White
         ];
-
+    
         const characters = [
             new Character(startingSquares[0], 'MS_SCARLET'),
             new Character(startingSquares[1], 'PROFESSOR_PLUM'),
@@ -39,16 +39,23 @@ class Controller {
             new Character(startingSquares[4], 'MR_GREEN'),
             new Character(startingSquares[5], 'MRS_WHITE')
         ];
-
-        // Initialize players and place characters on the board
+    
         this.gameBoard.players.forEach((player, index) => {
             player.setCharacter(characters[index]);
             const startingTile = characters[index].getCurrentTile();
-            this.gridPane.appendChild(characters[index].getCharacterImageView());
-            characters[index].getCharacterImageView().style.gridRowStart = startingTile.row + 1;
-            characters[index].getCharacterImageView().style.gridColumnStart = startingTile.column + 1;
+            
+            // Append character image to the grid and set position
+            const characterImg = characters[index].getCharacterImageView();
+            this.gridPane.appendChild(characterImg);
+    
+            // Ensure proper placement using grid row and column
+            characterImg.style.gridRowStart = startingTile.row + 1;
+            characterImg.style.gridColumnStart = startingTile.column + 1;
+    
+            console.log(`Placed ${characters[index].getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
         });
     }
+
 
     initializeButtons() {
         document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer(0, -1));
