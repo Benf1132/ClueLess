@@ -52,7 +52,7 @@ class Gameboard {
                         this.rooms.push(tile);
                         break;
                     case TileType.STARTING_SQUARE:
-                        tile = new StartingSquare(row, col);
+                        tile = new StartSquare(row, col);
                         tileDiv.classList.add('start-square');
                         break;
                     case TileType.HALLWAY:
