@@ -46,7 +46,6 @@ class Controller {
         this.gameBoard.players.forEach((player, index) => {
             const character = new Character(startingSquares[index], characterNames[index]);
             player.setCharacter(character);
-            console.log(`Placed ${character.getCharacterName()} at row ${startingSquares[index].row}, column ${startingSquares[index].column}`);
         });
     }
 
@@ -312,9 +311,46 @@ class Controller {
     }
 
     shortcutButton() {
-        // Implement the logic for the shortcut button
-        // This method should handle the logic for using shortcuts in the game
-        console.log("Shortcut button pressed");
+        const currentPlayer = this.getCurrentPlayer();
+        const character = currentPlayer.character;
+        const currentTile = character.getCurrentTile();
+
+        // Check if the player has already moved
+        if (this.tileMoved) {
+            this.showErrorAlert("Move Already Made", "You have already moved. Please undo your previous move if you want to change it.");
+            return;
+        }
+
+        // Check if the current tile is a Room and is a corner room
+        if (!(currentTile instanceof Room) || !currentTile.isCorner()) {
+            this.showErrorAlert("Invalid Move", "You must be in a corner room to use the shortcut.");
+            return;
+        }
+
+        // Find the opposite corner room
+        const oppositeRoom = this.findOppositeCornerRoom(currentTile);
+        if (oppositeRoom) {
+            character.move(oppositeRoom);
+            this.tileMoved = true;
+            this.updateCharacterPosition(character);
+        } else {
+            this.showErrorAlert("Invalid Move", "No opposite corner room found.");
+        }
+    }
+
+    findOppositeCornerRoom(currentRoom) {
+        const cornerRooms = {
+            'STUDY': 'KITCHEN',
+            'KITCHEN': 'STUDY',
+            'LOUNGE': 'CONSERVATORY',
+            'CONSERVATORY': 'LOUNGE'
+        };
+
+        const oppositeRoomName = cornerRooms[currentRoom.getRoomName()];
+        if (oppositeRoomName) {
+            return this.gameBoard.rooms.find(room => room.getRoomName() === oppositeRoomName);
+        }
+        return null;
     }
 
     logoutButton() {
