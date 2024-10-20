@@ -18,9 +18,10 @@ class Controller {
         this.suggestionMade = false;
         this.accusationMade = false;
 
-        this.initializePlayers();
-        this.initializeButtons();
-        this.updateTurnIndicator();
+        this.initializePlayers().then(() => {
+            this.initializeButtons();
+            this.updateTurnIndicator();
+        });
     }
 
     updateTurnIndicator() {
@@ -74,6 +75,8 @@ class Controller {
     
             const startingTile = chosenCharacter.getCurrentTile();
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
+    
+            console.log(`Player ${i + 1}: ${username}, ${chosenCharacter.getCharacterName()}`);
         }
     
         // Sort players so that the player with Miss Scarlet goes first
@@ -406,9 +409,11 @@ class Controller {
     resetGame() {
         window.location.reload();
     }
-
+    
     getCurrentPlayer() {
-        return this.gameBoard.getPlayers()[this.currentPlayerIndex];
+        const currentPlayer = this.gameBoard.getPlayers()[this.currentPlayerIndex];
+        console.log(`Current Player: ${currentPlayer.username}, ${currentPlayer.getCharacter().getCharacterName()}`);
+        return currentPlayer;
     }
 
     resetTurnFlags() {
