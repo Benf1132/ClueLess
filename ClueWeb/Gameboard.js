@@ -171,3 +171,5 @@ class Gameboard {
         }
     }
 }
+
+export { Gameboard };
