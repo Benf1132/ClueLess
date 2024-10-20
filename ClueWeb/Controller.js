@@ -74,12 +74,12 @@ class Controller {
         const character = currentPlayer.character;
         const currentTile = character.getCurrentTile();
         const newTile = this.findNewTile(currentTile, dx, dy);
-
+    
         if (this.tileMoved) {
             this.showErrorAlert("Move Already Made", "You have already moved. Undo your previous move to change it.");
             return;
         }
-
+    
         if (currentTile instanceof StartSquare) {
             if (!(newTile instanceof Hallway)) {
                 this.showErrorAlert("Invalid Move", "Your first move must be to the nearest hallway.");
@@ -96,7 +96,7 @@ class Controller {
                 return;
             }
         }
-
+    
         if (newTile) {
             character.move(newTile);
             this.tileMoved = true;
