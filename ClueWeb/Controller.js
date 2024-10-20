@@ -14,18 +14,12 @@ class Controller {
         this.tileMoved = false;
         this.suggestionMade = false;
         this.accusationMade = false;
-        
+
         // Initialize game components
         this.initializePlayers();
         this.initializeButtons();
         this.updateTurnIndicator();
     }
-    function updateDOM() {
-    requestAnimationFrame(() => {
-        // This will trigger after the next frame to ensure the DOM is updated.
-        console.log('DOM updated after placing characters.');
-    });
-}
 
     initializePlayers() {
         const startingSquares = [
@@ -36,7 +30,7 @@ class Controller {
             this.gameBoard.getTile(6, 2),  // Mr. Green
             this.gameBoard.getTile(6, 4)   // Mrs. White
         ];
-    
+
         const characters = [
             new Character(startingSquares[0], 'MS_SCARLET'),
             new Character(startingSquares[1], 'PROFESSOR_PLUM'),
@@ -45,21 +39,20 @@ class Controller {
             new Character(startingSquares[4], 'MR_GREEN'),
             new Character(startingSquares[5], 'MRS_WHITE')
         ];
-    
-        this.gameBoard.players.forEach((player, index) => {
-                player.setCharacter(characters[index]);
-                const startingTile = characters[index].getCurrentTile();
-                this.gridPane.appendChild(characters[index].getCharacterImageView());
-        
-                // Ensure the character image is positioned correctly
-                characters[index].getCharacterImageView().style.gridRowStart = startingTile.row + 1;
-                characters[index].getCharacterImageView().style.gridColumnStart = startingTile.column + 1;
-                
-                console.log(`Placed ${characters[index].getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
-            });
-        updateDOM();
-        }
 
+        // Initialize players and place characters on the board
+        this.gameBoard.players.forEach((player, index) => {
+            player.setCharacter(characters[index]);
+            const startingTile = characters[index].getCurrentTile();
+            this.gridPane.appendChild(characters[index].getCharacterImageView());
+
+            // Ensure the character image is positioned correctly
+            characters[index].getCharacterImageView().style.gridRowStart = startingTile.row + 1;
+            characters[index].getCharacterImageView().style.gridColumnStart = startingTile.column + 1;
+
+            console.log(`Placed ${characters[index].getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
+        });
+    }
 
     initializeButtons() {
         document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer(0, -1));
@@ -109,8 +102,7 @@ class Controller {
     updateCharacterPosition(character) {
         const characterView = character.getCharacterImageView();
         const currentTile = character.getCurrentTile();
-        this.gridPane.removeChild(characterView); // Remove from old position
-        this.gridPane.appendChild(characterView); // Append to new position
+        this.gridPane.appendChild(characterView);
         characterView.style.gridRowStart = currentTile.row + 1;
         characterView.style.gridColumnStart = currentTile.column + 1;
     }
@@ -282,8 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const turnIndicator = document.getElementById('turnIndicator');
 
     const gameBoard = new Gameboard(7, 7);
-    const controller = new Controller(gameBoard, gridPane, turnIndicator);
+    new Controller(gameBoard, gridPane, turnIndicator);
 });
 
-// Export the controller to use in the main script
 export { Controller };
