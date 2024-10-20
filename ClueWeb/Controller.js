@@ -18,7 +18,6 @@ class Controller {
         this.suggestionMade = false;
         this.accusationMade = false;
 
-        // Removed calls to initializePlayers() and initializeButtons() from constructor
     }
 
     async initializePlayers() {
@@ -56,6 +55,8 @@ class Controller {
     
             const startingTile = chosenCharacter.getCurrentTile();
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
+    
+            console.log(`Player ${i + 1}: ${username}, ${chosenCharacter.getCharacterName()}`);
         }
     
         // Remove unused placeholder players
@@ -67,6 +68,8 @@ class Controller {
             if (b.getCharacter().getCharacterName() === 'MS_SCARLET') return 1;
             return 0;
         });
+    
+        console.log('Sorted Players:', sortedPlayers.map(player => `${player.getUsername()} (${player.getCharacter().getCharacterName()})`));
     
         // Update the game board's players array with the sorted players
         this.gameBoard.players = sortedPlayers;
