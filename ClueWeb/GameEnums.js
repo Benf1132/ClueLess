@@ -1,27 +1,100 @@
-// CharacterName "Enum"
+// CharacterName Enum
 const CharacterName = {
-    MS_SCARLET: { imagePath: "images/players/miss_scarlet.png" },
-    MRS_WHITE: { imagePath: "images/players/mrs_white.png" },
-    MRS_PEACOCK: { imagePath: "images/players/mrs_peacock.png" },
-    MR_GREEN: { imagePath: "images/players/mr_green.png" },
-    PROFESSOR_PLUM: { imagePath: "images/players/professor_plum.png" },
-    COLONEL_MUSTARD: { imagePath: "images/players/colonel_mustard.png" }
+    MS_SCARLET: {
+        name: 'Miss Scarlet',
+        imagePath: 'images/characters/miss_scarlet.png'
+    },
+    MRS_WHITE: {
+        name: 'Mrs. White',
+        imagePath: 'images/characters/mrs_white.png'
+    },
+    MRS_PEACOCK: {
+        name: 'Mrs. Peacock',
+        imagePath: 'images/characters/mrs_peacock.png'
+    },
+    MR_GREEN: {
+        name: 'Mr. Green',
+        imagePath: 'images/characters/mr_green.png'
+    },
+    PROFESSOR_PLUM: {
+        name: 'Professor Plum',
+        imagePath: 'images/characters/professor_plum.png'
+    },
+    COLONEL_MUSTARD: {
+        name: 'Colonel Mustard',
+        imagePath: 'images/characters/colonel_mustard.png'
+    }
 };
 
-// RoomName "Enum"
+// RoomName Enum
 const RoomName = {
-    STUDY: { imagePath: "images/tiles/study.jpg" },
-    HALL: { imagePath: "images/tiles/hall.jpg" },
-    LOUNGE: { imagePath: "images/tiles/lounge.jpg" },
-    LIBRARY: { imagePath: "images/tiles/library.jpg" },
-    BILLIARD_ROOM: { imagePath: "images/tiles/billiard_room.jpg" },
-    DINING_ROOM: { imagePath: "images/tiles/dining_room.jpg" },
-    CONSERVATORY: { imagePath: "images/tiles/conservatory.jpg" },
-    BALLROOM: { imagePath: "images/tiles/ballroom.jpg" },
-    KITCHEN: { imagePath: "images/tiles/kitchen.jpg" }
+    STUDY: {
+        name: 'Study',
+        imagePath: 'images/tiles/study.jpg'
+    },
+    HALL: {
+        name: 'Hall',
+        imagePath: 'images/tiles/hall.jpg'
+    },
+    LOUNGE: {
+        name: 'Lounge',
+        imagePath: 'images/tiles/lounge.jpg'
+    },
+    LIBRARY: {
+        name: 'Library',
+        imagePath: 'images/tiles/library.jpg'
+    },
+    BILLIARD_ROOM: {
+        name: 'Billiard Room',
+        imagePath: 'images/tiles/billiard_room.jpg'
+    },
+    DINING_ROOM: {
+        name: 'Dining Room',
+        imagePath: 'images/tiles/dining_room.jpg'
+    },
+    CONSERVATORY: {
+        name: 'Conservatory',
+        imagePath: 'images/tiles/conservatory.jpg'
+    },
+    BALLROOM: {
+        name: 'Ballroom',
+        imagePath: 'images/tiles/ballroom.jpg'
+    },
+    KITCHEN: {
+        name: 'Kitchen',
+        imagePath: 'images/tiles/kitchen.jpg'
+    }
 };
 
-// TileType "Enum"
+// WeaponName Enum
+const WeaponName = {
+    ROPE: {
+        name: 'Rope',
+        imagePath: 'images/weapons/rope.png'
+    },
+    LEAD_PIPE: {
+        name: 'Lead Pipe',
+        imagePath: 'images/weapons/lead_pipe.png' // Adjusted the case to match the filename
+    },
+    KNIFE: {
+        name: 'Knife',
+        imagePath: 'images/weapons/knife.png'
+    },
+    WRENCH: {
+        name: 'Wrench',
+        imagePath: 'images/weapons/wrench.png'
+    },
+    CANDLESTICK: {
+        name: 'Candlestick',
+        imagePath: 'images/weapons/candlestick.png' // Adjusted the case to match the filename
+    },
+    REVOLVER: {
+        name: 'Revolver',
+        imagePath: 'images/weapons/revolver.png'
+    }
+};
+
+// TileType Enum
 const TileType = {
     ROOM: 'ROOM',
     STARTING_SQUARE: 'STARTING_SQUARE',
@@ -29,17 +102,7 @@ const TileType = {
     OUT_OF_BOUNDS: 'OUT_OF_BOUNDS'
 };
 
-// WeaponName "Enum"
-const WeaponName = {
-    ROPE: { imagePath: "images/weapons/rope.png" },
-    LEAD_PIPE: { imagePath: "images/weapons/leadPipe.png" }, // Fix case
-    KNIFE: { imagePath: "images/weapons/knife.png" },
-    WRENCH: { imagePath: "images/weapons/wrench.png" },
-    CANDLESTICK: { imagePath: "images/weapons/candleStick.png" }, // Fix case
-    REVOLVER: { imagePath: "images/weapons/revolver.png" }
-};
-
-// CardType "Enum"
+// CardType Enum
 const CardType = {
     SUSPECT: 'SUSPECT',
     WEAPON: 'WEAPON',
