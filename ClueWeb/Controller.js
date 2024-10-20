@@ -94,18 +94,41 @@ class Controller {
         return input;
     }
     askForCharacter(availableCharacters) {
+        const dialog = document.createElement('dialog');
+        dialog.classList.add('dialog');
+        dialog.setAttribute('open', '');
+
+        const characterDropdown = this.createDropdown(availableCharacters.map(character => character.getCharacterName().toString()));
+
+        dialog.appendChild(this.createLabel('Choose your character:'));
+        dialog.appendChild(characterDropdown);
+
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Confirm';
+        dialog.appendChild(confirmButton);
+
         let chosenCharacter = null;
-        while (!chosenCharacter) {
-            const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
-            const chosenCharacterName = prompt(`Choose your character:\n${characterNames.join('\n')}`);
+        confirmButton.addEventListener('click', () => {
+            const chosenCharacterName = characterDropdown.value;
             chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
-            if (!chosenCharacter) {
-                alert(`You must select a character!`);
+            if (chosenCharacter) {
+                dialog.close();
+                document.body.removeChild(dialog);
+            } else {
+                alert('You must select a character!');
             }
-        }
-        return chosenCharacter;
+        });
+
+        document.body.appendChild(dialog);
+        dialog.showModal();
+
+        return new Promise(resolve => {
+            dialog.addEventListener('close', () => {
+                resolve(chosenCharacter);
+            });
+        });
     }
-        moveCurrentPlayer(dx, dy) {
+    moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
         const currentTile = character.getCurrentTile();
