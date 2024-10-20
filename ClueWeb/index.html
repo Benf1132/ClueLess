@@ -10,73 +10,72 @@
 <body>
     <div id="scenePane" class="anchor-pane">
         <div id="grid-container">
-            <!-- Grid of 7x7 tiles -->
             <div class="grid">
-                <!-- Rows -->
                 <div class="col">
-                    <div id="tile0_0" class="tile out-of-bounds"></div>
-                    <div id="tile0_1" class="tile out-of-bounds"></div>
-                    <div id="tile0_2" class="tile start-square"></div>
-                    <div id="tile0_3" class="tile out-of-bounds"></div>
-                    <div id="tile0_4" class="tile start-square"></div>
-                    <div id="tile0_5" class="tile out-of-bounds"></div>
-                    <div id="tile0_6" class="tile out-of-bounds"></div>
+                    <div class="tile out-of-bounds" data-row="0" data-col="0"></div>
+                    <div class="tile out-of-bounds" data-row="0" data-col="1"></div>
+                    <div class="tile start-square" data-row="0" data-col="2"></div>
+                    <div class="tile out-of-bounds" data-row="0" data-col="3"></div>
+                    <div class="tile start-square" data-row="0" data-col="4"></div>
+                    <div class="tile out-of-bounds" data-row="0" data-col="5"></div>
+                    <div class="tile out-of-bounds" data-row="0" data-col="6"></div>
                 </div>
                 <div class="col">
-                    <div id="tile1_0" class="tile out-of-bounds"></div>
-                    <div id="tile1_1" class="tile room study"></div>
-                    <div id="tile1_2" class="tile hallway"></div>
-                    <div id="tile1_3" class="tile room hall"></div>
-                    <div id="tile1_4" class="tile hallway"></div>
-                    <div id="tile1_5" class="tile room lounge"></div>
-                    <div id="tile1_6" class="tile out-of-bounds"></div>
+                    <div class="tile out-of-bounds" data-row="1" data-col="0"></div>
+                    <div class="tile room study" data-row="1" data-col="1"></div>
+                    <div class="tile hallway" data-row="1" data-col="2"></div>
+                    <div class="tile room hall" data-row="1" data-col="3"></div>
+                    <div class="tile hallway" data-row="1" data-col="4"></div>
+                    <div class="tile room lounge" data-row="1" data-col="5"></div>
+                    <div class="tile out-of-bounds" data-row="1" data-col="6"></div>
                 </div>
                 <div class="col">
-                    <div id="tile2_0" class="tile out-of-bounds"></div>
-                    <div id="tile2_1" class="tile hallway"></div>
-                    <div id="tile2_2" class="tile out-of-bounds"></div>
-                    <div id="tile2_3" class="tile hallway"></div>
-                    <div id="tile2_4" class="tile out-of-bounds"></div>
-                    <div id="tile2_5" class="tile hallway"></div>
-                    <div id="tile2_6" class="tile start-square"></div>
+                    <div class="tile out-of-bounds" data-row="2" data-col="0"></div>
+                    <div class="tile hallway" data-row="2" data-col="1"></div>
+                    <div class="tile out-of-bounds" data-row="2" data-col="2"></div>
+                    <div class="tile hallway" data-row="2" data-col="3"></div>
+                    <div class="tile out-of-bounds" data-row="2" data-col="4"></div>
+                    <div class="tile hallway" data-row="2" data-col="5"></div>
+                    <div class="tile start-square" data-row="2" data-col="6"></div>
                 </div>
                 <div class="col">
-                    <div id="tile3_0" class="tile out-of-bounds"></div>
-                    <div id="tile3_1" class="tile room library"></div>
-                    <div id="tile3_2" class="tile hallway"></div>
-                    <div id="tile3_3" class="tile room billiard-room"></div>
-                    <div id="tile3_4" class="tile hallway"></div>
-                    <div id="tile3_5" class="tile room dining-room"></div>
-                    <div id="tile3_6" class="tile out-of-bounds"></div>
+                    <div class="tile out-of-bounds" data-row="3" data-col="0"></div>
+                    <div class="tile room library" data-row="3" data-col="1"></div>
+                    <div class="tile hallway" data-row="3" data-col="2"></div>
+                    <div class="tile room billiard-room" data-row="3" data-col="3"></div>
+                    <div class="tile hallway" data-row="3" data-col="4"></div>
+                    <div class="tile room dining-room" data-row="3" data-col="5"></div>
+                    <div class="tile out-of-bounds" data-row="3" data-col="6"></div>
                 </div>
                 <div class="col">
-                    <div id="tile4_0" class="tile start-square"></div>
-                    <div id="tile4_1" class="tile hallway"></div>
-                    <div id="tile4_2" class="tile out-of-bounds"></div>
-                    <div id="tile4_3" class="tile hallway"></div>
-                    <div id="tile4_4" class="tile out-of-bounds"></div>
-                    <div id="tile4_5" class="tile hallway"></div>
-                    <div id="tile4_6" class="tile start-square"></div>
+                    <div class="tile start-square" data-row="4" data-col="0"></div>
+                    <div class="tile hallway" data-row="4" data-col="1"></div>
+                    <div class="tile out-of-bounds" data-row="4" data-col="2"></div>
+                    <div class="tile hallway" data-row="4" data-col="3"></div>
+                    <div class="tile out-of-bounds" data-row="4" data-col="4"></div>
+                    <div class="tile hallway" data-row="4" data-col="5"></div>
+                    <div class="tile start-square" data-row="4" data-col="6"></div>
                 </div>
                 <div class="col">
-                    <div id="tile5_0" class="tile out-of-bounds"></div>
-                    <div id="tile5_1" class="tile room conservatory"></div>
-                    <div id="tile5_2" class="tile hallway"></div>
-                    <div id="tile5_3" class="tile room ballroom"></div>
-                    <div id="tile5_4" class="tile hallway"></div>
-                    <div id="tile5_5" class="tile room kitchen"></div>
-                    <div id="tile5_6" class="tile out-of-bounds"></div>
+                    <div class="tile out-of-bounds" data-row="5" data-col="0"></div>
+                    <div class="tile room conservatory" data-row="5" data-col="1"></div>
+                    <div class="tile hallway" data-row="5" data-col="2"></div>
+                    <div class="tile room ballroom" data-row="5" data-col="3"></div>
+                    <div class="tile hallway" data-row="5" data-col="4"></div>
+                    <div class="tile room kitchen" data-row="5" data-col="5"></div>
+                    <div class="tile out-of-bounds" data-row="5" data-col="6"></div>
                 </div>
                 <div class="col">
-                    <div id="tile6_0" class="tile out-of-bounds"></div>
-                    <div id="tile6_1" class="tile out-of-bounds"></div>
-                    <div id="tile6_2" class="tile start-square"></div>
-                    <div id="tile6_3" class="tile out-of-bounds"></div>
-                    <div id="tile6_4" class="tile out-of-bounds"></div>
-                    <div id="tile6_5" class="tile out-of-bounds"></div>
-                    <div id="tile6_6" class="tile out-of-bounds"></div>
+                    <div class="tile out-of-bounds" data-row="6" data-col="0"></div>
+                    <div class="tile out-of-bounds" data-row="6" data-col="1"></div>
+                    <div class="tile start-square" data-row="6" data-col="2"></div>
+                    <div class="tile out-of-bounds" data-row="6" data-col="3"></div>
+                    <div class="tile start-square" data-row="6" data-col="4"></div>
+                    <div class="tile out-of-bounds" data-row="6" data-col="5"></div>
+                    <div class="tile out-of-bounds" data-row="6" data-col="6"></div>
                 </div>
             </div>
+        </div>
         </div>
         <!-- Button Container -->
         <div id="button-container">
