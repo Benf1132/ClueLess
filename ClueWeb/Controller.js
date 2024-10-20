@@ -66,7 +66,7 @@ class Controller {
         const currentPlayer = this.getCurrentPlayer();
         this.turnIndicator.textContent = `${currentPlayer.username}'s Turn (${currentPlayer.character.getCharacterName()})`;
     }
-        moveCurrentPlayer(dx, dy) {
+    moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
         const currentTile = character.getCurrentTile();
@@ -164,7 +164,7 @@ class Controller {
         this.nextPlayer();
         this.updateTurnIndicator();
     }
-        showHandButton() {
+    showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.getHand().getCards();
 
@@ -226,26 +226,32 @@ class Controller {
     }
 
     showSuggestionDialog(player, room) {
+        const dialog = document.createElement('dialog');
+        dialog.classList.add('dialog');
+    
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
-
-        const suggestionDialog = document.createElement('div');
-        suggestionDialog.classList.add('dialog');
-        suggestionDialog.append(suspectDropdown, weaponDropdown);
-
+    
+        dialog.appendChild(this.createLabel('Suspect:'));
+        dialog.appendChild(suspectDropdown);
+        dialog.appendChild(this.createLabel('Weapon:'));
+        dialog.appendChild(weaponDropdown);
+    
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
-        suggestionDialog.appendChild(confirmButton);
-
+        dialog.appendChild(confirmButton);
+    
         confirmButton.addEventListener('click', () => {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
             const suggestion = new Suggestion(this.gameBoard.getPlayers(), room, weapon, suspect);
             this.suggestionMade = true;
-            document.body.removeChild(suggestionDialog);
+            dialog.close();
+            document.body.removeChild(dialog);
         });
-
-        document.body.appendChild(suggestionDialog);
+    
+        document.body.appendChild(dialog);
+        dialog.showModal();
     }
 
     accusationButton() {
@@ -264,24 +270,30 @@ class Controller {
     }
 
     showAccusationDialog(player, room) {
+        const dialog = document.createElement('dialog');
+        dialog.classList.add('dialog');
+    
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
         const roomDropdown = this.createDropdown(this.gameBoard.getRoomNames());
-
-        const accusationDialog = document.createElement('div');
-        accusationDialog.classList.add('dialog');
-        accusationDialog.append(suspectDropdown, weaponDropdown, roomDropdown);
-
+    
+        dialog.appendChild(this.createLabel('Suspect:'));
+        dialog.appendChild(suspectDropdown);
+        dialog.appendChild(this.createLabel('Weapon:'));
+        dialog.appendChild(weaponDropdown);
+        dialog.appendChild(this.createLabel('Room:'));
+        dialog.appendChild(roomDropdown);
+    
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
-        accusationDialog.appendChild(confirmButton);
-
+        dialog.appendChild(confirmButton);
+    
         confirmButton.addEventListener('click', () => {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
             const room = this.gameBoard.matchRoom(roomDropdown.value);
             const accusation = new Accusation(this.gameBoard.getPlayers(), room, weapon, suspect, this.gameBoard.getEnvelope());
-
+    
             if (accusation.isAccusationCorrect()) {
                 this.endGame(player, suspect, weapon, room);
             } else {
@@ -289,12 +301,21 @@ class Controller {
                 player.setInactivity();
                 this.endTurnButton();
             }
-            document.body.removeChild(accusationDialog);
+            dialog.close();
+            document.body.removeChild(dialog);
         });
-
-        document.body.appendChild(accusationDialog);
+    
+        document.body.appendChild(dialog);
+        dialog.showModal();
     }
-            endGame(player, suspect, weapon, room) {
+    
+    createLabel(text) {
+        const label = document.createElement('label');
+        label.textContent = text;
+        return label;
+    }
+    
+    endGame(player, suspect, weapon, room) {
         alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
         this.resetGame();
     }
