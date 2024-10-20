@@ -4,7 +4,7 @@ import { TileType } from './GameEnums.js';
 class Hallway extends Tile {
     constructor(row, column) {
         super(row, column, TileType.HALLWAY);
-        this.isOccupied = false;
+        this.occupied = false;
     }
 
     setNeighbors(...tiles) {
@@ -12,11 +12,11 @@ class Hallway extends Tile {
     }
 
     isOccupied() {
-        return this.isOccupied;
+        return this.occupied;
     }
 
     setOccupied(occupied) {
-        this.isOccupied = occupied;
+        this.occupied = occupied;
     }
 }
 
