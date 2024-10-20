@@ -17,7 +17,6 @@ class Controller {
         this.suggestionMade = false;
         this.accusationMade = false;
 
-        // Initialize game components
         this.initializePlayers();
         this.initializeButtons();
         this.updateTurnIndicator();
@@ -42,7 +41,6 @@ class Controller {
             'MRS_WHITE'
         ];
 
-        // Initialize players and place characters on the board
         this.gameBoard.players.forEach((player, index) => {
             const character = new Character(startingSquares[index], characterNames[index]);
             player.setCharacter(character);
@@ -74,12 +72,17 @@ class Controller {
         const character = currentPlayer.character;
         const currentTile = character.getCurrentTile();
         const newTile = this.findNewTile(currentTile, dx, dy);
-    
+
         if (this.tileMoved) {
             this.showErrorAlert("Move Already Made", "You have already moved. Undo your previous move to change it.");
             return;
         }
-    
+
+        if (newTile instanceof OutOfBounds) {
+            this.showErrorAlert("Invalid Move", "You cannot move to an out-of-bounds area.");
+            return;
+        }
+
         if (currentTile instanceof StartSquare) {
             if (!(newTile instanceof Hallway)) {
                 this.showErrorAlert("Invalid Move", "Your first move must be to the nearest hallway.");
@@ -96,7 +99,7 @@ class Controller {
                 return;
             }
         }
-    
+
         if (newTile) {
             character.move(newTile);
             this.tileMoved = true;
@@ -162,6 +165,7 @@ class Controller {
         this.nextPlayer();
         this.updateTurnIndicator();
     }
+
         showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.getHand().getCards();
@@ -293,7 +297,7 @@ class Controller {
         document.body.appendChild(accusationDialog);
     }
 
-    endGame(player, suspect, weapon, room) {
+        endGame(player, suspect, weapon, room) {
         alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
         this.resetGame();
     }
@@ -336,19 +340,16 @@ class Controller {
         const character = currentPlayer.character;
         const currentTile = character.getCurrentTile();
 
-        // Check if the player has already moved
         if (this.tileMoved) {
             this.showErrorAlert("Move Already Made", "You have already moved. Please undo your previous move if you want to change it.");
             return;
         }
 
-        // Check if the current tile is a Room and is a corner room
         if (!(currentTile instanceof Room) || !currentTile.isCorner()) {
             this.showErrorAlert("Invalid Move", "You must be in a corner room to use the shortcut.");
             return;
         }
 
-        // Find the opposite corner room
         const oppositeRoom = this.findOppositeCornerRoom(currentTile);
         if (oppositeRoom) {
             character.move(oppositeRoom);
@@ -375,7 +376,6 @@ class Controller {
     }
 
     logoutButton() {
-        // Implement the logic for the logout button
         console.log("Logout button pressed");
     }
 }
