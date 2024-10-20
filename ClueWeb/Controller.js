@@ -51,6 +51,7 @@ class Controller {
                 
                 console.log(`Placed ${characters[index].getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
             });
+        updateDOM();
         }
 
 
