@@ -3,7 +3,7 @@ import { RoomName, TileType, WeaponName } from './GameEnums.js';
 import Deck from './Deck.js';
 import Player from './Player.js';  // Assuming you have a Player class
 import Room from './Room.js';
-import StartingSquare from './StartingSquare.js';
+import StartSquare from './StartSquare.js';
 import Hallway from './Hallway.js';
 import OutOfBounds from './OutOfBounds.js';
 import Weapon from './Weapon.js';
