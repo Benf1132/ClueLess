@@ -294,7 +294,7 @@ class Controller {
 
         document.body.appendChild(accusationDialog);
     }
-        endGame(player, suspect, weapon, room) {
+            endGame(player, suspect, weapon, room) {
         alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
         this.resetGame();
     }
