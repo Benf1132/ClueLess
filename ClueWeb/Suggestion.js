@@ -67,3 +67,4 @@ class Suggestion {
         }
     }
 }
+export { Suggestion };
