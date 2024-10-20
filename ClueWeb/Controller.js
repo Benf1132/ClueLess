@@ -3,6 +3,9 @@ import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
 import { CharacterName, WeaponName, RoomName, TileType } from './GameEnums.js';
 import Character from './Character.js';
+import StartSquare from './StartSquare.js'; // Import StartSquare
+import Hallway from './Hallway.js'; // Import Hallway
+import Room from './Room.js'; // Import Room
 
 class Controller {
     constructor(gameBoard, gridPane, turnIndicator) {
