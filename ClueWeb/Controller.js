@@ -22,7 +22,7 @@ class Controller {
         this.initializeButtons();
         this.updateTurnIndicator();
     }
-        initializePlayers() {
+    initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
             this.gameBoard.getTile(2, 0),  // Professor Plum
@@ -65,7 +65,7 @@ class Controller {
     updateTurnIndicator() {
         const currentPlayer = this.getCurrentPlayer();
         this.turnIndicator.textContent = `${currentPlayer.username}'s Turn (${currentPlayer.character.getCharacterName()})`;
-    }
+    }    
     moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
@@ -228,28 +228,39 @@ class Controller {
     showSuggestionDialog(player, room) {
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
-    
+
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
-    
+
         dialog.appendChild(this.createLabel('Suspect:'));
         dialog.appendChild(suspectDropdown);
         dialog.appendChild(this.createLabel('Weapon:'));
         dialog.appendChild(weaponDropdown);
-    
+
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
         dialog.appendChild(confirmButton);
-    
+
         confirmButton.addEventListener('click', () => {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
             const suggestion = new Suggestion(this.gameBoard.getPlayers(), room, weapon, suspect);
             this.suggestionMade = true;
+            this.tileMoved = true;
+            this.showErrorAlert("Suggestion Made", "Your suggestion has been made.");
             dialog.close();
             document.body.removeChild(dialog);
         });
-    
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        dialog.appendChild(cancelButton);
+
+        cancelButton.addEventListener('click', () => {
+            dialog.close();
+            document.body.removeChild(dialog);
+        });
+
         document.body.appendChild(dialog);
         dialog.showModal();
     }
@@ -262,60 +273,63 @@ class Controller {
 
         const currentPlayer = this.getCurrentPlayer();
         const currentTile = currentPlayer.character.getCurrentTile();
-        if (currentTile instanceof Room) {
+        if (!(currentTile instanceof StartSquare)) {
             this.showAccusationDialog(currentPlayer, currentTile);
         } else {
-            this.showErrorAlert("Invalid Accusation", "You must be in a room to make an accusation.");
+            this.showErrorAlert("Invalid Accusation", "You cannot make an accusation from a start square.");
         }
     }
 
     showAccusationDialog(player, room) {
         const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
-    
+
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
         const roomDropdown = this.createDropdown(this.gameBoard.getRoomNames());
-    
+
         dialog.appendChild(this.createLabel('Suspect:'));
         dialog.appendChild(suspectDropdown);
         dialog.appendChild(this.createLabel('Weapon:'));
         dialog.appendChild(weaponDropdown);
         dialog.appendChild(this.createLabel('Room:'));
         dialog.appendChild(roomDropdown);
-    
+
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
         dialog.appendChild(confirmButton);
-    
+
         confirmButton.addEventListener('click', () => {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
             const room = this.gameBoard.matchRoom(roomDropdown.value);
             const accusation = new Accusation(this.gameBoard.getPlayers(), room, weapon, suspect, this.gameBoard.getEnvelope());
-    
+
             if (accusation.isAccusationCorrect()) {
                 this.endGame(player, suspect, weapon, room);
             } else {
                 this.showErrorAlert("Wrong Accusation", "You are out of the game!");
                 player.setInactivity();
+                this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
                 this.endTurnButton();
             }
             dialog.close();
             document.body.removeChild(dialog);
         });
-    
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        dialog.appendChild(cancelButton);
+
+        cancelButton.addEventListener('click', () => {
+            dialog.close();
+            document.body.removeChild(dialog);
+        });
+
         document.body.appendChild(dialog);
         dialog.showModal();
     }
-    
-    createLabel(text) {
-        const label = document.createElement('label');
-        label.textContent = text;
-        return label;
-    }
-    
-    endGame(player, suspect, weapon, room) {
+        endGame(player, suspect, weapon, room) {
         alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
         this.resetGame();
     }
@@ -347,6 +361,12 @@ class Controller {
             select.appendChild(opt);
         });
         return select;
+    }
+
+    createLabel(text) {
+        const label = document.createElement('label');
+        label.textContent = text;
+        return label;
     }
 
     showErrorAlert(title, message) {
