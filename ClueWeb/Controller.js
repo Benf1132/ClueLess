@@ -41,7 +41,7 @@ class Controller {
         document.getElementById('shortcutButton').addEventListener('click', () => this.shortcutButton());
         document.getElementById('logoutButton').addEventListener('click', () => this.logoutButton());
     }
-    initializePlayers() {
+    async initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
             this.gameBoard.getTile(2, 0),  // Professor Plum
@@ -71,7 +71,7 @@ class Controller {
             const password = this.askForInput(`Player Setup`, `Enter a password for Player ${i}`);
             placeholderPlayer.setPassword(password);
     
-            const chosenCharacter = this.askForCharacter(availableCharacters);
+            const chosenCharacter = await this.askForCharacter(availableCharacters);
             placeholderPlayer.setCharacter(chosenCharacter);
             availableCharacters.splice(availableCharacters.indexOf(chosenCharacter), 1);
     
@@ -94,8 +94,7 @@ class Controller {
         return input;
     }
     askForCharacter(availableCharacters) {
-        let chosenCharacter = null;
-        while (!chosenCharacter) {
+        return new Promise((resolve) => {
             const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
             const select = document.createElement('select');
     
@@ -121,18 +120,18 @@ class Controller {
     
             confirmButton.addEventListener('click', () => {
                 const chosenCharacterName = select.value;
-                chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
+                const chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
                 if (chosenCharacter) {
                     dialog.close();
                     document.body.removeChild(dialog);
+                    resolve(chosenCharacter);
                 } else {
                     alert('You must select a character!');
                 }
             });
     
             document.body.appendChild(dialog);
-        }
-        return chosenCharacter;
+        });
     }
     
     moveCurrentPlayer(dx, dy) {
