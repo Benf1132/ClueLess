@@ -62,6 +62,7 @@ class Controller {
     
         const characters = characterNames.map((name, index) => new Character(startingSquares[index], name));
         const availableCharacters = [...characters];
+        const players = [];
     
         for (let i = 1; i <= 6; i++) {
             const placeholderPlayer = this.gameBoard.getPlayers()[i - 1];
@@ -74,7 +75,19 @@ class Controller {
     
             const startingTile = chosenCharacter.getCurrentTile();
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
+    
+            players.push(placeholderPlayer);
         }
+    
+        // Sort players so that the player with Miss Scarlet goes first
+        players.sort((a, b) => {
+            if (a.getCharacter().getCharacterName() === 'MS_SCARLET') return -1;
+            if (b.getCharacter().getCharacterName() === 'MS_SCARLET') return 1;
+            return 0;
+        });
+    
+        // Update the game board's players array with the sorted players
+        this.gameBoard.players = players;
     
         this.getFirstPlayer();
     }
@@ -393,6 +406,16 @@ class Controller {
     resetGame() {
         window.location.reload();
     }
+    getFirstPlayer() {
+        const players = this.gameBoard.getPlayers();
+        for (let i = 0; i < players.length; i++) {
+            if (players[i].getCharacter().getCharacterName() === 'MS_SCARLET') {
+                this.currentPlayerIndex = i;
+                break;
+            }
+        }
+        this.updateTurnIndicator();
+    }
 
     getCurrentPlayer() {
         return this.gameBoard.getPlayers()[this.currentPlayerIndex];
@@ -406,6 +429,7 @@ class Controller {
 
     nextPlayer() {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.gameBoard.getPlayers().length;
+        this.updateTurnIndicator();
     }
 
     createDropdown(options) {
