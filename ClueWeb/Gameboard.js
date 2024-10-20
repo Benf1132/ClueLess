@@ -1,3 +1,9 @@
+import { TileType, RoomName } from './GameEnums.js';
+import Room from './Room.js';
+import Hallway from './Hallway.js';
+import StartingSquare from './StartingSquare.js';
+import OutOfBounds from './OutOfBounds.js';
+
 class Gameboard {
     constructor(rows, columns) {
         this.rows = rows;
@@ -23,6 +29,7 @@ class Gameboard {
     }
 
     initializeTiles() {
+        console.log('Initializing tiles...');
         const gridContainer = document.getElementById('grid-container');
 
         for (let row = 0; row < this.rows; row++) {
@@ -37,7 +44,7 @@ class Gameboard {
                     case TileType.ROOM:
                         const roomName = this.determineRoomName(row, col);
                         tile = new Room(row, col, roomName);
-                        tileDiv.classList.add(roomName.toLowerCase().replace(/\s+/g, '-')); // CSS class for room type
+                        tileDiv.classList.add(roomName.toLowerCase().replace(/\s+/g, '-'));
                         this.rooms.push(tile);
                         break;
                     case TileType.STARTING_SQUARE:
@@ -54,9 +61,9 @@ class Gameboard {
                         break;
                 }
 
+                console.log(`Tile initialized at [${row},${col}] with type: ${tileType}`);
                 this.tiles[row][col] = tile;
-                tile.element = tileDiv;  // Reference to the tile's DOM element
-
+                tile.element = tileDiv;
                 gridContainer.appendChild(tileDiv);
             }
         }
@@ -98,7 +105,6 @@ class Gameboard {
     }
 
     determineTileType(row, col) {
-        // Logic to determine which type of tile to create based on row and col
         if ((row === 0 && col === 4) || (row === 2 && col === 0) || (row === 4 && col === 0) ||
             (row === 6 && col === 4) || (row === 2 && col === 6) || (row === 6 && col === 2)) {
             return TileType.STARTING_SQUARE;
@@ -119,7 +125,6 @@ class Gameboard {
     }
 
     determineRoomName(row, col) {
-        // Determine room names based on positions
         if (row === 3 && col === 3) return RoomName.BILLIARD_ROOM;
         if (row === 1 && col === 1) return RoomName.STUDY;
         if (row === 1 && col === 3) return RoomName.HALL;
@@ -138,7 +143,7 @@ class Gameboard {
 
     initializeWeapons() {
         const weaponNames = Object.values(WeaponName);
-        const shuffledRooms = [...this.rooms].sort(() => Math.random() - 0.5);  // Shuffle rooms
+        const shuffledRooms = [...this.rooms].sort(() => Math.random() - 0.5); 
 
         weaponNames.forEach((weaponName, index) => {
             const randomRoom = shuffledRooms[index];
@@ -146,7 +151,6 @@ class Gameboard {
             this.weapons.push(weapon);
             randomRoom.addWeapon(weapon);
 
-            // Add the weapon image to the room's tile (using weapon class logic)
             const weaponImg = document.createElement('img');
             weaponImg.src = `images/weapons/${weaponName.toLowerCase().replace(/\s+/g, '_')}.png`;
             weaponImg.classList.add('weapon-image');
@@ -158,15 +162,11 @@ class Gameboard {
         const character = player.getCharacter();
         character.move(newTile);
 
-        // Update the character's position in the DOM
         const characterImg = character.getCharacterImageView();
         const newTileElement = newTile.element;
         if (characterImg && newTileElement) {
-            // Remove the character from the previous tile
             const prevTileElement = character.getPreviousTile()?.element;
             if (prevTileElement) prevTileElement.removeChild(characterImg);
-
-            // Add the character to the new tile
             newTileElement.appendChild(characterImg);
         }
     }
