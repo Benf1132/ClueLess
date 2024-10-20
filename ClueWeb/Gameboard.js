@@ -34,21 +34,21 @@ class Gameboard {
     }
 
     initializeTiles() {
-        const gridContainer = document.getElementById('grid-container');
-    
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.columns; col++) {
-                const tileDiv = document.createElement('div');
+                const tileId = `tile${row}_${col}`;
+                const tileDiv = document.getElementById(tileId);  // Get the existing tile from the HTML
+    
                 let tile;
                 const tileType = this.determineTileType(row, col);
     
-                tileDiv.classList.add('tile');
+                tileDiv.classList.add('tile');  // Ensure it has the tile class
     
                 switch (tileType) {
                     case TileType.ROOM:
                         const roomName = this.determineRoomName(row, col);
                         tile = new Room(row, col, RoomName[roomName]);
-                        tileDiv.classList.add(roomName.toLowerCase().replace(/\s+/g, '-')); // CSS class for room type
+                        tileDiv.classList.add(roomName.toLowerCase().replace(/\s+/g, '-'));  // Add the appropriate CSS class
                         this.rooms.push(tile);
                         break;
                     case TileType.STARTING_SQUARE:
@@ -65,12 +65,12 @@ class Gameboard {
                         break;
                 }
     
-                this.tiles[row][col] = tile;
-                tile.element = tileDiv;  // Reference to the tile's DOM element
-                gridContainer.appendChild(tileDiv);
+                this.tiles[row][col] = tile;  // Store the tile in the tiles array
+                tile.element = tileDiv;  // Associate the tile with its DOM element
             }
         }
     }
+
 
 
     setNeighbors() {
@@ -149,20 +149,22 @@ class Gameboard {
 
     initializeWeapons() {
         const weaponNames = Object.values(WeaponName);
-        const shuffledRooms = [...this.rooms].sort(() => Math.random() - 0.5); 
-
+        const shuffledRooms = [...this.rooms].sort(() => Math.random() - 0.5);  // Shuffle rooms
+    
         weaponNames.forEach((weaponName, index) => {
             const randomRoom = shuffledRooms[index];
-            const weapon = new Weapon(randomRoom, weaponName);
+            const weapon = new Weapon(randomRoom, weaponName);  // Create the weapon object
             this.weapons.push(weapon);
             randomRoom.addWeapon(weapon);
-
+    
+            // Create the img element for the weapon and append it to the room's tile
             const weaponImg = document.createElement('img');
-            weaponImg.src = `images/weapons/${weaponName.toLowerCase().replace(/\s+/g, '_')}.png`;
+            weaponImg.src = weapon.getImagePath();  // Use the correct method to get the image path
             weaponImg.classList.add('weapon-image');
-            randomRoom.element.appendChild(weaponImg);
+            randomRoom.element.appendChild(weaponImg);  // Append the img to the room's tile
         });
-    }
+}
+
 
     movePlayer(player, newTile) {
         const character = player.getCharacter();
