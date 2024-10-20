@@ -4,6 +4,49 @@ body {
     padding: 0;
     background-color: #f5f5f5;
 }
+/* Player Setup Dialog Styles */
+.player-setup-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    border-radius: 10px;
+    width: 300px;
+    box-sizing: border-box;
+}
+
+.player-setup-dialog label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.player-setup-dialog input,
+.player-setup-dialog select {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.player-setup-dialog button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.player-setup-dialog button:hover {
+    background-color: #45a049;
+}
 
 .anchor-pane {
     width: 800px;
