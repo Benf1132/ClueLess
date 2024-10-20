@@ -41,20 +41,17 @@ class Controller {
         ];
     
         this.gameBoard.players.forEach((player, index) => {
-            player.setCharacter(characters[index]);
-            const startingTile = characters[index].getCurrentTile();
-            
-            // Append character image to the grid and set position
-            const characterImg = characters[index].getCharacterImageView();
-            this.gridPane.appendChild(characterImg);
-    
-            // Ensure proper placement using grid row and column
-            characterImg.style.gridRowStart = startingTile.row + 1;
-            characterImg.style.gridColumnStart = startingTile.column + 1;
-    
-            console.log(`Placed ${characters[index].getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
-        });
-    }
+                player.setCharacter(characters[index]);
+                const startingTile = characters[index].getCurrentTile();
+                this.gridPane.appendChild(characters[index].getCharacterImageView());
+        
+                // Ensure the character image is positioned correctly
+                characters[index].getCharacterImageView().style.gridRowStart = startingTile.row + 1;
+                characters[index].getCharacterImageView().style.gridColumnStart = startingTile.column + 1;
+                
+                console.log(`Placed ${characters[index].getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
+            });
+        }
 
 
     initializeButtons() {
