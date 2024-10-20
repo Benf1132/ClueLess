@@ -1,18 +1,12 @@
-// Import necessary classes and enums
-import { GameBoard } from './GameBoard.js';
+import { Gameboard } from './Gameboard.js';
 import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
-import { CharacterName, WeaponName, RoomName } from './GameEnums.js';
+import { CharacterName, WeaponName, RoomName, TileType } from './GameEnums.js';
 import Character from './Character.js';
-import Player from './Player.js';
-import Room from './Room.js';
-import Tile from './Tile.js';
+import StartSquare from './StartSquare.js';
 import Hallway from './Hallway.js';
-import StartingSquare from './StartingSquare.js';
-import Weapon from './Weapon.js';
-import Deck from './Deck.js';
-import Card from './Card.js';
-import Hand from './Hand.js';
+import Room from './Room.js';
+import OutOfBounds from './OutOfBounds.js';
 
 class Controller {
     constructor(gameBoard, gridPane, turnIndicator) {
@@ -20,29 +14,13 @@ class Controller {
         this.gridPane = gridPane;
         this.turnIndicator = turnIndicator;
         this.currentPlayerIndex = 0;
-        this.tileMoved = false;  // Track if a tile was moved
-        this.suggestionMade = false;  // Track if suggestion was made
-        this.accusationMade = false;  // Track if accusation was made
+        this.tileMoved = false;
+        this.suggestionMade = false;
+        this.accusationMade = false;
 
-        // Initialize game components
         this.initializePlayers();
-        this.updateTurnIndicator();
         this.initializeButtons();
-    }
-
-    initializeButtons() {
-        // Add event listeners to buttons
-        document.getElementById('upButton').addEventListener('click', () => this.upButton());
-        document.getElementById('downButton').addEventListener('click', () => this.downButton());
-        document.getElementById('leftButton').addEventListener('click', () => this.leftButton());
-        document.getElementById('rightButton').addEventListener('click', () => this.rightButton());
-        document.getElementById('shortcutButton').addEventListener('click', () => this.shortcutButton());
-        document.getElementById('backButton').addEventListener('click', () => this.backButton());
-        document.getElementById('endTurnButton').addEventListener('click', () => this.endTurnButton());
-        document.getElementById('showHandButton').addEventListener('click', () => this.showHandButton());
-        document.getElementById('logoutButton').addEventListener('click', () => this.logoutButton());
-        document.getElementById('suggestionButton').addEventListener('click', () => this.suggestionButton());
-        document.getElementById('accusationButton').addEventListener('click', () => this.accusationButton());
+        this.updateTurnIndicator();
     }
 
     updateTurnIndicator() {
@@ -50,70 +28,20 @@ class Controller {
         this.turnIndicator.textContent = `${currentPlayer.username.trim()}'s Turn (${currentPlayer.character.getCharacterName()})`;
     }
 
-    upButton() {
-        this.moveCurrentPlayer(0, -1); // Move up
+    initializeButtons() {
+        document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer(0, -1));
+        document.getElementById('downButton').addEventListener('click', () => this.moveCurrentPlayer(0, 1));
+        document.getElementById('leftButton').addEventListener('click', () => this.moveCurrentPlayer(-1, 0));
+        document.getElementById('rightButton').addEventListener('click', () => this.moveCurrentPlayer(1, 0));
+        document.getElementById('backButton').addEventListener('click', () => this.backButton());
+        document.getElementById('endTurnButton').addEventListener('click', () => this.endTurnButton());
+        document.getElementById('showHandButton').addEventListener('click', () => this.showHandButton());
+        document.getElementById('suggestionButton').addEventListener('click', () => this.suggestionButton());
+        document.getElementById('accusationButton').addEventListener('click', () => this.accusationButton());
+        document.getElementById('shortcutButton').addEventListener('click', () => this.shortcutButton());
+        document.getElementById('logoutButton').addEventListener('click', () => this.logoutButton());
     }
-
-    downButton() {
-        this.moveCurrentPlayer(0, 1); // Move down
-    }
-
-    leftButton() {
-        this.moveCurrentPlayer(-1, 0); // Move left
-    }
-
-    rightButton() {
-        this.moveCurrentPlayer(1, 0); // Move right
-    }
-
-    showHandButton() {
-        const currentPlayer = this.getCurrentPlayer();
-        const playerHand = currentPlayer.getHand().getCards();
-
-        // Create a dialog to display the hand
-        const handDialog = document.createElement('div');
-        handDialog.classList.add('hand-dialog');
-
-        // Create a container to hold the card images
-        const cardContainer = document.createElement('div');
-        cardContainer.classList.add('card-container');
-
-        // Add each card's image to the container
-        playerHand.forEach(card => {
-            const img = document.createElement('img');
-            img.src = card.getImagePath();
-            img.alt = card.getName();
-            img.style.width = '150px';
-            img.style.height = '150px';
-            img.style.margin = '10px';
-            cardContainer.appendChild(img);
-        });
-
-        // Add a close button
-        const closeButton = document.createElement('button');
-        closeButton.textContent = 'Close';
-        closeButton.addEventListener('click', () => {
-            document.body.removeChild(handDialog);
-        });
-
-        handDialog.appendChild(cardContainer);
-        handDialog.appendChild(closeButton);
-
-        // Style the dialog
-        handDialog.style.position = 'fixed';
-        handDialog.style.top = '50%';
-        handDialog.style.left = '50%';
-        handDialog.style.transform = 'translate(-50%, -50%)';
-        handDialog.style.backgroundColor = 'white';
-        handDialog.style.border = '1px solid black';
-        handDialog.style.padding = '20px';
-        handDialog.style.zIndex = '1000';
-
-        document.body.appendChild(handDialog);
-    }
-
-    initializePlayers() {
-        // Define the starting squares for each character
+        initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
             this.gameBoard.getTile(2, 0),  // Professor Plum
@@ -123,38 +51,30 @@ class Controller {
             this.gameBoard.getTile(6, 4)   // Mrs. White
         ];
 
-        // Create characters
-        const characters = [
-            new Character(startingSquares[0], 'MS_SCARLET'),
-            new Character(startingSquares[1], 'PROFESSOR_PLUM'),
-            new Character(startingSquares[2], 'COLONEL_MUSTARD'),
-            new Character(startingSquares[3], 'MRS_PEACOCK'),
-            new Character(startingSquares[4], 'MR_GREEN'),
-            new Character(startingSquares[5], 'MRS_WHITE')            
+        const characterNames = [
+            'MS_SCARLET',
+            'PROFESSOR_PLUM',
+            'COLONEL_MUSTARD',
+            'MRS_PEACOCK',
+            'MR_GREEN',
+            'MRS_WHITE'
         ];
 
-        // Track selected characters to prevent duplicates
-        let availableCharacters = [...characters];
+        const characters = characterNames.map((name, index) => new Character(startingSquares[index], name));
+        const availableCharacters = [...characters];
 
-        // Interactive player setup
         for (let i = 1; i <= 6; i++) {
             const placeholderPlayer = this.gameBoard.getPlayers()[i - 1];
-            // Ask for the username
-            let username = this.askForInput(`Player Setup`, `Enter a username for Player ${i}`);
+            const username = this.askForInput(`Player Setup`, `Enter a username for Player ${i}`);
             placeholderPlayer.setUsername(username);
 
-            // Ask for the password
-            let password = this.askForInput(`Player Setup`, `Enter a password for Player ${i}`);
+            const password = this.askForInput(`Player Setup`, `Enter a password for Player ${i}`);
             placeholderPlayer.setPassword(password);
 
-            // Let the player choose a character
-            let chosenCharacter = this.askForCharacter(availableCharacters);
+            const chosenCharacter = this.askForCharacter(availableCharacters);
             placeholderPlayer.setCharacter(chosenCharacter);
+            availableCharacters.splice(availableCharacters.indexOf(chosenCharacter), 1);
 
-            // Remove the chosen character from the available characters list
-            availableCharacters = availableCharacters.filter(c => c !== chosenCharacter);
-
-            // Place the character on the game board
             const startingTile = chosenCharacter.getCurrentTile();
             this.gridPane.appendChild(chosenCharacter.getCharacterImageView());
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
@@ -165,10 +85,10 @@ class Controller {
 
     askForInput(title, content) {
         let input = null;
-        while (input === null || input.trim() === '') {
+        while (!input || input.trim().isEmpty()) {
             input = prompt(`${title}\n${content}`);
-            if (input === null || input.trim() === '') {
-                this.showAlert('warning', 'Input Required', `You must enter a valid ${content.toLowerCase()}!`);
+            if (!input || input.trim().isEmpty()) {
+                alert(`You must enter a valid ${content.toLowerCase()}!`);
             }
         }
         return input;
@@ -176,189 +96,291 @@ class Controller {
 
     askForCharacter(availableCharacters) {
         let chosenCharacter = null;
-        while (chosenCharacter === null) {
-            const characterNames = availableCharacters.map(character => character.getCharacterName());
-            const input = prompt(`Character Selection\nChoose your character:\nAvailable characters: ${characterNames.join(', ')}`);
-            if (input !== null) {
-                const selectedCharacter = availableCharacters.find(c => c.getCharacterName().toUpperCase() === input.trim().toUpperCase());
-                if (selectedCharacter) {
-                    chosenCharacter = selectedCharacter;
-                } else {
-                    this.showAlert('warning', 'Character Selection Required', 'You must select a character from the list!');
-                }
-            } else {
-                this.showAlert('warning', 'Character Selection Required', 'You must select a character!');
+        while (!chosenCharacter) {
+            const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
+            const chosenCharacterName = prompt(`Choose your character:\n${characterNames.join('\n')}`);
+            chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
+            if (!chosenCharacter) {
+                alert(`You must select a character!`);
             }
         }
         return chosenCharacter;
     }
+        moveCurrentPlayer(dx, dy) {
+        const currentPlayer = this.getCurrentPlayer();
+        const character = currentPlayer.character;
+        const currentTile = character.getCurrentTile();
+        const newTile = this.findNewTile(currentTile, dx, dy);
+
+        if (this.tileMoved) {
+            this.showErrorAlert("Move Already Made", "You have already moved. Undo your previous move to change it.");
+            return;
+        }
+
+        if (newTile instanceof OutOfBounds) {
+            this.showErrorAlert("Invalid Move", "You cannot move to an out-of-bounds area.");
+            return;
+        }
+
+        if (currentTile instanceof StartSquare) {
+            if (!(newTile instanceof Hallway)) {
+                this.showErrorAlert("Invalid Move", "Your first move must be to the nearest hallway.");
+                return;
+            }
+        } else if (currentTile instanceof Hallway) {
+            if (!(newTile instanceof Room)) {
+                this.showErrorAlert("Invalid Move", "You can only move to a nearby room.");
+                return;
+            }
+        } else if (currentTile instanceof Room) {
+            if (newTile instanceof Hallway && newTile.isOccupied()) {
+                this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
+                return;
+            }
+        }
+
+        if (newTile) {
+            character.move(newTile);
+            this.tileMoved = true;
+            this.updateCharacterPosition(character);
+        } else {
+            this.showErrorAlert("Invalid Move", "You cannot move outside the grid.");
+        }
+    }
+
+    findNewTile(currentTile, dx, dy) {
+        const row = currentTile.row + dy;
+        const col = currentTile.column + dx;
+        return this.gameBoard.getTile(row, col);
+    }
+
+    updateCharacterPosition(character) {
+        const characterView = character.getCharacterImageView();
+        const currentTile = character.getCurrentTile();
+        const previousTile = character.getPreviousTile();
+
+        if (previousTile && previousTile.element.contains(characterView)) {
+            previousTile.element.removeChild(characterView);
+        }
+
+        currentTile.element.appendChild(characterView);
+    }
+
+    backButton() {
+        const currentPlayer = this.getCurrentPlayer();
+        const character = currentPlayer.character;
+        if (this.tileMoved) {
+            if (character.getCurrentTile() instanceof Hallway) {
+                character.getCurrentTile().setOccupied(false);
+            }
+            character.undoMove();
+            this.tileMoved = false;
+            this.updateCharacterPosition(character);
+        } else {
+            this.showErrorAlert("Nothing to Undo", "You haven't made a move yet.");
+        }
+    }
+
+    endTurnButton() {
+        const currentPlayer = this.getCurrentPlayer();
+        const currentTile = currentPlayer.character.getCurrentTile();
+
+        if (currentTile instanceof StartSquare) {
+            this.showErrorAlert("Invalid End Turn", "You must move to the nearest hallway before ending your turn.");
+            return;
+        }
+
+        if (currentTile instanceof Hallway && !this.tileMoved) {
+            this.showErrorAlert("Invalid End Turn", "You must move to a nearby room before ending your turn.");
+            return;
+        }
+
+        if (currentTile instanceof Room && !this.tileMoved && !this.suggestionMade && !this.accusationMade) {
+            this.showErrorAlert("Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
+            return;
+        }
+
+        this.resetTurnFlags();
+        this.nextPlayer();
+        this.updateTurnIndicator();
+    }
+        showHandButton() {
+        const currentPlayer = this.getCurrentPlayer();
+        const playerHand = currentPlayer.getHand().getCards();
+
+        const dialog = document.createElement('dialog');
+        dialog.classList.add('dialog');
+        dialog.setAttribute('open', '');
+
+        const hbox = document.createElement('div');
+        hbox.classList.add('hbox');
+        hbox.style.display = 'flex';
+        hbox.style.gap = '10px';
+
+        playerHand.forEach(card => {
+            const img = document.createElement('img');
+            img.src = card.getImagePath();
+            img.alt = card.getName();
+            img.style.height = '150px';
+            img.style.width = '150px';
+            hbox.appendChild(img);
+        });
+
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.addEventListener('click', () => {
+            dialog.close();
+            document.body.removeChild(dialog);
+        });
+
+        dialog.appendChild(hbox);
+        dialog.appendChild(closeButton);
+        document.body.appendChild(dialog);
+    }
 
     suggestionButton() {
         if (this.suggestionMade) {
-            this.showErrorAlert("Invalid Suggestion", "You have already made a previous suggestion and cannot make another one this turn.");
+            this.showErrorAlert("Invalid Suggestion", "You have already made a suggestion this turn.");
             return;
         }
 
         const currentPlayer = this.getCurrentPlayer();
-        const currentTile = currentPlayer.getCharacter().getCurrentTile();
-
+        const currentTile = currentPlayer.character.getCurrentTile();
         if (currentTile instanceof Room) {
-            const currentRoom = currentTile;
-
-            if (currentPlayer.wasPulledBySuggestion && currentPlayer.wasPulledBySuggestion()) {
-                currentPlayer.setPulledBySuggestion(false);
-                this.showSuggestionDialog();
-            } else {
-                if (this.tileMoved) {
-                    this.showSuggestionDialog();
-                } else {
-                    if (currentRoom.isCornerRoom) {
-                        this.showErrorAlert("Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway or take a shortcut to the opposite room and make the suggestion there.");
-                    } else {
-                        this.showErrorAlert("Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway.");
-                    }
-                }
-            }
-        } else if (currentTile instanceof StartingSquare) {
-            this.showErrorAlert("Invalid Suggestion", "Your first move must be to the nearest hallway.");
+            this.showSuggestionDialog(currentPlayer, currentTile);
         } else {
-            this.showErrorAlert("Invalid Suggestion", "To make a suggestion you must be in a room.");
+            this.showErrorAlert("Invalid Suggestion", "You must be in a room to make a suggestion.");
         }
     }
 
-    // Method to create and show the suggestion dialog
-    showSuggestionDialog() {
-        const currentRoom = this.getCurrentPlayer().getCharacter().getCurrentTile();
-        // Create dropdown menus for suspect and weapon selection
-        const suspectSelect = this.createDropdown(this.gameBoard.getCharacterNames(), 'Select Suspect');
-        const weaponSelect = this.createDropdown(this.gameBoard.getWeaponNames(), 'Select Weapon');
-
-        // Create a dialog
-        const dialog = document.createElement('div');
+    showSuggestionDialog(player, room) {
+        const dialog = document.createElement('dialog');
         dialog.classList.add('dialog');
+        dialog.setAttribute('open', '');
+
+        const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
+        const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
+
+        dialog.appendChild(this.createLabel('Suspect:'));
+        dialog.appendChild(suspectDropdown);
+        dialog.appendChild(this.createLabel('Weapon:'));
+        dialog.appendChild(weaponDropdown);
 
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
-
-        dialog.appendChild(suspectSelect.label);
-        dialog.appendChild(suspectSelect.select);
-        dialog.appendChild(weaponSelect.label);
-        dialog.appendChild(weaponSelect.select);
         dialog.appendChild(confirmButton);
 
-        // Style the dialog
-        dialog.style.position = 'fixed';
-        dialog.style.top = '50%';
-        dialog.style.left = '50%';
-        dialog.style.transform = 'translate(-50%, -50%)';
-        dialog.style.backgroundColor = 'white';
-        dialog.style.border = '1px solid black';
-        dialog.style.padding = '20px';
-        dialog.style.zIndex = '1000';
-
-        document.body.appendChild(dialog);
-
         confirmButton.addEventListener('click', () => {
-            const selectedSuspectName = suspectSelect.select.value;
-            const selectedWeaponName = weaponSelect.select.value;
-
-            const selectedSuspect = this.gameBoard.matchCharacter(selectedSuspectName);
-            const selectedWeapon = this.gameBoard.matchWeapon(selectedWeaponName);
-
-            if (selectedSuspect && selectedWeapon) {
-                const suggestion = new Suggestion(this.gameBoard.getPlayers(), currentRoom, selectedWeapon, selectedSuspect);
-                this.suggestionMade = true;
-                this.disproveSuggestionOrAccusation(this.getCurrentPlayer(), selectedSuspect, selectedWeapon, currentRoom, true);
-            }
-
+            const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
+            const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
+            const suggestion = new Suggestion(this.gameBoard.getPlayers(), room, weapon, suspect);
+            this.suggestionMade = true;
+            this.tileMoved = true;
+            this.showErrorAlert("Suggestion Made", "Your suggestion has been made.");
+            dialog.close();
             document.body.removeChild(dialog);
         });
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        dialog.appendChild(cancelButton);
+
+        cancelButton.addEventListener('click', () => {
+            dialog.close();
+            document.body.removeChild(dialog);
+        });
+
+        document.body.appendChild(dialog);
     }
 
     accusationButton() {
+        if (this.accusationMade) {
+            this.showErrorAlert("Invalid Accusation", "You have already made an accusation.");
+            return;
+        }
+
         const currentPlayer = this.getCurrentPlayer();
-        const currentTile = currentPlayer.getCharacter().getCurrentTile();
-
-        if (currentTile instanceof StartingSquare) {
-            this.showErrorAlert("Invalid Accusation", "Your first move must be to the nearest hallway");
+        const currentTile = currentPlayer.character.getCurrentTile();
+        if (!(currentTile instanceof StartSquare)) {
+            this.showAccusationDialog(currentPlayer, currentTile);
         } else {
-            const confirmAccusation = confirm("Are you sure you want to make this accusation? If you are wrong, you will be kicked out of the game.");
-            if (confirmAccusation) {
-                // Create dropdown menus for suspect, weapon, and room selection
-                const suspectSelect = this.createDropdown(this.gameBoard.getCharacterNames(), 'Select Suspect');
-                const weaponSelect = this.createDropdown(this.gameBoard.getWeaponNames(), 'Select Weapon');
-                const roomSelect = this.createDropdown(this.gameBoard.getRoomNames(), 'Select Room');
-
-                // Create a dialog
-                const dialog = document.createElement('div');
-                dialog.classList.add('dialog');
-
-                const confirmButton = document.createElement('button');
-                confirmButton.textContent = 'Confirm';
-
-                dialog.appendChild(suspectSelect.label);
-                dialog.appendChild(suspectSelect.select);
-                dialog.appendChild(weaponSelect.label);
-                dialog.appendChild(weaponSelect.select);
-                dialog.appendChild(roomSelect.label);
-                dialog.appendChild(roomSelect.select);
-                dialog.appendChild(confirmButton);
-
-                // Style the dialog
-                dialog.style.position = 'fixed';
-                dialog.style.top = '50%';
-                dialog.style.left = '50%';
-                dialog.style.transform = 'translate(-50%, -50%)';
-                dialog.style.backgroundColor = 'white';
-                dialog.style.border = '1px solid black';
-                dialog.style.padding = '20px';
-                dialog.style.zIndex = '1000';
-
-                document.body.appendChild(dialog);
-
-                confirmButton.addEventListener('click', () => {
-                    const selectedSuspectName = suspectSelect.select.value;
-                    const selectedWeaponName = weaponSelect.select.value;
-                    const selectedRoomName = roomSelect.select.value;
-
-                    const selectedSuspect = this.gameBoard.matchCharacter(selectedSuspectName);
-                    const selectedWeapon = this.gameBoard.matchWeapon(selectedWeaponName);
-                    const selectedRoom = this.gameBoard.matchRoom(selectedRoomName);
-
-                    if (selectedSuspect && selectedWeapon && selectedRoom) {
-                        const accusation = new Accusation(
-                            this.gameBoard.getPlayers(),
-                            selectedRoom,
-                            selectedWeapon,
-                            selectedSuspect,
-                            this.gameBoard.getEnvelope()
-                        );
-                        this.accusationMade = true;
-
-                        this.disproveSuggestionOrAccusation(currentPlayer, selectedSuspect, selectedWeapon, selectedRoom, false);
-
-                        if (accusation.isAccusationCorrect()) {
-                            this.endGame(currentPlayer, selectedSuspect, selectedWeapon, selectedRoom);
-                        } else {
-                            this.showAlert('error', "Incorrect Accusation", "You have been kicked out of the game.");
-                            currentPlayer.setInactivity();
-                            this.endTurn();
-                        }
-                    }
-
-                    document.body.removeChild(dialog);
-                });
-            }
+            this.showErrorAlert("Invalid Accusation", "You cannot make an accusation from a start square.");
         }
     }
 
-    // Implement the disproveSuggestionOrAccusation, endGame, backButton, endTurnButton, and other methods similarly...
+    showAccusationDialog(player, room) {
+        const dialog = document.createElement('dialog');
+        dialog.classList.add('dialog');
+        dialog.setAttribute('open', '');
 
-    // Utility methods
-    createDropdown(options, labelText) {
-        const label = document.createElement('label');
-        label.textContent = labelText;
+        const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
+        const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
+        const roomDropdown = this.createDropdown(this.gameBoard.getRoomNames());
 
+        dialog.appendChild(this.createLabel('Suspect:'));
+        dialog.appendChild(suspectDropdown);
+        dialog.appendChild(this.createLabel('Weapon:'));
+        dialog.appendChild(weaponDropdown);
+        dialog.appendChild(this.createLabel('Room:'));
+        dialog.appendChild(roomDropdown);
+
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Confirm';
+        dialog.appendChild(confirmButton);
+
+        confirmButton.addEventListener('click', () => {
+            const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
+            const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
+            const room = this.gameBoard.matchRoom(roomDropdown.value);
+            const accusation = new Accusation(this.gameBoard.getPlayers(), room, weapon, suspect, this.gameBoard.getEnvelope());
+
+            if (accusation.isAccusationCorrect()) {
+                this.endGame(player, suspect, weapon, room);
+            } else {
+                this.showErrorAlert("Wrong Accusation", "You are out of the game!");
+                player.setInactivity();
+                this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
+                this.endTurnButton();
+            }
+            dialog.close();
+            document.body.removeChild(dialog);
+        });
+
+        const cancelButton = document.createElement('button');
+        cancelButton.textContent = 'Cancel';
+        dialog.appendChild(cancelButton);
+
+        cancelButton.addEventListener('click', () => {
+            dialog.close();
+            document.body.removeChild(dialog);
+        });
+
+        document.body.appendChild(dialog);
+    }
+        endGame(player, suspect, weapon, room) {
+        alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
+        this.resetGame();
+    }
+
+    resetGame() {
+        window.location.reload();
+    }
+
+    getCurrentPlayer() {
+        return this.gameBoard.getPlayers()[this.currentPlayerIndex];
+    }
+
+    resetTurnFlags() {
+        this.tileMoved = false;
+        this.suggestionMade = false;
+        this.accusationMade = false;
+    }
+
+    nextPlayer() {
+        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.gameBoard.getPlayers().length;
+    }
+
+    createDropdown(options) {
         const select = document.createElement('select');
         options.forEach(option => {
             const opt = document.createElement('option');
@@ -366,40 +388,87 @@ class Controller {
             opt.textContent = option;
             select.appendChild(opt);
         });
-
-        return { label, select };
+        return select;
     }
 
-    showAlert(type, title, content) {
-        alert(`${title}\n${content}`);
+    createLabel(text) {
+        const label = document.createElement('label');
+        label.textContent = text;
+        return label;
     }
 
     showErrorAlert(title, message) {
-        alert(`${title}\n${message}`);
+        alert(`${title}: ${message}`);
     }
 
-    getCurrentPlayer() {
-        return this.gameBoard.getPlayers()[this.currentPlayerIndex];
-    }
+    shortcutButton() {
+        const currentPlayer = this.getCurrentPlayer();
+        const character = currentPlayer.character;
+        const currentTile = character.getCurrentTile();
 
-    getFirstPlayer() {
-        const characterNames = this.gameBoard.getPlayers().map(player => player.getCharacter().name);
-        for (let i = 0; i < characterNames.length; i++) {
-            const c = characterNames[i];
-            if (c === 'MS_SCARLET') {
-                this.currentPlayerIndex = i;
-                break;
-            }
+        if (this.tileMoved) {
+            this.showErrorAlert("Move Already Made", "You have already moved. Please undo your previous move if you want to change it.");
+            return;
+        }
+
+        if (!(currentTile instanceof Room) || !currentTile.isCorner()) {
+            this.showErrorAlert("Invalid Move", "You must be in a corner room to use the shortcut.");
+            return;
+        }
+
+        const oppositeRoom = this.findOppositeCornerRoom(currentTile);
+        if (oppositeRoom) {
+            character.move(oppositeRoom);
+            this.tileMoved = true;
+            this.updateCharacterPosition(character);
+        } else {
+            this.showErrorAlert("Invalid Move", "No opposite corner room found.");
         }
     }
 
-    // Continue implementing other methods as per your Java code
+    findOppositeCornerRoom(currentRoom) {
+        const cornerRooms = {
+            'STUDY': 'KITCHEN',
+            'KITCHEN': 'STUDY',
+            'LOUNGE': 'CONSERVATORY',
+            'CONSERVATORY': 'LOUNGE'
+        };
+
+        const oppositeRoomName = cornerRooms[currentRoom.getRoomName()];
+        if (oppositeRoomName) {
+            return this.gameBoard.rooms.find(room => room.getRoomName() === oppositeRoomName);
+        }
+        return null;
+    }
+
+    logoutButton() {
+        const confirmLogout = confirm("You're about to logout!");
+        if (confirmLogout) {
+            console.log("You successfully logged out!");
+            window.close();
+        }
+    }
+
+    checkPlayerPassword(currentPlayer) {
+        let passwordCorrect = false;
+        while (!passwordCorrect) {
+            const password = prompt(`${currentPlayer.getUsername()}, please enter your password:`);
+            if (password === currentPlayer.getPassword()) {
+                passwordCorrect = true;
+            } else {
+                alert("The password you entered is incorrect. Please try again.");
+            }
+        }
+    }
 }
 
-// Initialize the game when DOM is ready
+// Wait for the DOM to load before initializing the game
 document.addEventListener('DOMContentLoaded', () => {
-    const gridPane = document.getElementById('gridPane'); // Adjust the ID as per your HTML
-    const turnIndicator = document.getElementById('turnIndicator'); // Adjust the ID as per your HTML
-    const gameBoard = new GameBoard(7, 7);
-    const controller = new Controller(gameBoard, gridPane, turnIndicator);
+    const gridPane = document.getElementById('grid-container');
+    const turnIndicator = document.getElementById('turnIndicator');
+
+    const gameBoard = new Gameboard(7, 7);
+    new Controller(gameBoard, gridPane, turnIndicator);
 });
+
+export { Controller };
