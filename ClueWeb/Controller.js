@@ -41,7 +41,7 @@ class Controller {
         document.getElementById('shortcutButton').addEventListener('click', () => this.shortcutButton());
         document.getElementById('logoutButton').addEventListener('click', () => this.logoutButton());
     }
-        initializePlayers() {
+    initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
             this.gameBoard.getTile(2, 0),  // Professor Plum
@@ -50,7 +50,7 @@ class Controller {
             this.gameBoard.getTile(6, 2),  // Mr. Green
             this.gameBoard.getTile(6, 4)   // Mrs. White
         ];
-
+    
         const characterNames = [
             'MS_SCARLET',
             'PROFESSOR_PLUM',
@@ -59,27 +59,27 @@ class Controller {
             'MR_GREEN',
             'MRS_WHITE'
         ];
-
+    
         const characters = characterNames.map((name, index) => new Character(startingSquares[index], name));
         const availableCharacters = [...characters];
-
+    
         for (let i = 1; i <= 6; i++) {
             const placeholderPlayer = this.gameBoard.getPlayers()[i - 1];
             const username = this.askForInput(`Player Setup`, `Enter a username for Player ${i}`);
             placeholderPlayer.setUsername(username);
-
+    
             const password = this.askForInput(`Player Setup`, `Enter a password for Player ${i}`);
             placeholderPlayer.setPassword(password);
-
+    
             const chosenCharacter = this.askForCharacter(availableCharacters);
             placeholderPlayer.setCharacter(chosenCharacter);
             availableCharacters.splice(availableCharacters.indexOf(chosenCharacter), 1);
-
+    
             const startingTile = chosenCharacter.getCurrentTile();
             this.gridPane.appendChild(chosenCharacter.getCharacterImageView());
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
         }
-
+    
         this.getFirstPlayer();
     }
 
@@ -94,40 +94,47 @@ class Controller {
         return input;
     }
     askForCharacter(availableCharacters) {
-        const dialog = document.createElement('dialog');
-        dialog.classList.add('dialog');
-        dialog.setAttribute('open', '');
-
-        const characterDropdown = this.createDropdown(availableCharacters.map(character => character.getCharacterName().toString()));
-
-        dialog.appendChild(this.createLabel('Choose your character:'));
-        dialog.appendChild(characterDropdown);
-
-        const confirmButton = document.createElement('button');
-        confirmButton.textContent = 'Confirm';
-        dialog.appendChild(confirmButton);
-
         let chosenCharacter = null;
-        confirmButton.addEventListener('click', () => {
-            const chosenCharacterName = characterDropdown.value;
-            chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
-            if (chosenCharacter) {
-                dialog.close();
-                document.body.removeChild(dialog);
-            } else {
-                alert('You must select a character!');
-            }
-        });
-
-        document.body.appendChild(dialog);
-        dialog.showModal();
-
-        return new Promise(resolve => {
-            dialog.addEventListener('close', () => {
-                resolve(chosenCharacter);
+        while (!chosenCharacter) {
+            const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
+            const select = document.createElement('select');
+    
+            characterNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
             });
-        });
+    
+            const dialog = document.createElement('dialog');
+            dialog.classList.add('dialog');
+            dialog.setAttribute('open', '');
+    
+            const label = document.createElement('label');
+            label.textContent = 'Choose your character:';
+            dialog.appendChild(label);
+            dialog.appendChild(select);
+    
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Confirm';
+            dialog.appendChild(confirmButton);
+    
+            confirmButton.addEventListener('click', () => {
+                const chosenCharacterName = select.value;
+                chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
+                if (chosenCharacter) {
+                    dialog.close();
+                    document.body.removeChild(dialog);
+                } else {
+                    alert('You must select a character!');
+                }
+            });
+    
+            document.body.appendChild(dialog);
+        }
+        return chosenCharacter;
     }
+    
     moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
