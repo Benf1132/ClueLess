@@ -29,6 +29,18 @@ class Gameboard {
         return this.players;
     }
 
+    getCharacterNames() {
+        return this.players.map(player => player.getCharacter().getCharacterName());
+    }
+
+    getWeaponNames() {
+        return this.weapons.map(weapon => weapon.getWeaponName());
+    }
+
+    getRoomNames() {
+        return this.rooms.map(room => room.getRoomName());
+    }
+
     initializePlaceholderPlayers() {
         for (let i = 0; i < 6; i++) {
             this.players.push(new Player());
@@ -120,10 +132,10 @@ class Gameboard {
             'CONSERVATORY': this.getTile(5, 1)
         };
 
-        cornerRooms['STUDY'].setNeighbors(cornerRooms['KITCHEN']);
-        cornerRooms['KITCHEN'].setNeighbors(cornerRooms['STUDY']);
-        cornerRooms['LOUNGE'].setNeighbors(cornerRooms['CONSERVATORY']);
-        cornerRooms['CONSERVATORY'].setNeighbors(cornerRooms['LOUNGE']);
+        if (cornerRooms['STUDY']) cornerRooms['STUDY'].setNeighbors(cornerRooms['KITCHEN']);
+        if (cornerRooms['KITCHEN']) cornerRooms['KITCHEN'].setNeighbors(cornerRooms['STUDY']);
+        if (cornerRooms['LOUNGE']) cornerRooms['LOUNGE'].setNeighbors(cornerRooms['CONSERVATORY']);
+        if (cornerRooms['CONSERVATORY']) cornerRooms['CONSERVATORY'].setNeighbors(cornerRooms['LOUNGE']);
     }
 
     getOppositeCornerRoom(room) {
