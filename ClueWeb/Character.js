@@ -73,16 +73,20 @@ class Character {
         }
     }
 
-        addCharacterToTile() {
+    addCharacterToTile() {
         const tileElement = this.currentTile.element;
         if (tileElement) {
+            // Remove character image from previous tile if necessary
+            if (this.characterImageElement.parentElement && this.characterImageElement.parentElement !== tileElement) {
+                this.characterImageElement.parentElement.removeChild(this.characterImageElement);
+            }
+
             tileElement.appendChild(this.characterImageElement);
             console.log(`Placed ${this.name} on tile: ${this.currentTile.row}, ${this.currentTile.column}`);
         } else {
             console.error(`Tile at row: ${this.currentTile.row}, column: ${this.currentTile.column} not found.`);
         }
     }
-
 
     getCharacterImageView() {
         return this.characterImageElement;
