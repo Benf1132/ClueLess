@@ -62,10 +62,9 @@ class Controller {
     
         const characters = characterNames.map((name, index) => new Character(startingSquares[index], name));
         const availableCharacters = [...characters];
-        const players = [];
     
-        for (let i = 1; i <= 6; i++) {
-            const placeholderPlayer = this.gameBoard.getPlayers()[i - 1];
+        for (let i = 0; i < 6; i++) {
+            const placeholderPlayer = this.gameBoard.getPlayers()[i];
             const { username, password, chosenCharacter } = await this.askForPlayerDetails(availableCharacters);
     
             placeholderPlayer.setUsername(username);
@@ -75,15 +74,17 @@ class Controller {
     
             const startingTile = chosenCharacter.getCurrentTile();
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
-    
-            players.push(placeholderPlayer);
         }
     
-        // Update the game board's players array with the collected players
-        this.gameBoard.players = players;
+        // Sort players so that the player with Miss Scarlet goes first
+        this.gameBoard.players.sort((a, b) => {
+            if (a.getCharacter().getCharacterName() === 'MS_SCARLET') return -1;
+            if (b.getCharacter().getCharacterName() === 'MS_SCARLET') return 1;
+            return 0;
+        });
     
         // Find the index of the player who chose Miss Scarlet
-        const msScarletIndex = players.findIndex(player => player.getCharacter().getCharacterName() === 'MS_SCARLET');
+        const msScarletIndex = this.gameBoard.players.findIndex(player => player.getCharacter().getCharacterName() === 'MS_SCARLET');
         this.currentPlayerIndex = msScarletIndex;
     
         // Update the turn indicator
