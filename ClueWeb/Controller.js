@@ -1,4 +1,3 @@
-// Import necessary classes and enums
 import { Gameboard } from './Gameboard.js';
 import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
@@ -78,6 +77,23 @@ class Controller {
             return;
         }
 
+        if (currentTile instanceof StartSquare) {
+            if (!(newTile instanceof Hallway)) {
+                this.showErrorAlert("Invalid Move", "Your first move must be to the nearest hallway.");
+                return;
+            }
+        } else if (currentTile instanceof Hallway) {
+            if (!(newTile instanceof Room)) {
+                this.showErrorAlert("Invalid Move", "You can only move to a nearby room.");
+                return;
+            }
+        } else if (currentTile instanceof Room) {
+            if (newTile instanceof Hallway && newTile.isOccupied()) {
+                this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
+                return;
+            }
+        }
+
         if (newTile) {
             character.move(newTile);
             this.tileMoved = true;
@@ -97,11 +113,11 @@ class Controller {
         const characterView = character.getCharacterImageView();
         const currentTile = character.getCurrentTile();
         const previousTile = character.getPreviousTile();
-    
+
         if (previousTile && previousTile.element.contains(characterView)) {
             previousTile.element.removeChild(characterView);
         }
-    
+
         currentTile.element.appendChild(characterView);
     }
 
@@ -126,30 +142,26 @@ class Controller {
     showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.getHand().getCards();
-    
-        // Create an overlay
+
         const overlay = document.createElement('div');
         overlay.classList.add('modal-overlay');
-    
+
         const handDialog = document.createElement('div');
         handDialog.classList.add('hand-dialog');
-    
-        // Create a close button
+
         const closeButton = document.createElement('button');
         closeButton.textContent = 'Close';
         closeButton.classList.add('close-button');
         handDialog.appendChild(closeButton);
-    
-        // Event listener to close the dialog when the close button is clicked
+
         closeButton.addEventListener('click', () => {
             document.body.removeChild(overlay);
         });
-    
-        // Create a container for the cards
+
         const cardsContainer = document.createElement('div');
         cardsContainer.classList.add('cards-container');
         handDialog.appendChild(cardsContainer);
-    
+
         playerHand.forEach(card => {
             const img = document.createElement('img');
             img.src = card.getImagePath();
@@ -157,15 +169,13 @@ class Controller {
             img.classList.add('card-image');
             cardsContainer.appendChild(img);
         });
-    
+
         overlay.appendChild(handDialog);
         document.body.appendChild(overlay);
-    
-        // Accessibility: Move focus to the dialog
+
         handDialog.setAttribute('tabindex', '-1');
         handDialog.focus();
-    
-        // Accessibility: Close dialog on Escape key
+
         const escListener = (e) => {
             if (e.key === 'Escape') {
                 document.body.removeChild(overlay);
@@ -174,7 +184,7 @@ class Controller {
         };
         document.addEventListener('keydown', escListener);
     }
-    
+
     suggestionButton() {
         if (this.suggestionMade) {
             this.showErrorAlert("Invalid Suggestion", "You have already made a suggestion this turn.");
