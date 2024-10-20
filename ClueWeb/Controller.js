@@ -22,8 +22,7 @@ class Controller {
     }
 
     initializePlayers() {
-        console.log("Initializing players...");
-        const startingSquares = [
+            const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
             this.gameBoard.getTile(2, 0),  // Professor Plum
             this.gameBoard.getTile(2, 6),  // Colonel Mustard
@@ -49,7 +48,6 @@ class Controller {
             characters[index].getCharacterImageView().style.gridRowStart = startingTile.row + 1;
             characters[index].getCharacterImageView().style.gridColumnStart = startingTile.column + 1;
         });
-        console.log("Players initialized.");
     }
 
     initializeButtons() {
