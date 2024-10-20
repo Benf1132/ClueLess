@@ -12,6 +12,7 @@ class Character {
         if (CharacterName[this.name]) {
             this.characterImageElement = document.createElement('img');
             this.characterImageElement.src = CharacterName[this.name].imagePath;  // Set the image path from the enum
+            this.characterImageElement.alt = CharacterName[this.name].name;  
             this.characterImageElement.classList.add('character-image');
             this.addCharacterToTile();
         } else {
@@ -90,6 +91,10 @@ class Character {
 
     getCharacterImageView() {
         return this.characterImageElement;
+    }
+    
+    getCharacterName() {
+        return CharacterName[this.name].name; // Return the display name
     }
 }
 
