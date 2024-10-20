@@ -6,6 +6,7 @@ import Character from './Character.js';
 import StartSquare from './StartSquare.js';
 import Hallway from './Hallway.js';
 import Room from './Room.js';
+import OutOfBounds from './OutOfBounds.js';
 
 class Controller {
     constructor(gameBoard, gridPane, turnIndicator) {
