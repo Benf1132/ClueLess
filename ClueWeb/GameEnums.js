@@ -74,7 +74,7 @@ const WeaponName = {
     },
     LEAD_PIPE: {
         name: 'Lead Pipe',
-        imagePath: 'images/weapons/lead_pipe.png' // Adjusted the case to match the filename
+        imagePath: 'images/weapons/leadPipe.png' // Adjusted the case to match the filename
     },
     KNIFE: {
         name: 'Knife',
@@ -86,7 +86,7 @@ const WeaponName = {
     },
     CANDLESTICK: {
         name: 'Candlestick',
-        imagePath: 'images/weapons/candlestick.png' // Adjusted the case to match the filename
+        imagePath: 'images/weapons/candleStick.png' // Adjusted the case to match the filename
     },
     REVOLVER: {
         name: 'Revolver',
