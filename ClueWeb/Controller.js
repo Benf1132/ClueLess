@@ -21,7 +21,6 @@ class Controller {
         this.updateTurnIndicator();
     }
 
-    // Initialize players and assign characters to their starting positions
     initializePlayers() {
         console.log("Initializing players...");
         const startingSquares = [
@@ -53,7 +52,6 @@ class Controller {
         console.log("Players initialized.");
     }
 
-    // Initialize buttons and bind their functionality to movement and game actions
     initializeButtons() {
         document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer(0, -1));
         document.getElementById('downButton').addEventListener('click', () => this.moveCurrentPlayer(0, 1));
@@ -68,13 +66,11 @@ class Controller {
         document.getElementById('logoutButton').addEventListener('click', () => this.logoutButton());
     }
 
-    // Update the turn indicator to show which player's turn it is
     updateTurnIndicator() {
         const currentPlayer = this.getCurrentPlayer();
         this.turnIndicator.textContent = `${currentPlayer.username}'s Turn (${currentPlayer.character.getCharacterName()})`;
     }
 
-    // Move the current player based on direction
     moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
@@ -95,14 +91,12 @@ class Controller {
         }
     }
 
-    // Find the new tile based on current position and movement direction
     findNewTile(currentTile, dx, dy) {
         const row = currentTile.row + dy;
         const col = currentTile.column + dx;
         return this.gameBoard.getTile(row, col);
     }
 
-    // Update the character's position on the grid
     updateCharacterPosition(character) {
         const characterView = character.getCharacterImageView();
         const currentTile = character.getCurrentTile();
@@ -112,7 +106,6 @@ class Controller {
         characterView.style.gridColumnStart = currentTile.column + 1;
     }
 
-    // Undo the current player's move
     backButton() {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
@@ -125,14 +118,12 @@ class Controller {
         }
     }
 
-    // End the current player's turn and move to the next player
     endTurnButton() {
         this.resetTurnFlags();
         this.nextPlayer();
         this.updateTurnIndicator();
     }
 
-    // Show the current player's hand
     showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.hand.getCards();
@@ -152,12 +143,12 @@ class Controller {
         }, 5000); // Show the hand for 5 seconds
     }
 
-    // Handle the suggestion process
     suggestionButton() {
         if (this.suggestionMade) {
             this.showErrorAlert("Invalid Suggestion", "You have already made a suggestion this turn.");
             return;
         }
+
         const currentPlayer = this.getCurrentPlayer();
         const currentTile = currentPlayer.character.getCurrentTile();
         if (currentTile instanceof Room) {
@@ -167,7 +158,6 @@ class Controller {
         }
     }
 
-    // Handle the accusation process
     accusationButton() {
         if (this.accusationMade) {
             this.showErrorAlert("Invalid Accusation", "You have already made an accusation.");
@@ -183,7 +173,84 @@ class Controller {
         }
     }
 
-    // Create dropdown for selecting options in suggestion or accusation
+    showSuggestionDialog(player, room) {
+        const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
+        const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
+
+        const suggestionDialog = document.createElement('div');
+        suggestionDialog.classList.add('dialog');
+        suggestionDialog.append(suspectDropdown, weaponDropdown);
+
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Confirm';
+        suggestionDialog.appendChild(confirmButton);
+
+        confirmButton.addEventListener('click', () => {
+            const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
+            const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
+            const suggestion = new Suggestion(this.gameBoard.getPlayers(), room, weapon, suspect);
+            this.suggestionMade = true;
+            document.body.removeChild(suggestionDialog);
+        });
+
+        document.body.appendChild(suggestionDialog);
+    }
+
+    showAccusationDialog(player, room) {
+        const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
+        const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
+        const roomDropdown = this.createDropdown(this.gameBoard.getRoomNames());
+
+        const accusationDialog = document.createElement('div');
+        accusationDialog.classList.add('dialog');
+        accusationDialog.append(suspectDropdown, weaponDropdown, roomDropdown);
+
+        const confirmButton = document.createElement('button');
+        confirmButton.textContent = 'Confirm';
+        accusationDialog.appendChild(confirmButton);
+
+        confirmButton.addEventListener('click', () => {
+            const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
+            const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
+            const room = this.gameBoard.matchRoom(roomDropdown.value);
+            const accusation = new Accusation(this.gameBoard.getPlayers(), room, weapon, suspect, this.gameBoard.getEnvelope());
+
+            if (accusation.isAccusationCorrect()) {
+                this.endGame(player, suspect, weapon, room);
+            } else {
+                this.showErrorAlert("Wrong Accusation", "You are out of the game!");
+                player.setInactivity();
+                this.endTurnButton();
+            }
+            document.body.removeChild(accusationDialog);
+        });
+
+        document.body.appendChild(accusationDialog);
+    }
+
+    endGame(player, suspect, weapon, room) {
+        alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
+        this.resetGame();
+    }
+
+    resetGame() {
+        window.location.reload();
+    }
+
+    getCurrentPlayer() {
+        return this.gameBoard.getPlayers()[this.currentPlayerIndex];
+    }
+
+    resetTurnFlags() {
+        this.tileMoved = false;
+        this.suggestionMade = false;
+        this.accusationMade = false;
+    }
+
+    nextPlayer() {
+        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.gameBoard.getPlayers().length;
+    }
+
     createDropdown(options) {
         const select = document.createElement('select');
         options.forEach(option => {
@@ -195,31 +262,8 @@ class Controller {
         return select;
     }
 
-    // Advance to the next player
-    nextPlayer() {
-        this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.gameBoard.getPlayers().length;
-    }
-
-    // Reset flags for the new turn
-    resetTurnFlags() {
-        this.tileMoved = false;
-        this.suggestionMade = false;
-        this.accusationMade = false;
-    }
-
-    // Display an error alert
     showErrorAlert(title, message) {
         alert(`${title}: ${message}`);
-    }
-
-    // Reset the game (refreshes the page)
-    resetGame() {
-        window.location.reload();
-    }
-
-    // Get the current player
-    getCurrentPlayer() {
-        return this.gameBoard.getPlayers()[this.currentPlayerIndex];
     }
 }
 
@@ -228,10 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridPane = document.getElementById('grid-container');
     const turnIndicator = document.getElementById('turnIndicator');
 
-    // Initialize the gameboard (7x7 grid as an example)
     const gameBoard = new Gameboard(7, 7);
-
-    // Initialize the controller with gameBoard and UI components
     const controller = new Controller(gameBoard, gridPane, turnIndicator);
 });
 
