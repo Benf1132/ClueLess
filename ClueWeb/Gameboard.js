@@ -37,41 +37,27 @@ class Gameboard {
     }
 
     initializeTiles() {
-        for (let row = 0; row < this.rows; row++) {
-            for (let col = 0; col < this.columns; col++) {
-                const tileId = `tile${row}_${col}`;
-                const tileDiv = document.getElementById(tileId);  // Get the existing tile from the HTML
+        const tiles = document.querySelectorAll('.tile'); // Select all tiles in the grid
+        tiles.forEach(tile => {
+            const row = parseInt(tile.getAttribute('data-row'), 10);
+            const col = parseInt(tile.getAttribute('data-col'), 10);
 
-                let tile;
-                const tileType = this.determineTileType(row, col);
-
-                tileDiv.classList.add('tile');  // Ensure it has the tile class
-
-                switch (tileType) {
-                    case TileType.ROOM:
-                        const roomName = this.determineRoomName(row, col);
-                        tile = new Room(row, col, RoomName[roomName]);
-                        tileDiv.classList.add(roomName.toLowerCase().replace(/\s+/g, '-'));  // Add appropriate class
-                        this.rooms.push(tile);
-                        break;
-                    case TileType.STARTING_SQUARE:
-                        tile = new StartSquare(row, col);
-                        tileDiv.classList.add('start-square');
-                        break;
-                    case TileType.HALLWAY:
-                        tile = new Hallway(row, col);
-                        tileDiv.classList.add('hallway');
-                        break;
-                    default:
-                        tile = new OutOfBounds(row, col);
-                        tileDiv.classList.add('out-of-bounds');
-                        break;
-                }
-
-                this.tiles[row][col] = tile;
-                tile.element = tileDiv;
+            let tileObj;
+            if (tile.classList.contains('room')) {
+                const roomClass = tile.classList[2]; // The third class is the room type
+                tileObj = new Room(row, col, RoomName[roomClass.toUpperCase().replace('-', '_')]);
+                this.rooms.push(tileObj);
+            } else if (tile.classList.contains('start-square')) {
+                tileObj = new StartSquare(row, col);
+            } else if (tile.classList.contains('hallway')) {
+                tileObj = new Hallway(row, col);
+            } else {
+                tileObj = new OutOfBounds(row, col);
             }
-        }
+
+            this.tiles[row][col] = tileObj;
+            tileObj.element = tile;  // Attach the DOM element to the tile object
+        });
     }
 
     determineTileType(row, col) {
