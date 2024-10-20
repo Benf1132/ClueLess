@@ -1,3 +1,4 @@
+import { RoomName, TileType, WeaponName } from './GameEnums.js';
 import Deck from './Deck.js'; 
 import Player from './Player.js';
 import Room from './Room.js';
