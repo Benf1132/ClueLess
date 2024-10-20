@@ -1,5 +1,4 @@
-import { RoomName, TileType, WeaponName } from './GameEnums.js';
-import Deck from './Deck.js';
+import Deck from './Deck.js'; 
 import Player from './Player.js';
 import Room from './Room.js';
 import StartSquare from './StartSquare.js';
@@ -11,7 +10,10 @@ class Gameboard {
     constructor(rows, columns) {
         this.rows = rows;
         this.columns = columns;
-        this.tiles = new Array(rows).fill(null).map(() => new Array(columns).fill(null));
+        // Initialize all positions with OutOfBounds tiles
+        this.tiles = new Array(rows).fill(null).map((_, row) =>
+            new Array(columns).fill(null).map((_, col) => new OutOfBounds(row, col))
+        );
         this.players = [];
         this.weapons = [];
         this.rooms = [];
@@ -30,7 +32,9 @@ class Gameboard {
     }
 
     getCharacterNames() {
-        return this.players.map(player => player.getCharacter().getCharacterName());
+        return this.players
+            .filter(player => player.getCharacter() !== null)
+            .map(player => player.getCharacter().getCharacterName());
     }
 
     getWeaponNames() {
@@ -42,7 +46,8 @@ class Gameboard {
     }
 
     matchCharacter(characterName) {
-        return this.players.find(player => player.getCharacter().getCharacterName() === characterName).getCharacter();
+        const player = this.players.find(player => player.getCharacter() && player.getCharacter().getCharacterName() === characterName);
+        return player ? player.getCharacter() : null;
     }
 
     matchWeapon(weaponName) {
@@ -56,7 +61,7 @@ class Gameboard {
     initializePlaceholderPlayers() {
         for (let i = 0; i < 6; i++) {
             const player = new Player();
-            player.setCharacter("");  // Set character to an empty string initially
+            // No need to set character here; it defaults to null
             this.players.push(player);
         }
     }
@@ -81,6 +86,7 @@ class Gameboard {
                 tileObj = new OutOfBounds(row, col);
             }
 
+            // Overwrite the tile at the specific position
             this.tiles[row][col] = tileObj;
             tileObj.element = tile;  // Attach the DOM element to the tile object
         });
@@ -110,17 +116,23 @@ class Gameboard {
     }
 
     assignStartSquareNeighbors(square, up, down, left, right) {
-        const neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
+        const neighbors = [up, down, left, right]
+            .filter(tile => tile instanceof Hallway)
+            .filter(neighbor => neighbor != null);
         square.setNeighbors(...neighbors.slice(0, 1)); // Start squares only have 1 neighbor
     }
 
     assignHallwayNeighbors(hallway, up, down, left, right) {
-        const neighbors = [up, down, left, right].filter(tile => tile instanceof Room);
-        hallway.setNeighbors(...neighbors.slice(0, 2)); // Hallways only have 2 neighbors
+        const neighbors = [up, down, left, right]
+            .filter(tile => (tile instanceof Room || tile instanceof Hallway))
+            .filter(neighbor => neighbor != null);
+        hallway.setNeighbors(...neighbors.slice(0, 2)); // Hallways only have up to 2 neighbors
     }
 
     assignRoomNeighbors(room, up, down, left, right) {
-        let neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
+        let neighbors = [up, down, left, right]
+            .filter(tile => tile instanceof Hallway)
+            .filter(neighbor => neighbor != null);
 
         // Special case for corner rooms
         if (room.isCorner()) {
@@ -132,7 +144,9 @@ class Gameboard {
 
         // Special case for the billiard room
         if (room.getRoomName() === 'BILLIARD_ROOM') {
-            neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
+            neighbors = [up, down, left, right]
+                .filter(tile => tile instanceof Hallway)
+                .filter(neighbor => neighbor != null);
         }
 
         room.setNeighbors(...neighbors.slice(0, 4)); // Rooms can have up to 4 neighbors
@@ -140,16 +154,24 @@ class Gameboard {
 
     assignOppositeCornerNeighbors() {
         const cornerRooms = {
-            'STUDY': this.getTile(1, 1),
-            'KITCHEN': this.getTile(5, 5),
-            'LOUNGE': this.getTile(1, 5),
-            'CONSERVATORY': this.getTile(5, 1)
+            'STUDY': this.rooms.find(room => room.getRoomName() === 'STUDY'),
+            'KITCHEN': this.rooms.find(room => room.getRoomName() === 'KITCHEN'),
+            'LOUNGE': this.rooms.find(room => room.getRoomName() === 'LOUNGE'),
+            'CONSERVATORY': this.rooms.find(room => room.getRoomName() === 'CONSERVATORY')
         };
 
-        if (cornerRooms['STUDY']) cornerRooms['STUDY'].setNeighbors(cornerRooms['KITCHEN']);
-        if (cornerRooms['KITCHEN']) cornerRooms['KITCHEN'].setNeighbors(cornerRooms['STUDY']);
-        if (cornerRooms['LOUNGE']) cornerRooms['LOUNGE'].setNeighbors(cornerRooms['CONSERVATORY']);
-        if (cornerRooms['CONSERVATORY']) cornerRooms['CONSERVATORY'].setNeighbors(cornerRooms['LOUNGE']);
+        if (cornerRooms['STUDY'] && cornerRooms['KITCHEN']) {
+            cornerRooms['STUDY'].addNeighbor(cornerRooms['KITCHEN']);
+        }
+        if (cornerRooms['KITCHEN'] && cornerRooms['STUDY']) {
+            cornerRooms['KITCHEN'].addNeighbor(cornerRooms['STUDY']);
+        }
+        if (cornerRooms['LOUNGE'] && cornerRooms['CONSERVATORY']) {
+            cornerRooms['LOUNGE'].addNeighbor(cornerRooms['CONSERVATORY']);
+        }
+        if (cornerRooms['CONSERVATORY'] && cornerRooms['LOUNGE']) {
+            cornerRooms['CONSERVATORY'].addNeighbor(cornerRooms['LOUNGE']);
+        }
     }
 
     getOppositeCornerRoom(room) {
@@ -168,7 +190,9 @@ class Gameboard {
     }
 
     getTile(row, col) {
-        return (row >= 0 && row < this.rows && col >= 0 && col < this.columns) ? this.tiles[row][col] : null;
+        return (row >= 0 && row < this.rows && col >= 0 && col < this.columns)
+            ? this.tiles[row][col]
+            : null;
     }
 
     initializeWeapons() {
@@ -193,7 +217,9 @@ class Gameboard {
         if (characterImg && newTileElement) {
             // Remove the character from the previous tile
             const prevTileElement = character.getPreviousTile()?.element;
-            if (prevTileElement) prevTileElement.removeChild(characterImg);
+            if (prevTileElement && prevTileElement.contains(characterImg)) {
+                prevTileElement.removeChild(characterImg);
+            }
 
             // Add the character to the new tile
             newTileElement.appendChild(characterImg);
@@ -206,7 +232,9 @@ class Gameboard {
             for (let col = 0; col < this.columns; col++) {
                 const tile = this.getTile(row, col);
                 if (tile) {
-                    const neighbors = tile.getNeighbors().map(neighbor => `(${neighbor.row}, ${neighbor.column})`).join(', ');
+                    const neighbors = tile.getNeighbors()
+                        .filter(neighbor => neighbor != null)
+                        .map(neighbor => `(${neighbor.row}, ${neighbor.column})`).join(', ');
                     console.log(`Tile (${row}, ${col}) neighbors: ${neighbors}`);
                 }
             }
