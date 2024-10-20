@@ -140,12 +140,29 @@ class Controller {
     }
 
     endTurnButton() {
+        const currentPlayer = this.getCurrentPlayer();
+        const currentTile = currentPlayer.character.getCurrentTile();
+
+        if (currentTile instanceof StartSquare) {
+            this.showErrorAlert("Invalid End Turn", "You must move to the nearest hallway before ending your turn.");
+            return;
+        }
+
+        if (currentTile instanceof Hallway && !this.tileMoved) {
+            this.showErrorAlert("Invalid End Turn", "You must move to a nearby room before ending your turn.");
+            return;
+        }
+
+        if (currentTile instanceof Room && !this.tileMoved && !this.suggestionMade && !this.accusationMade) {
+            this.showErrorAlert("Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
+            return;
+        }
+
         this.resetTurnFlags();
         this.nextPlayer();
         this.updateTurnIndicator();
     }
-
-    showHandButton() {
+        showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.getHand().getCards();
 
@@ -206,21 +223,6 @@ class Controller {
         }
     }
 
-    accusationButton() {
-        if (this.accusationMade) {
-            this.showErrorAlert("Invalid Accusation", "You have already made an accusation.");
-            return;
-        }
-
-        const currentPlayer = this.getCurrentPlayer();
-        const currentTile = currentPlayer.character.getCurrentTile();
-        if (currentTile instanceof Room) {
-            this.showAccusationDialog(currentPlayer, currentTile);
-        } else {
-            this.showErrorAlert("Invalid Accusation", "You must be in a room to make an accusation.");
-        }
-    }
-
     showSuggestionDialog(player, room) {
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
@@ -242,6 +244,21 @@ class Controller {
         });
 
         document.body.appendChild(suggestionDialog);
+    }
+
+    accusationButton() {
+        if (this.accusationMade) {
+            this.showErrorAlert("Invalid Accusation", "You have already made an accusation.");
+            return;
+        }
+
+        const currentPlayer = this.getCurrentPlayer();
+        const currentTile = currentPlayer.character.getCurrentTile();
+        if (currentTile instanceof Room) {
+            this.showAccusationDialog(currentPlayer, currentTile);
+        } else {
+            this.showErrorAlert("Invalid Accusation", "You must be in a room to make an accusation.");
+        }
     }
 
     showAccusationDialog(player, room) {
@@ -355,30 +372,6 @@ class Controller {
             return this.gameBoard.rooms.find(room => room.getRoomName() === oppositeRoomName);
         }
         return null;
-    }
-    
-    endTurnButton() {
-        const currentPlayer = this.getCurrentPlayer();
-        const currentTile = currentPlayer.character.getCurrentTile();
-    
-        if (currentTile instanceof StartSquare) {
-            this.showErrorAlert("Invalid End Turn", "You must move to the nearest hallway before ending your turn.");
-            return;
-        }
-    
-        if (currentTile instanceof Hallway && !this.tileMoved) {
-            this.showErrorAlert("Invalid End Turn", "You must move to a nearby room before ending your turn.");
-            return;
-        }
-    
-        if (currentTile instanceof Room && !this.tileMoved && !this.suggestionMade && !this.accusationMade) {
-            this.showErrorAlert("Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
-            return;
-        }
-    
-        this.resetTurnFlags();
-        this.nextPlayer();
-        this.updateTurnIndicator();
     }
 
     logoutButton() {
