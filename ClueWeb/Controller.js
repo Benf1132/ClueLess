@@ -20,6 +20,12 @@ class Controller {
         this.initializeButtons();
         this.updateTurnIndicator();
     }
+    function updateDOM() {
+    requestAnimationFrame(() => {
+        // This will trigger after the next frame to ensure the DOM is updated.
+        console.log('DOM updated after placing characters.');
+    });
+}
 
     initializePlayers() {
         const startingSquares = [
