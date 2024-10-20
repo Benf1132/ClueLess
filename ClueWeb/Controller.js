@@ -46,6 +46,7 @@ class Controller {
         this.gameBoard.players.forEach((player, index) => {
             const character = new Character(startingSquares[index], characterNames[index]);
             player.setCharacter(character);
+            console.log(`Placed ${character.getCharacterName()} at row ${startingSquares[index].row}, column ${startingSquares[index].column}`);
         });
     }
 
