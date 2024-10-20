@@ -93,32 +93,38 @@ class Controller {
         return input;
     }
     askForCharacter(availableCharacters) {
-        const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
-        let selectHTML = '<select id="characterSelect">';
-    
-        characterNames.forEach(name => {
-            selectHTML += `<option value="${name}">${name}</option>`;
-        });
-    
-        selectHTML += '</select>';
-    
-        const dialogHTML = `
-            <div>
-                <label for="characterSelect">Choose your character:</label>
-                ${selectHTML}
-            </div>
-        `;
-    
         return new Promise((resolve) => {
+            const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
+            const select = document.createElement('select');
+    
+            characterNames.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+    
             const dialog = document.createElement('div');
-            dialog.innerHTML = dialogHTML;
+            dialog.classList.add('dialog');
+            dialog.style.position = 'fixed';
+            dialog.style.top = '50%';
+            dialog.style.left = '50%';
+            dialog.style.transform = 'translate(-50%, -50%)';
+            dialog.style.backgroundColor = 'white';
+            dialog.style.padding = '20px';
+            dialog.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+            dialog.style.zIndex = '1000';
+    
+            const label = document.createElement('label');
+            label.textContent = 'Choose your character:';
+            dialog.appendChild(label);
+            dialog.appendChild(select);
     
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Confirm';
             dialog.appendChild(confirmButton);
     
             confirmButton.addEventListener('click', () => {
-                const select = document.getElementById('characterSelect');
                 const chosenCharacterName = select.value;
                 const chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
                 if (chosenCharacter) {
@@ -130,7 +136,6 @@ class Controller {
             });
     
             document.body.appendChild(dialog);
-            alert(dialog.innerHTML); // Display the dialog as an alert
         });
     }
     
