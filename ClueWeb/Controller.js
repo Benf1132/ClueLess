@@ -105,9 +105,13 @@ class Controller {
     updateCharacterPosition(character) {
         const characterView = character.getCharacterImageView();
         const currentTile = character.getCurrentTile();
-        this.gridPane.appendChild(characterView);
-        characterView.style.gridRowStart = currentTile.row + 1;
-        characterView.style.gridColumnStart = currentTile.column + 1;
+        const previousTile = character.getPreviousTile();
+    
+        if (previousTile && previousTile.element.contains(characterView)) {
+            previousTile.element.removeChild(characterView);
+        }
+    
+        currentTile.element.appendChild(characterView);
     }
 
     backButton() {
