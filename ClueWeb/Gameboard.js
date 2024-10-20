@@ -1,7 +1,7 @@
 import { TileType, RoomName } from './GameEnums.js';
 import Room from './Room.js';
 import Hallway from './Hallway.js';
-import StartingSquare from './StartingSquare.js';
+import StartingSquare from './StartSquare.js';
 import OutOfBounds from './OutOfBounds.js';
 
 class Gameboard {
