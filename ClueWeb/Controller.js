@@ -42,16 +42,17 @@ class Controller {
 
         // Initialize players and place characters on the board
         this.gameBoard.players.forEach((player, index) => {
-            player.setCharacter(characters[index]);
-            const startingTile = characters[index].getCurrentTile();
-            this.gridPane.appendChild(characters[index].getCharacterImageView());
-
-            // Ensure the character image is positioned correctly
-            characters[index].getCharacterImageView().style.gridRowStart = startingTile.row + 1;
-            characters[index].getCharacterImageView().style.gridColumnStart = startingTile.column + 1;
-
-            console.log(`Placed ${characters[index].getCharacterName()} at row ${startingTile.row}, column ${startingTile.column}`);
-        });
+                player.setCharacter(characters[index]);
+                const startingTile = characters[index].getCurrentTile();
+                const tileElement = startingTile.element; // Get the tile's DOM element
+                const characterImageView = characters[index].getCharacterImageView();
+        
+                // Append the character image to the tile element
+                tileElement.appendChild(characterImageView);
+        
+                // Optionally, set CSS classes or styles if needed
+                characterImageView.classList.add('character-image');
+            });
     }
 
     initializeButtons() {
