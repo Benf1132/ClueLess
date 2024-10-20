@@ -18,10 +18,9 @@ class Controller {
         this.suggestionMade = false;
         this.accusationMade = false;
 
-        this.initializePlayers().then(() => {
-            this.initializeButtons();
-            this.updateTurnIndicator();
-        });
+        this.initializePlayers();
+        this.initializeButtons();
+        this.updateTurnIndicator();
     }
 
     updateTurnIndicator() {
@@ -80,11 +79,14 @@ class Controller {
         }
     
         // Sort players so that the player with Miss Scarlet goes first
-        this.gameBoard.players.sort((a, b) => {
+        const sortedPlayers = this.gameBoard.getPlayers().sort((a, b) => {
             if (a.getCharacter().getCharacterName() === 'MS_SCARLET') return -1;
             if (b.getCharacter().getCharacterName() === 'MS_SCARLET') return 1;
             return 0;
         });
+    
+        // Update the game board's players array with the sorted players
+        this.gameBoard.players = sortedPlayers;
     
         // Find the index of the player who chose Miss Scarlet
         const msScarletIndex = this.gameBoard.players.findIndex(player => player.getCharacter().getCharacterName() === 'MS_SCARLET');
@@ -412,7 +414,6 @@ class Controller {
     
     getCurrentPlayer() {
         const currentPlayer = this.gameBoard.getPlayers()[this.currentPlayerIndex];
-        console.log(`Current Player: ${currentPlayer.username}, ${currentPlayer.getCharacter().getCharacterName()}`);
         return currentPlayer;
     }
 
