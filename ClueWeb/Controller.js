@@ -22,8 +22,7 @@ class Controller {
         this.initializeButtons();
         this.updateTurnIndicator();
     }
-
-    initializePlayers() {
+        initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
             this.gameBoard.getTile(2, 0),  // Professor Plum
@@ -67,8 +66,7 @@ class Controller {
         const currentPlayer = this.getCurrentPlayer();
         this.turnIndicator.textContent = `${currentPlayer.username}'s Turn (${currentPlayer.character.getCharacterName()})`;
     }
-
-    moveCurrentPlayer(dx, dy) {
+        moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
         const currentTile = character.getCurrentTile();
@@ -166,7 +164,6 @@ class Controller {
         this.nextPlayer();
         this.updateTurnIndicator();
     }
-
         showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.getHand().getCards();
@@ -297,7 +294,6 @@ class Controller {
 
         document.body.appendChild(accusationDialog);
     }
-
         endGame(player, suspect, weapon, room) {
         alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
         this.resetGame();
