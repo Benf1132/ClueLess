@@ -35,7 +35,6 @@ class Weapon {
             }
 
             tileElement.appendChild(this.weaponImage);
-            console.log(`Placed ${this.name} on tile: ${this.currentTile.row}, ${this.currentTile.column}`);
         } else {
             console.error(`Tile at row: ${this.currentTile.row}, column: ${this.currentTile.column} not found.`);
         }
