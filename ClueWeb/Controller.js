@@ -123,35 +123,38 @@ class Controller {
         this.updateTurnIndicator();
     }
 
-showHandButton() { 
-    const currentPlayer = this.getCurrentPlayer();
-    const playerHand = currentPlayer.getHand().getCards(); // Ensure getHand() method exists
-    const handDialog = document.createElement('div');
-    handDialog.classList.add('hand-dialog');
-
-    playerHand.forEach(card => {
-        const img = document.createElement('img');
-        img.src = card.getImagePath();
-        img.alt = card.getName();
-        img.classList.add('card-image');
-        handDialog.appendChild(img);
-    });
-
-    document.body.appendChild(handDialog);
-
-    // Optional: Close the hand dialog when clicked
-    handDialog.addEventListener('click', () => {
-        document.body.removeChild(handDialog);
-    });
-
-    // Or remove after a timeout
-    setTimeout(() => {
-        if (document.body.contains(handDialog)) {
+    showHandButton() {
+        const currentPlayer = this.getCurrentPlayer();
+        const playerHand = currentPlayer.getHand().getCards(); // Ensure getHand() method exists
+        const handDialog = document.createElement('div');
+        handDialog.classList.add('hand-dialog');
+    
+        // Create a close button
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.classList.add('close-button');
+        handDialog.appendChild(closeButton);
+    
+        // Event listener to close the dialog when the close button is clicked
+        closeButton.addEventListener('click', () => {
             document.body.removeChild(handDialog);
-        }
-    }, 5000); // Show the hand for 5 seconds
-}
-
+        });
+    
+        // Create a container for the cards
+        const cardsContainer = document.createElement('div');
+        cardsContainer.classList.add('cards-container');
+        handDialog.appendChild(cardsContainer);
+    
+        playerHand.forEach(card => {
+            const img = document.createElement('img');
+            img.src = card.getImagePath();
+            img.alt = card.getName();
+            img.classList.add('card-image');
+            cardsContainer.appendChild(img);
+        });
+    
+        document.body.appendChild(handDialog);
+    }
 
     suggestionButton() {
         if (this.suggestionMade) {
