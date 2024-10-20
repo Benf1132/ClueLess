@@ -1,0 +1,225 @@
+body { 
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+.anchor-pane {
+    width: 800px;
+    background-color: #e0e0e0;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+}
+
+#grid-container {
+    margin-bottom: 20px;
+    width: 600px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 5px;
+}
+
+.tile {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #333;
+    background-size: cover;
+    background-position: center;
+}
+
+.character-image {
+    position: absolute;
+    width: 50px; /* Smaller size so it's noticeable but not covering the entire tile */
+    height: 50px;
+    top: 50%; /* Center the image vertically */
+    left: 50%; /* Center the image horizontally */
+    transform: translate(-50%, -50%); /* Adjust to ensure proper centering */
+}
+
+/* Background images for each tile class */
+.out-of-bounds {
+    background-image: url('images/tiles/out_of_bounds.jpg');
+}
+
+.start-square {
+    background-image: url('images/tiles/start_square.jpg');
+}
+
+.study {
+    background-image: url('images/tiles/study.jpg');
+}
+
+.hallway {
+    background-image: url('images/tiles/hallway.jpg');
+}
+
+.hall {
+    background-image: url('images/tiles/hall.jpg');
+}
+
+.lounge {
+    background-image: url('images/tiles/lounge.jpg');
+}
+
+.library {
+    background-image: url('images/tiles/library.jpg');
+}
+
+.billiard-room {
+    background-image: url('images/tiles/billiard_room.jpg');
+}
+
+.dining-room {
+    background-image: url('images/tiles/dining_room.jpg');
+}
+
+.conservatory {
+    background-image: url('images/tiles/conservatory.jpg');
+}
+
+.ballroom {
+    background-image: url('images/tiles/ballroom.jpg');
+}
+
+.kitchen {
+    background-image: url('images/tiles/kitchen.jpg');
+}
+
+/* Positioning for weapon image in the bottom-right corner */
+.weapon-image {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 30px; /* Smaller size for visualization */
+    height: auto;
+    z-index: 1; /* Ensure it appears on top of the tile */
+}
+
+/* Button Container directly under grid */
+#button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 600px;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+/* First container: Show Hand and Logout buttons */
+.first-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#showHandButton, #logoutButton {
+    margin-bottom: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#logoutButton {
+    background-color: #dc3545;
+}
+
+#logoutButton:hover {
+    background-color: #c82333;
+}
+
+/* Second container: Grid layout for movement buttons */
+.second-container {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    grid-template-rows: repeat(3, auto);
+    justify-items: start;
+    align-items: start;
+    gap: 2px;
+    width: auto;
+    margin: 0 auto;
+}
+
+#backButton {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+#upButton {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+}
+
+#shortcutButton {
+    grid-column: 3 / 4;
+    grid-row: 1 / 2;
+}
+
+#leftButton {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+#rightButton {
+    grid-column: 3 / 4;
+    grid-row: 2 / 3;
+}
+
+#downButton {
+    grid-column: 2 / 3;
+    grid-row: 3 / 4;
+}
+
+#endTurnButton {
+    grid-column: 3 / 4;
+    grid-row: 3 / 4;
+}
+
+/* Third container: Suggestion, Accusation, Turn Indicator */
+.third-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#suggestionButton, #accusationButton {
+    margin-bottom: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#turnIndicator {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.movement-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 6px;
+    cursor: pointer;
+    width: 90px;
+}
+
+.movement-button:hover {
+    background-color: #0056b3;
+}

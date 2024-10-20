@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clue-Less Game UI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="scenePane" class="anchor-pane">
+        <div id="grid-container">
+            <!-- Grid of 7x7 tiles -->
+            <div class="grid">
+                <!-- Rows -->
+                <div class="col">
+                    <div id="tile0_0" class="tile out-of-bounds"></div>
+                    <div id="tile0_1" class="tile out-of-bounds"></div>
+                    <div id="tile0_2" class="tile start-square"></div>
+                    <div id="tile0_3" class="tile out-of-bounds"></div>
+                    <div id="tile0_4" class="tile start-square"></div>
+                    <div id="tile0_5" class="tile out-of-bounds"></div>
+                    <div id="tile0_6" class="tile out-of-bounds"></div>
+                </div>
+                <div class="col">
+                    <div id="tile1_0" class="tile out-of-bounds"></div>
+                    <div id="tile1_1" class="tile study"></div>
+                    <div id="tile1_2" class="tile hallway"></div>
+                    <div id="tile1_3" class="tile hall"></div>
+                    <div id="tile1_4" class="tile hallway"></div>
+                    <div id="tile1_5" class="tile lounge"></div>
+                    <div id="tile1_6" class="tile out-of-bounds"></div>
+                </div>
+                <div class="col">
+                    <div id="tile2_0" class="tile out-of-bounds"></div>
+                    <div id="tile2_1" class="tile hallway"></div>
+                    <div id="tile2_2" class="tile out-of-bounds"></div>
+                    <div id="tile2_3" class="tile hallway"></div>
+                    <div id="tile2_4" class="tile out-of-bounds"></div>
+                    <div id="tile2_5" class="tile hallway"></div>
+                    <div id="tile2_6" class="tile start-square"></div>
+                </div>
+                <div class="col">
+                    <div id="tile3_0" class="tile out-of-bounds"></div>
+                    <div id="tile3_1" class="tile library"></div>
+                    <div id="tile3_2" class="tile hallway"></div>
+                    <div id="tile3_3" class="tile billiard-room"></div>
+                    <div id="tile3_4" class="tile hallway"></div>
+                    <div id="tile3_5" class="tile dining-room"></div>
+                    <div id="tile3_6" class="tile out-of-bounds"></div>
+                </div>
+                <div class="col">
+                    <div id="tile4_0" class="tile start-square"></div>
+                    <div id="tile4_1" class="tile hallway"></div>
+                    <div id="tile4_2" class="tile out-of-bounds"></div>
+                    <div id="tile4_3" class="tile hallway"></div>
+                    <div id="tile4_4" class="tile out-of-bounds"></div>
+                    <div id="tile4_5" class="tile hallway"></div>
+                    <div id="tile4_6" class="tile start-square"></div>
+                </div>
+                <div class="col">
+                    <div id="tile5_0" class="tile out-of-bounds"></div>
+                    <div id="tile5_1" class="tile conservatory"></div>
+                    <div id="tile5_2" class="tile hallway"></div>
+                    <div id="tile5_3" class="tile ballroom"></div>
+                    <div id="tile5_4" class="tile hallway"></div>
+                    <div id="tile5_5" class="tile kitchen"></div>
+                    <div id="tile5_6" class="tile out-of-bounds"></div>
+                </div>
+                <div class="col">
+                    <div id="tile6_0" class="tile out-of-bounds"></div>
+                    <div id="tile6_1" class="tile out-of-bounds"></div>
+                    <div id="tile6_2" class="tile start-square"></div>
+                    <div id="tile6_3" class="tile out-of-bounds"></div>
+                    <div id="tile6_4" class="tile out-of-bounds"></div>
+                    <div id="tile6_5" class="tile out-of-bounds"></div>
+                    <div id="tile6_6" class="tile out-of-bounds"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Button Container -->
+        <div id="button-container">
+            <!-- First container: Show Hand and Logout -->
+            <div class="first-container">
+                <button id="showHandButton" class="movement-button">Show Hand</button>
+                <button id="logoutButton" class="movement-button">Logout</button>
+            </div>
+
+            <!-- Second container: Grid layout for movement buttons -->
+            <div class="second-container">
+                <button id="backButton" class="movement-button">Back</button>
+                <button id="upButton" class="movement-button">UP</button>
+                <button id="shortcutButton" class="movement-button">Shortcut</button>
+                <button id="leftButton" class="movement-button">LEFT</button>
+                <button id="rightButton" class="movement-button">RIGHT</button>
+                <button id="downButton" class="movement-button">DOWN</button>
+                <button id="endTurnButton" class="movement-button">End Turn</button>
+            </div>
+
+            <!-- Third container: Suggestion, Accusation, Turn Indicator -->
+            <div class="third-container">
+                <button id="suggestionButton" class="movement-button">Suggestion</button>
+                <button id="accusationButton" class="movement-button">Accusation</button>
+                <p id="turnIndicator">Player 1's Turn</p>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="Controller.js"></script>
+</body>
+</html>
