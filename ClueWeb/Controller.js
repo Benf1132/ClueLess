@@ -79,18 +79,17 @@ class Controller {
             players.push(placeholderPlayer);
         }
     
-        // Sort players so that the player with Miss Scarlet goes first
-        players.sort((a, b) => {
-            if (a.getCharacter().getCharacterName() === 'MS_SCARLET') return -1;
-            if (b.getCharacter().getCharacterName() === 'MS_SCARLET') return 1;
-            return 0;
-        });
-    
-        // Update the game board's players array with the sorted players
+        // Update the game board's players array with the collected players
         this.gameBoard.players = players;
     
-        this.getFirstPlayer();
+        // Find the index of the player who chose Miss Scarlet
+        const msScarletIndex = players.findIndex(player => player.getCharacter().getCharacterName() === 'MS_SCARLET');
+        this.currentPlayerIndex = msScarletIndex;
+    
+        // Update the turn indicator
+        this.updateTurnIndicator();
     }
+
     askForPlayerDetails(availableCharacters) {
         return new Promise((resolve) => {
             const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
@@ -406,16 +405,6 @@ class Controller {
     resetGame() {
         window.location.reload();
     }
-    getFirstPlayer() {
-        const players = this.gameBoard.getPlayers();
-        for (let i = 0; i < players.length; i++) {
-            if (players[i].getCharacter().getCharacterName() === 'MS_SCARLET') {
-                this.currentPlayerIndex = i;
-                break;
-            }
-        }
-        this.updateTurnIndicator();
-    }
 
     getCurrentPlayer() {
         return this.gameBoard.getPlayers()[this.currentPlayerIndex];
@@ -426,7 +415,7 @@ class Controller {
         this.suggestionMade = false;
         this.accusationMade = false;
     }
-
+    
     nextPlayer() {
         this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.gameBoard.getPlayers().length;
         this.updateTurnIndicator();
