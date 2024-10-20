@@ -1,50 +1,60 @@
 import { WeaponName } from './GameEnums.js';
 
 class Weapon {
-    constructor(currentTile, name) {
+    constructor(currentTile, weaponType) {
         this.currentTile = currentTile;
-        this.name = name;
+        this.weaponType = weaponType;
+
+        // Get the weapon's display name and image path from the WeaponName enum
+        if (WeaponName[this.weaponType]) {
+            this.name = WeaponName[this.weaponType].name;
+            this.imagePath = WeaponName[this.weaponType].imagePath;
+        } else {
+            console.error(`Weapon type ${this.weaponType} not found in WeaponName enum.`);
+            this.name = 'Unknown Weapon';
+            this.imagePath = 'images/weapons/default.png';
+        }
 
         // Create an img element for the weapon image
         this.weaponImage = document.createElement('img');
-        this.weaponImage.src = this.getImagePath();
+        this.weaponImage.src = this.imagePath;
+        this.weaponImage.alt = this.name;
         this.weaponImage.classList.add('weapon-image');
 
-        // Add the image to the current tile
-        this.updateImageViewPosition();
+        // Add the weapon image to the current tile
+        this.addWeaponToTile();
     }
 
-    // Method to get the image path of the weapon
-    getImagePath() {
-        return WeaponName[this.name]?.imagePath || 'images/weapons/default.png';
+    // Method to add the weapon image to the tile
+    addWeaponToTile() {
+        const tileElement = this.currentTile.element;
+        if (tileElement) {
+            // Remove weapon image from previous tile if necessary
+            if (this.weaponImage.parentElement && this.weaponImage.parentElement !== tileElement) {
+                this.weaponImage.parentElement.removeChild(this.weaponImage);
+            }
+
+            tileElement.appendChild(this.weaponImage);
+            console.log(`Placed ${this.name} on tile: ${this.currentTile.row}, ${this.currentTile.column}`);
+        } else {
+            console.error(`Tile at row: ${this.currentTile.row}, column: ${this.currentTile.column} not found.`);
+        }
     }
 
-    // Get the current tile of the weapon
-    getCurrentTile() {
-        return this.currentTile;
-    }
-
-    // Set a new current tile for the weapon
+    // Method to set a new current tile for the weapon
     setCurrentTile(newTile) {
         this.currentTile = newTile;
-        this.updateImageViewPosition();
+        this.addWeaponToTile();
     }
 
-    // Update the position of the weapon image inside the current tile (bottom-right alignment)
-    updateImageViewPosition() {
-        if (this.currentTile) {
-            // Remove the image from the previous tile if needed
-            const previousTile = document.getElementById(`tile${this.currentTile.row}_${this.currentTile.column}`);
-            if (previousTile && previousTile.contains(this.weaponImage)) {
-                previousTile.removeChild(this.weaponImage);
-            }
+    // Getter for the weapon's name
+    getWeaponName() {
+        return this.name;
+    }
 
-            // Add the image to the new tile
-            const newTileElement = document.getElementById(`tile${this.currentTile.row}_${this.currentTile.column}`);
-            if (newTileElement) {
-                newTileElement.appendChild(this.weaponImage);
-            }
-        }
+    // Getter for the current tile
+    getCurrentTile() {
+        return this.currentTile;
     }
 }
 
