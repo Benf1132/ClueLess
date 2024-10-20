@@ -103,7 +103,6 @@ body {
     height: auto;
     z-index: 1; /* Ensure it appears on top of the tile */
 }
-
 /* Hand Dialog Styles */
 .hand-dialog {
     position: fixed;
@@ -127,11 +126,11 @@ body {
 .cards-container {
     display: flex;
     flex-wrap: nowrap; /* Prevent wrapping */
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     margin-top: 20px;
     overflow-x: auto; /* Enable horizontal scrolling if needed */
-    width: 100%; /* Ensure it uses the full width of the dialog */
+    width: 100%;
 }
 
 /* Card Image Styles */
@@ -163,9 +162,20 @@ body {
     display: none;
 }
 
-/* Optional: For other browsers, you can set scrollbar width to zero */
+/* For Firefox */
 .cards-container {
-    scrollbar-width: none; /* For Firefox */
+    scrollbar-width: none;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .hand-dialog {
+        max-width: 100%;
+    }
+
+    .hand-dialog img.card-image {
+        height: 100px;
+    }
 }
 
 .modal-overlay {
