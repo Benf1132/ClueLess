@@ -65,13 +65,10 @@ class Controller {
     
         for (let i = 1; i <= 6; i++) {
             const placeholderPlayer = this.gameBoard.getPlayers()[i - 1];
-            const username = this.askForInput(`Player Setup`, `Enter a username for Player ${i}`);
+            const { username, password, chosenCharacter } = await this.askForPlayerDetails(availableCharacters);
+    
             placeholderPlayer.setUsername(username);
-    
-            const password = this.askForInput(`Player Setup`, `Enter a password for Player ${i}`);
             placeholderPlayer.setPassword(password);
-    
-            const chosenCharacter = await this.askForCharacter(availableCharacters);
             placeholderPlayer.setCharacter(chosenCharacter);
             availableCharacters.splice(availableCharacters.indexOf(chosenCharacter), 1);
     
@@ -81,18 +78,7 @@ class Controller {
     
         this.getFirstPlayer();
     }
-        
-    askForInput(title, content) {
-        let input = null;
-        while (!input || input.trim() === "") {
-            input = prompt(`${title}\n${content}`);
-            if (!input || input.trim() === "") {
-                alert(`You must enter a valid ${content.toLowerCase()}!`);
-            }
-        }
-        return input;
-    }
-    askForCharacter(availableCharacters) {
+    askForPlayerDetails(availableCharacters) {
         return new Promise((resolve) => {
             const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
             const select = document.createElement('select');
@@ -115,30 +101,50 @@ class Controller {
             dialog.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
             dialog.style.zIndex = '1000';
     
-            const label = document.createElement('label');
-            label.textContent = 'Choose your character:';
-            dialog.appendChild(label);
-            dialog.appendChild(select);
+            const usernameLabel = document.createElement('label');
+            usernameLabel.textContent = 'Enter username:';
+            const usernameInput = document.createElement('input');
+            usernameInput.type = 'text';
+    
+            const passwordLabel = document.createElement('label');
+            passwordLabel.textContent = 'Enter password:';
+            const passwordInput = document.createElement('input');
+            passwordInput.type = 'password';
+    
+            const characterLabel = document.createElement('label');
+            characterLabel.textContent = 'Choose your character:';
     
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Confirm';
+    
+            dialog.appendChild(usernameLabel);
+            dialog.appendChild(usernameInput);
+            dialog.appendChild(document.createElement('br'));
+            dialog.appendChild(passwordLabel);
+            dialog.appendChild(passwordInput);
+            dialog.appendChild(document.createElement('br'));
+            dialog.appendChild(characterLabel);
+            dialog.appendChild(select);
+            dialog.appendChild(document.createElement('br'));
             dialog.appendChild(confirmButton);
     
             confirmButton.addEventListener('click', () => {
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
                 const chosenCharacterName = select.value;
                 const chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
-                if (chosenCharacter) {
+    
+                if (username && password && chosenCharacter) {
                     document.body.removeChild(dialog);
-                    resolve(chosenCharacter);
+                    resolve({ username, password, chosenCharacter });
                 } else {
-                    alert('You must select a character!');
+                    alert('You must enter a username, password, and select a character!');
                 }
             });
     
             document.body.appendChild(dialog);
         });
     }
-    
     moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
