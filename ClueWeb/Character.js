@@ -73,11 +73,11 @@ class Character {
         }
     }
 
-    addCharacterToTile() {
-        // Use querySelector to find the tile with matching data-row and data-col attributes
-        const tileElement = document.querySelector(`.tile[data-row="${this.currentTile.row}"][data-col="${this.currentTile.column}"]`);
+        addCharacterToTile() {
+        const tileElement = this.currentTile.element;
         if (tileElement) {
             tileElement.appendChild(this.characterImageElement);
+            console.log(`Placed ${this.name} on tile: ${this.currentTile.row}, ${this.currentTile.column}`);
         } else {
             console.error(`Tile at row: ${this.currentTile.row}, column: ${this.currentTile.column} not found.`);
         }
