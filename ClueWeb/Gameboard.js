@@ -3,10 +3,11 @@ import { RoomName, TileType, WeaponName } from './GameEnums.js';
 import Deck from './Deck.js';
 import Player from './Player.js';  // Assuming you have a Player class
 import Room from './Room.js';
-import StartSquare from './StartSquare.js';
+import StartSquare from './StartSquare.js';  // Changed StartingSquare to StartSquare
 import Hallway from './Hallway.js';
 import OutOfBounds from './OutOfBounds.js';
 import Weapon from './Weapon.js';
+import Envelope from './Envelope.js'; 
 
 class Gameboard {
     constructor(rows, columns) {
@@ -52,7 +53,7 @@ class Gameboard {
                         this.rooms.push(tile);
                         break;
                     case TileType.STARTING_SQUARE:
-                        tile = new StartingSquare(row, col);
+                        tile = new StartSquare(row, col);  // Changed StartingSquare to StartSquare
                         tileDiv.classList.add('start-square');
                         break;
                     case TileType.HALLWAY:
@@ -82,8 +83,8 @@ class Gameboard {
                 const left = this.getTile(row, col - 1);
                 const right = this.getTile(row, col + 1);
 
-                if (current instanceof StartingSquare) {
-                    this.assignStartingSquareNeighbors(current, up, down, left, right);
+                if (current instanceof StartSquare) {  // Changed StartingSquare to StartSquare
+                    this.assignStartSquareNeighbors(current, up, down, left, right);
                 } else if (current instanceof Hallway) {
                     this.assignHallwayNeighbors(current, up, down, left, right);
                 } else if (current instanceof Room) {
@@ -93,7 +94,7 @@ class Gameboard {
         }
     }
 
-    assignStartingSquareNeighbors(square, up, down, left, right) {
+    assignStartSquareNeighbors(square, up, down, left, right) {  // Changed StartingSquare to StartSquare
         const neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
         square.setNeighbors(...neighbors);
     }
