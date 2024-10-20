@@ -20,10 +20,6 @@ class Character {
         }
     }
 
-    getCharacterName() {
-        return this.name;
-    }
-
     getCurrentTile() {
         return this.currentTile;
     }
