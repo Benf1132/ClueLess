@@ -91,15 +91,7 @@ class Controller {
             });
     
             const dialog = document.createElement('div');
-            dialog.classList.add('dialog');
-            dialog.style.position = 'fixed';
-            dialog.style.top = '50%';
-            dialog.style.left = '50%';
-            dialog.style.transform = 'translate(-50%, -50%)';
-            dialog.style.backgroundColor = 'white';
-            dialog.style.padding = '20px';
-            dialog.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
-            dialog.style.zIndex = '1000';
+            dialog.classList.add('player-setup-dialog');
     
             const usernameLabel = document.createElement('label');
             usernameLabel.textContent = 'Enter username:';
@@ -119,13 +111,10 @@ class Controller {
     
             dialog.appendChild(usernameLabel);
             dialog.appendChild(usernameInput);
-            dialog.appendChild(document.createElement('br'));
             dialog.appendChild(passwordLabel);
             dialog.appendChild(passwordInput);
-            dialog.appendChild(document.createElement('br'));
             dialog.appendChild(characterLabel);
             dialog.appendChild(select);
-            dialog.appendChild(document.createElement('br'));
             dialog.appendChild(confirmButton);
     
             confirmButton.addEventListener('click', () => {
