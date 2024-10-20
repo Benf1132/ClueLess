@@ -63,7 +63,12 @@ class Controller {
         const characters = characterNames.map((name, index) => new Character(startingSquares[index], name));
         const availableCharacters = [...characters];
     
-        for (let i = 1; i <= 6; i++) {
+        const setupPlayer = (i) => {
+            if (i > 6) {
+                this.getFirstPlayer();
+                return;
+            }
+    
             const placeholderPlayer = this.gameBoard.getPlayers()[i - 1];
             const username = this.askForInput(`Player Setup`, `Enter a username for Player ${i}`);
             placeholderPlayer.setUsername(username);
@@ -71,16 +76,20 @@ class Controller {
             const password = this.askForInput(`Player Setup`, `Enter a password for Player ${i}`);
             placeholderPlayer.setPassword(password);
     
-            const chosenCharacter = this.askForCharacter(availableCharacters);
-            placeholderPlayer.setCharacter(chosenCharacter);
-            availableCharacters.splice(availableCharacters.indexOf(chosenCharacter), 1);
+            this.askForCharacter(availableCharacters, (chosenCharacter) => {
+                placeholderPlayer.setCharacter(chosenCharacter);
+                availableCharacters.splice(availableCharacters.indexOf(chosenCharacter), 1);
     
-            const startingTile = chosenCharacter.getCurrentTile();
-            startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
-        }
+                const startingTile = chosenCharacter.getCurrentTile();
+                startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
     
-        this.getFirstPlayer();
+                setupPlayer(i + 1);
+            });
+        };
+    
+        setupPlayer(1);
     }
+    
     askForInput(title, content) {
         let input = null;
         while (!input || input.trim() === "") {
@@ -91,7 +100,7 @@ class Controller {
         }
         return input;
     }
-    askForCharacter(availableCharacters) {
+    askForCharacter(availableCharacters, callback) {
         const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
         const select = document.createElement('select');
     
@@ -115,27 +124,21 @@ class Controller {
         confirmButton.textContent = 'Confirm';
         dialog.appendChild(confirmButton);
     
-        let chosenCharacter = null;
         confirmButton.addEventListener('click', () => {
             const chosenCharacterName = select.value;
-            chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
+            const chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
             if (chosenCharacter) {
                 dialog.close();
                 document.body.removeChild(dialog);
+                callback(chosenCharacter);
             } else {
                 alert('You must select a character!');
             }
         });
     
         document.body.appendChild(dialog);
-    
-        // Block interaction until the dialog is closed
-        while (!chosenCharacter) {
-            // Busy-wait loop (not recommended, but for demonstration purposes)
-        }
-    
-        return chosenCharacter;
     }
+    
     moveCurrentPlayer(dx, dy) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.character;
