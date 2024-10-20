@@ -78,21 +78,67 @@ class Gameboard {
                 }
             }
         }
+
+        // Assign opposite corner rooms as neighbors
+        this.assignOppositeCornerNeighbors();
     }
 
     assignStartSquareNeighbors(square, up, down, left, right) {
         const neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
-        square.setNeighbors(...neighbors);
+        square.setNeighbors(...neighbors.slice(0, 1)); // Start squares only have 1 neighbor
     }
 
     assignHallwayNeighbors(hallway, up, down, left, right) {
         const neighbors = [up, down, left, right].filter(tile => tile instanceof Room);
-        hallway.setNeighbors(...neighbors);
+        hallway.setNeighbors(...neighbors.slice(0, 2)); // Hallways only have 2 neighbors
     }
 
     assignRoomNeighbors(room, up, down, left, right) {
-        const neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
-        room.setNeighbors(...neighbors);
+        let neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
+
+        // Special case for corner rooms
+        if (room.isCorner()) {
+            const oppositeCorner = this.getOppositeCornerRoom(room);
+            if (oppositeCorner) {
+                neighbors.push(oppositeCorner);
+            }
+        }
+
+        // Special case for the billiard room
+        if (room.getRoomName() === 'BILLIARD_ROOM') {
+            neighbors = [up, down, left, right].filter(tile => tile instanceof Hallway);
+        }
+
+        room.setNeighbors(...neighbors.slice(0, 4)); // Rooms can have up to 4 neighbors
+    }
+
+    assignOppositeCornerNeighbors() {
+        const cornerRooms = {
+            'STUDY': this.getTile(1, 1),
+            'KITCHEN': this.getTile(5, 5),
+            'LOUNGE': this.getTile(1, 5),
+            'CONSERVATORY': this.getTile(5, 1)
+        };
+
+        cornerRooms['STUDY'].setNeighbors(cornerRooms['KITCHEN']);
+        cornerRooms['KITCHEN'].setNeighbors(cornerRooms['STUDY']);
+        cornerRooms['LOUNGE'].setNeighbors(cornerRooms['CONSERVATORY']);
+        cornerRooms['CONSERVATORY'].setNeighbors(cornerRooms['LOUNGE']);
+    }
+
+    getOppositeCornerRoom(room) {
+        const cornerRooms = {
+            'STUDY': 'KITCHEN',
+            'KITCHEN': 'STUDY',
+            'LOUNGE': 'CONSERVATORY',
+            'CONSERVATORY': 'LOUNGE'
+        };
+
+        const oppositeRoomName = cornerRooms[room.getRoomName()];
+        if (oppositeRoomName) {
+            return this.rooms.find(r => r.getRoomName() === oppositeRoomName);
+        }
+        return null;
     }
 
     getTile(row, col) {
