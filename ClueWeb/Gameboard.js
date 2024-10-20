@@ -34,26 +34,25 @@ class Gameboard {
     }
 
     initializeTiles() {
-        console.log('Initializing tiles...');
         const gridContainer = document.getElementById('grid-container');
-
+    
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.columns; col++) {
                 const tileDiv = document.createElement('div');
                 let tile;
                 const tileType = this.determineTileType(row, col);
-
+    
                 tileDiv.classList.add('tile');
-
+    
                 switch (tileType) {
                     case TileType.ROOM:
                         const roomName = this.determineRoomName(row, col);
-                        tile = new Room(row, col, roomName);
-                        tileDiv.classList.add(roomName.toLowerCase().replace(/\s+/g, '-'));
+                        tile = new Room(row, col, RoomName[roomName]);
+                        tileDiv.classList.add(roomName.toLowerCase().replace(/\s+/g, '-')); // CSS class for room type
                         this.rooms.push(tile);
                         break;
                     case TileType.STARTING_SQUARE:
-                        tile = new StartSquare(row, col);  // Changed StartingSquare to StartSquare
+                        tile = new StartingSquare(row, col);
                         tileDiv.classList.add('start-square');
                         break;
                     case TileType.HALLWAY:
@@ -65,14 +64,14 @@ class Gameboard {
                         tileDiv.classList.add('out-of-bounds');
                         break;
                 }
-
-                console.log(`Tile initialized at [${row},${col}] with type: ${tileType}`);
+    
                 this.tiles[row][col] = tile;
-                tile.element = tileDiv;
+                tile.element = tileDiv;  // Reference to the tile's DOM element
                 gridContainer.appendChild(tileDiv);
             }
         }
     }
+
 
     setNeighbors() {
         for (let row = 0; row < this.rows; row++) {
@@ -130,17 +129,19 @@ class Gameboard {
     }
 
     determineRoomName(row, col) {
-        if (row === 3 && col === 3) return RoomName.BILLIARD_ROOM;
-        if (row === 1 && col === 1) return RoomName.STUDY;
-        if (row === 1 && col === 3) return RoomName.HALL;
-        if (row === 1 && col === 5) return RoomName.LOUNGE;
-        if (row === 3 && col === 1) return RoomName.LIBRARY;
-        if (row === 3 && col === 5) return RoomName.DINING_ROOM;
-        if (row === 5 && col === 1) return RoomName.CONSERVATORY;
-        if (row === 5 && col === 3) return RoomName.BALLROOM;
-        if (row === 5 && col === 5) return RoomName.KITCHEN;
-        return RoomName.STUDY;  // Default fallback
+        // Determine room names based on positions
+        if (row === 3 && col === 3) return 'BILLIARD_ROOM';
+        if (row === 1 && col === 1) return 'STUDY';
+        if (row === 1 && col === 3) return 'HALL';
+        if (row === 1 && col === 5) return 'LOUNGE';
+        if (row === 3 && col === 1) return 'LIBRARY';
+        if (row === 3 && col === 5) return 'DINING_ROOM';
+        if (row === 5 && col === 1) return 'CONSERVATORY';
+        if (row === 5 && col === 3) return 'BALLROOM';
+        if (row === 5 && col === 5) return 'KITCHEN';
+        return 'STUDY';  // Default fallback
     }
+
 
     getTile(row, col) {
         return (row >= 0 && row < this.rows && col >= 0 && col < this.columns) ? this.tiles[row][col] : null;
