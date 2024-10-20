@@ -160,9 +160,21 @@ class Controller {
     
         overlay.appendChild(handDialog);
         document.body.appendChild(overlay);
+    
+        // Accessibility: Move focus to the dialog
+        handDialog.setAttribute('tabindex', '-1');
+        handDialog.focus();
+    
+        // Accessibility: Close dialog on Escape key
+        const escListener = (e) => {
+            if (e.key === 'Escape') {
+                document.body.removeChild(overlay);
+                document.removeEventListener('keydown', escListener);
+            }
+        };
+        document.addEventListener('keydown', escListener);
     }
-
-
+    
     suggestionButton() {
         if (this.suggestionMade) {
             this.showErrorAlert("Invalid Suggestion", "You have already made a suggestion this turn.");
