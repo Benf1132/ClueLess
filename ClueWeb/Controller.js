@@ -76,7 +76,6 @@ class Controller {
             availableCharacters.splice(availableCharacters.indexOf(chosenCharacter), 1);
     
             const startingTile = chosenCharacter.getCurrentTile();
-            this.gridPane.appendChild(chosenCharacter.getCharacterImageView());
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
         }
     
@@ -130,7 +129,7 @@ class Controller {
     
         document.body.appendChild(dialog);
     
-        // Wait for the user to select a character
+        // Block interaction until the dialog is closed
         while (!chosenCharacter) {
             // Busy-wait loop (not recommended, but for demonstration purposes)
         }
