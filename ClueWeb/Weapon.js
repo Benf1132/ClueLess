@@ -16,7 +16,6 @@ class Weapon {
 
     // Method to get the image path of the weapon
     getImagePath() {
-        // Access the correct image path from WeaponName object
         return WeaponName[this.name]?.imagePath || 'images/weapons/default.png';
     }
 
@@ -36,7 +35,7 @@ class Weapon {
         if (this.currentTile) {
             // Remove the image from the previous tile if needed
             const previousTile = document.getElementById(`tile${this.currentTile.row}_${this.currentTile.column}`);
-            if (previousTile) {
+            if (previousTile && previousTile.contains(this.weaponImage)) {
                 previousTile.removeChild(this.weaponImage);
             }
 
