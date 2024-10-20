@@ -41,6 +41,18 @@ class Gameboard {
         return this.rooms.map(room => room.getRoomName());
     }
 
+    matchCharacter(characterName) {
+        return this.players.find(player => player.getCharacter().getCharacterName() === characterName).getCharacter();
+    }
+
+    matchWeapon(weaponName) {
+        return this.weapons.find(weapon => weapon.getWeaponName() === weaponName);
+    }
+
+    matchRoom(roomName) {
+        return this.rooms.find(room => room.getRoomName() === roomName);
+    }
+
     initializePlaceholderPlayers() {
         for (let i = 0; i < 6; i++) {
             this.players.push(new Player());
