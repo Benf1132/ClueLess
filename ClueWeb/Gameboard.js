@@ -1,5 +1,5 @@
 import { RoomName, TileType, WeaponName } from './GameEnums.js';
-import Deck from './Deck.js'; 
+import Deck from './Deck.js';
 import Player from './Player.js';
 import Room from './Room.js';
 import StartSquare from './StartSquare.js';
@@ -118,22 +118,19 @@ class Gameboard {
 
     assignStartSquareNeighbors(square, up, down, left, right) {
         const neighbors = [up, down, left, right]
-            .filter(tile => tile instanceof Hallway)
-            .filter(neighbor => neighbor != null);
+            .filter(tile => tile instanceof Hallway);
         square.setNeighbors(...neighbors.slice(0, 1)); // Start squares only have 1 neighbor
     }
 
     assignHallwayNeighbors(hallway, up, down, left, right) {
         const neighbors = [up, down, left, right]
-            .filter(tile => (tile instanceof Room || tile instanceof Hallway))
-            .filter(neighbor => neighbor != null);
+            .filter(tile => (tile instanceof Room || tile instanceof Hallway));
         hallway.setNeighbors(...neighbors.slice(0, 2)); // Hallways only have up to 2 neighbors
     }
 
     assignRoomNeighbors(room, up, down, left, right) {
         let neighbors = [up, down, left, right]
-            .filter(tile => tile instanceof Hallway)
-            .filter(neighbor => neighbor != null);
+            .filter(tile => tile instanceof Hallway);
 
         // Special case for corner rooms
         if (room.isCorner()) {
@@ -146,8 +143,7 @@ class Gameboard {
         // Special case for the billiard room
         if (room.getRoomName() === 'BILLIARD_ROOM') {
             neighbors = [up, down, left, right]
-                .filter(tile => tile instanceof Hallway)
-                .filter(neighbor => neighbor != null);
+                .filter(tile => tile instanceof Hallway);
         }
 
         room.setNeighbors(...neighbors.slice(0, 4)); // Rooms can have up to 4 neighbors
@@ -234,7 +230,6 @@ class Gameboard {
                 const tile = this.getTile(row, col);
                 if (tile) {
                     const neighbors = tile.getNeighbors()
-                        .filter(neighbor => neighbor != null)
                         .map(neighbor => `(${neighbor.row}, ${neighbor.column})`).join(', ');
                     console.log(`Tile (${row}, ${col}) neighbors: ${neighbors}`);
                 }
