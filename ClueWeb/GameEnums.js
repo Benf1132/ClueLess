@@ -2,27 +2,27 @@
 const CharacterName = {
     MS_SCARLET: {
         name: 'Miss Scarlet',
-        imagePath: 'images/characters/miss_scarlet.png'
+        imagePath: 'images/players/miss_scarlet.png'
     },
     MRS_WHITE: {
         name: 'Mrs. White',
-        imagePath: 'images/characters/mrs_white.png'
+        imagePath: 'images/players/mrs_white.png'
     },
     MRS_PEACOCK: {
         name: 'Mrs. Peacock',
-        imagePath: 'images/characters/mrs_peacock.png'
+        imagePath: 'images/players/mrs_peacock.png'
     },
     MR_GREEN: {
         name: 'Mr. Green',
-        imagePath: 'images/characters/mr_green.png'
+        imagePath: 'images/players/mr_green.png'
     },
     PROFESSOR_PLUM: {
         name: 'Professor Plum',
-        imagePath: 'images/characters/professor_plum.png'
+        imagePath: 'images/players/professor_plum.png'
     },
     COLONEL_MUSTARD: {
         name: 'Colonel Mustard',
-        imagePath: 'images/characters/colonel_mustard.png'
+        imagePath: 'images/players/colonel_mustard.png'
     }
 };
 
