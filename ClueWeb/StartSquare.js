@@ -1,7 +1,7 @@
 import Tile from './Tile.js';
 import { TileType } from './GameEnums.js';
 
-class StartingSquare extends Tile {
+class StartSquare extends Tile {
     constructor(row, column) {
         super(row, column, TileType.STARTING_SQUARE);
     }
@@ -11,4 +11,4 @@ class StartingSquare extends Tile {
     }
 }
 
-export default StartingSquare;
+export default StartSquare;
