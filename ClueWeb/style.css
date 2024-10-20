@@ -104,6 +104,7 @@ body {
     z-index: 1; /* Ensure it appears on top of the tile */
 }
 
+/* Hand Dialog Styles */
 .hand-dialog {
     position: fixed;
     top: 50%;
@@ -117,21 +118,31 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 90%; /* Adjust the max-width as needed */
+    width: auto;
+    overflow: hidden;
 }
 
+/* Cards Container Styles */
 .cards-container {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Prevent wrapping */
     justify-content: center;
+    align-items: center;
     margin-top: 20px;
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    width: 100%; /* Ensure it uses the full width of the dialog */
 }
 
+/* Card Image Styles */
 .hand-dialog img.card-image {
-    width: 100px;
-    height: auto;
-    margin: 10px;
+    width: auto;
+    height: 150px; /* Adjust the height as needed */
+    margin: 0 10px; /* Horizontal margin between images */
+    flex-shrink: 0; /* Prevent images from shrinking */
 }
 
+/* Close Button Styles */
 .close-button {
     background-color: #f44336; /* Red color */
     color: white;
@@ -145,6 +156,16 @@ body {
 
 .close-button:hover {
     background-color: #d32f2f; /* Darker red on hover */
+}
+
+/* Optional: Hide scrollbar in WebKit browsers */
+.cards-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Optional: For other browsers, you can set scrollbar width to zero */
+.cards-container {
+    scrollbar-width: none; /* For Firefox */
 }
 
 .modal-overlay {
