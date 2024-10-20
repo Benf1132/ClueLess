@@ -32,10 +32,10 @@ const TileType = {
 // WeaponName "Enum"
 const WeaponName = {
     ROPE: { imagePath: "images/weapons/rope.png" },
-    LEAD_PIPE: { imagePath: "images/weapons/leadPipe.png" },
+    LEAD_PIPE: { imagePath: "images/weapons/lead_pipe.png" }, // Fix case
     KNIFE: { imagePath: "images/weapons/knife.png" },
     WRENCH: { imagePath: "images/weapons/wrench.png" },
-    CANDLESTICK: { imagePath: "images/weapons/candleStick.png" },
+    CANDLESTICK: { imagePath: "images/weapons/candlestick.png" }, // Fix case
     REVOLVER: { imagePath: "images/weapons/revolver.png" }
 };
 
