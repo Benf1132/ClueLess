@@ -24,6 +24,11 @@ class Gameboard {
         this.initializeWeapons();
         this.deck.dealCards(this.players);
     }
+    
+    // Add this method to return players
+    getPlayers() {
+        return this.players;
+    }
 
     initializePlaceholderPlayers() {
         for (let i = 0; i < 6; i++) {
