@@ -1,8 +1,12 @@
-import { TileType, RoomName } from './GameEnums.js';
+// Import necessary classes and enums
+import { RoomName, TileType, WeaponName } from './GameEnums.js';
+import Deck from './Deck.js';
+import Player from './Player.js';  // Assuming you have a Player class
 import Room from './Room.js';
+import StartingSquare from './StartingSquare.js';
 import Hallway from './Hallway.js';
-import StartingSquare from './StartSquare.js';
 import OutOfBounds from './OutOfBounds.js';
+import Weapon from './Weapon.js';
 
 class Gameboard {
     constructor(rows, columns) {
