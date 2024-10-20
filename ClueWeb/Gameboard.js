@@ -178,8 +178,6 @@ class Gameboard {
             const weapon = new Weapon(room, weaponType);
             this.weapons.push(weapon);
             room.addWeapon(weapon);
-
-            console.log(`Placed ${weapon.getWeaponName()} in ${room.getRoomName()}`);
         });
     }
 
