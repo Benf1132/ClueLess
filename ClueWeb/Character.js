@@ -10,7 +10,7 @@ class Character {
 
         // Create the character image element
         this.characterImageElement = document.createElement('img');
-        this.characterImageElement.src = CharacterName[name].imagePath;
+        this.characterImageElement.src = CharacterName[name].imagePath;  // Make sure image paths are properly set in GameEnums
         this.characterImageElement.classList.add('character-image');
 
         // Add the character to the initial tile
@@ -34,11 +34,13 @@ class Character {
 
     // Move the character to a new tile
     move(newTile) {
-        // If the new tile is a hallway and it's occupied, don't move
+        // Check if the new tile is a hallway and occupied, don't move if occupied
         if (newTile instanceof Hallway && newTile.isOccupied()) {
+            console.warn(`Cannot move ${this.name} to an occupied hallway.`);
             return;
         }
 
+        // Remove the character from the current tile
         if (this.currentTile) {
             // If the new tile is a room, add the character to the room's list
             if (newTile instanceof Room) {
@@ -50,7 +52,7 @@ class Character {
                 this.currentTile.removeCharacter(this);
             }
 
-            // Update previous tile before moving
+            // Update the previous tile before moving
             this.previousTile = this.currentTile;
 
             // If the current tile is a hallway, mark it as not occupied
@@ -108,12 +110,21 @@ class Character {
     // Add the character to the current tile in the DOM
     addCharacterToTile() {
         const tileElement = document.getElementById(`tile${this.currentTile.row}_${this.currentTile.column}`);
-        tileElement.appendChild(this.characterImageElement);
+        if (tileElement) {
+            tileElement.appendChild(this.characterImageElement);
+        } else {
+            console.error(`Tile at row: ${this.currentTile.row}, column: ${this.currentTile.column} not found.`);
+        }
     }
 
-    // Clear previous tile reference (at end of player's turn)
+    // Clear previous tile reference at the end of a player's turn
     resetPreviousTile() {
         this.previousTile = null;
+    }
+
+    // Get the character's DOM image element
+    getCharacterImageView() {
+        return this.characterImageElement;
     }
 }
 
