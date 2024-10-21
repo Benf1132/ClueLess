@@ -118,8 +118,8 @@ class Gameboard {
 
     assignStartSquareNeighbors(square, up, down, left, right) {
         const neighbors = [up, down, left, right]
-            .filter(tile => tile !== null && tile instanceof Hallway);
-        square.setNeighbors(...neighbors.slice(0, 1)); // Start squares only have 1 neighbor
+            .filter(tile => tile !== null && tile instanceof Hallway); 
+        square.setNeighbors(...neighbors.slice(0, 1));
     }
 
     assignHallwayNeighbors(hallway, up, down, left, right) {
