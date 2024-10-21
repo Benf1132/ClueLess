@@ -44,8 +44,11 @@ class Controller {
     
         const numPlayers = 6;  // Adjust this to the desired number of players
     
+        // Debug: Initial placeholder players
+        console.log('Initial Placeholder Players:', this.gameBoard.players.map((player, index) => `Player ${index + 1}: Username=${player.getUsername()}, Character=${player.getCharacter() ? player.getCharacter().getCharacterName() : 'None'}`));
+    
         for (let i = 0; i < numPlayers; i++) {
-            const placeholderPlayer = this.gameBoard.getPlayers()[i];
+            const placeholderPlayer = this.gameBoard.players[i];
             const { username, password, chosenCharacter } = await this.askForPlayerDetails(availableCharacters);
     
             placeholderPlayer.setUsername(username);
@@ -56,23 +59,14 @@ class Controller {
             const startingTile = chosenCharacter.getCurrentTile();
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
     
-            console.log(`Player ${i + 1}: ${username}, ${chosenCharacter.getCharacterName()}`);
+            console.log(`Player ${i + 1}: Username=${username}, Character=${chosenCharacter.getCharacterName()}`);
         }
     
-        // Remove unused placeholder players
-        this.gameBoard.players = this.gameBoard.players.slice(0, numPlayers);
+        // Adjust the length of the players array without reassigning
+        this.gameBoard.players.length = numPlayers;
     
-        // Sort players so that the player with Miss Scarlet goes first
-        const sortedPlayers = this.gameBoard.getPlayers().sort((a, b) => {
-            if (a.getCharacter().getCharacterName() === 'MS_SCARLET') return -1;
-            if (b.getCharacter().getCharacterName() === 'MS_SCARLET') return 1;
-            return 0;
-        });
-    
-        console.log('Sorted Players:', sortedPlayers.map(player => `${player.getUsername()} (${player.getCharacter().getCharacterName()})`));
-    
-        // Update the game board's players array with the sorted players
-        this.gameBoard.players = sortedPlayers;
+        // Debug: After setting player details
+        console.log('After Setting Player Details:', this.gameBoard.players.map((player, index) => `Player ${index + 1}: Username=${player.getUsername()}, Character=${player.getCharacter().getCharacterName()}`));
     
         // Find the index of the player who chose Miss Scarlet
         const msScarletIndex = this.gameBoard.players.findIndex(player => player.getCharacter().getCharacterName() === 'MS_SCARLET');
