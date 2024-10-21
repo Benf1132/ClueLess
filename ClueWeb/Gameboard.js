@@ -121,7 +121,7 @@ class Gameboard {
         }
     
         // Handle secret passages or corner rooms for Room tiles
-        if (tile instanceof Room && tile.isCornerRoom()) {
+        if (tile instanceof Room && tile.isCornerRoom) {
             const oppositeRoom = this.getOppositeCornerRoom(tile);
             if (oppositeRoom) {
                 validNeighbors['secret'] = oppositeRoom;
