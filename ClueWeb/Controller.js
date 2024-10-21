@@ -74,7 +74,7 @@ class Controller {
             this.currentPlayerIndex = msScarletIndex;
         } else {
             // If no one chose Miss Scarlet, default to the first player
-            this.currentPlayerIndex = 0;
+            this.currentPlayerIndex = 4;
         }
     
         console.log(`Current Player Index: ${this.currentPlayerIndex}`);
