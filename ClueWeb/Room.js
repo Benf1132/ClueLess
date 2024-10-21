@@ -7,7 +7,7 @@ class Room extends Tile {
         this.roomType = roomType;
         this.name = RoomName[this.roomType].name;
         this.imagePath = RoomName[this.roomType].imagePath;
-        this.isCorner = this.checkIfCornerRoom(row, column); // Hardcoded check for corner rooms
+        this.isCornerRoom = this.checkIfCornerRoom(row, column); // Hardcoded check for corner rooms
         this.characters = [];
         this.weapons = [];
     }
