@@ -121,7 +121,7 @@ class Gameboard {
         }
     
         // Handle secret passages or corner rooms for Room tiles
-        if (tile instanceof Room && tile.isCorner()) {
+        if (tile instanceof Room && tile.isCornerRoom()) {
             const oppositeRoom = this.getOppositeCornerRoom(tile);
             if (oppositeRoom) {
                 validNeighbors['secret'] = oppositeRoom;
@@ -186,16 +186,18 @@ class Gameboard {
         }
     }
 
-    // Debugging method to log neighbors of each tile
+  // Debugging method to log neighbors of each tile
     debugNeighbors() {
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.columns; col++) {
                 const tile = this.getTile(row, col);
                 if (tile) {
-                    const neighbors = tile.getNeighbors()
-                        .filter(neighbor => neighbor !== null)
-                        .map(neighbor => `(${neighbor.row}, ${neighbor.column})`).join(', ');
-                    console.log(`Tile (${row}, ${col}) neighbors: ${neighbors}`);
+                    const neighborEntries = Object.entries(tile.getNeighbors());
+                    const neighborsStr = neighborEntries
+                        .map(([dir, neighbor]) => neighbor ? `${dir}: (${neighbor.row}, ${neighbor.column})` : null)
+                        .filter(str => str !== null)
+                        .join(', ');
+                    console.log(`Tile (${row}, ${col}) neighbors: ${neighborsStr}`);
                 }
             }
         }
