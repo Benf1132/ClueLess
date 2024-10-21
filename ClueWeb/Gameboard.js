@@ -120,7 +120,7 @@ class Gameboard {
     assignHallwayNeighbors(hallway, up, down, left, right) {
         const neighbors = [up, down, left, right]
             .filter(tile => tile instanceof Room);
-        hallway.setNeighbors(...neighbors)); 
+        hallway.setNeighbors(...neighbors); 
     }
 
     assignRoomNeighbors(room, up, down, left, right) {
