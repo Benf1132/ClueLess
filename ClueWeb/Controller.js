@@ -485,7 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const turnIndicator = document.getElementById('turnIndicator');
 
         const gameBoard = new Gameboard(7, 7);
-        gameBoard.debugNeighbors();
 
         const controller = new Controller(gameBoard, gridPane, turnIndicator);
 
