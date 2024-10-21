@@ -59,11 +59,7 @@ class Controller {
 
     updateTurnIndicator() {
         const currentPlayer = this.getCurrentPlayer();
-        if (currentPlayer && currentPlayer.username && currentPlayer.getCharacter()) {
-            this.turnIndicator.textContent = `${currentPlayer.username.trim()}'s Turn (${currentPlayer.getCharacter().getCharacterName()})`;
-        } else {
-            this.turnIndicator.textContent = `Waiting for players to initialize...`;
-        }
+        this.turnIndicator.textContent = `${currentPlayer.username.trim()}'s Turn (${currentPlayer.getCharacter().getCharacterName()})`;
     }
 
     initializeButtons() {
@@ -139,7 +135,6 @@ class Controller {
 
     getCurrentPlayer() {
         const currentPlayer = this.gameBoard.getPlayers()[this.currentPlayerIndex];
-        console.log(`Current Player: ${currentPlayer.getUsername()}, ${currentPlayer.getCharacter().getCharacterName()}`);
         return currentPlayer;
     }
 
