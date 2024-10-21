@@ -9,8 +9,9 @@ class Tile {
     }
 
     setNeighbors(...tiles) {
-        this.neighbors = tiles.slice(0, 4);
+        this.neighbors = tiles.filter(tile => tile != null).slice(0, 4);
     }
+
 
     getNeighbors() {
         return this.neighbors;
