@@ -20,6 +20,8 @@ class Controller {
 
     }
 
+    import { CharacterName } from './GameEnums.js'; // Ensure you import CharacterName from GameEnums.js
+
     async initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
@@ -30,25 +32,14 @@ class Controller {
             this.gameBoard.getTile(6, 4)   // Mrs. White
         ];
     
-        const characterNames = [
-            'MS_SCARLET',
-            'PROFESSOR_PLUM',
-            'COLONEL_MUSTARD',
-            'MRS_PEACOCK',
-            'MR_GREEN',
-            'MRS_WHITE'
-        ];
+        // Dynamically generate character names from the CharacterName enum
+        const characterNames = Object.keys(CharacterName);
     
         const characters = characterNames.map((name, index) => new Character(startingSquares[index], name));
         const availableCharacters = [...characters];
     
-        const numPlayers = 6;  // Adjust this to the desired number of players
-    
-        // Debug: Initial placeholder players
-        console.log('Initial Placeholder Players:', this.gameBoard.players.map((player, index) => `Player ${index + 1}: Username=${player.getUsername()}, Character=${player.getCharacter() ? player.getCharacter().getCharacterName() : 'None'}`));
-    
-        for (let i = 0; i < numPlayers; i++) {
-            const placeholderPlayer = this.gameBoard.players[i];
+        for (let i = 0; i < this.gameBoard.getPlayers().length; i++) {
+            const placeholderPlayer = this.gameBoard.getPlayers()[i];
             const { username, password, chosenCharacter } = await this.askForPlayerDetails(availableCharacters);
     
             placeholderPlayer.setUsername(username);
@@ -58,27 +49,11 @@ class Controller {
     
             const startingTile = chosenCharacter.getCurrentTile();
             startingTile.element.appendChild(chosenCharacter.getCharacterImageView());
-    
-            console.log(`Player ${i + 1}: Username=${username}, Character=${chosenCharacter.getCharacterName()}`);
         }
-    
-        // Adjust the length of the players array without reassigning
-        this.gameBoard.players.length = numPlayers;
-    
-        // Debug: After setting player details
-        console.log('After Setting Player Details:', this.gameBoard.players.map((player, index) => `Player ${index + 1}: Username=${player.getUsername()}, Character=${player.getCharacter().getCharacterName()}`));
     
         // Find the index of the player who chose Miss Scarlet
-        const msScarletIndex = this.gameBoard.players.findIndex(player => player.getCharacter().getCharacterName() === 'MS_SCARLET');
-        if (msScarletIndex !== -1) {
-            this.currentPlayerIndex = msScarletIndex;
-        } else {
-            // If no one chose Miss Scarlet, default to the first player
-            this.currentPlayerIndex = 4;
-        }
-    
-        console.log(`Current Player Index: ${this.currentPlayerIndex}`);
-        console.log(`Players: ${this.gameBoard.players.map(player => player.getUsername()).join(', ')}`);
+        const msScarletIndex = this.gameBoard.players.findIndex(player => player.getCharacter().getCharacterName() === 'Miss Scarlet');
+        this.currentPlayerIndex = msScarletIndex;
     
         // Update the turn indicator
         this.updateTurnIndicator();
