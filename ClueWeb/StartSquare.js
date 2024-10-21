@@ -7,7 +7,7 @@ class StartSquare extends Tile {
     }
 
     setNeighbors(...tiles) {
-        super.setNeighbors(tiles.slice(0, 1)); // Starting square has 1 neighbor
+        super.setNeighbors(...tiles.slice(0, 1)); // Starting square has 1 neighbor
     }
 }
 
