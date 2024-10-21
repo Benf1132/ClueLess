@@ -81,11 +81,10 @@ body {
 
 .character-image {
     position: absolute;
-    width: 50px; /* Smaller size so it's noticeable but not covering the entire tile */
-    height: 50px;
-    top: 50%; /* Center the image vertically */
-    left: 50%; /* Center the image horizontally */
-    transform: translate(-50%, -50%); /* Adjust to ensure proper centering */
+    width: 30px;
+    height: 30px;
+    bottom: 5px;
+    right: 5px; 
 }
 
 /* Background images for each tile class */
