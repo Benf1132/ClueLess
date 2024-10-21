@@ -5,13 +5,16 @@ class Tile {
         this.row = row;
         this.column = column;
         this.type = type;
-        this.neighbors = new Array(4).fill(null);
+        this.neighbors = {};
     }
 
-    setNeighbors(...tiles) {
-        this.neighbors = tiles.filter(tile => tile != null).slice(0, 4);
+    setNeighbors(neighbors) {
+        this.neighbors = neighbors;
     }
 
+    getNeighbor(direction) {
+        return this.neighbors[direction] || null;
+    }
 
     getNeighbors() {
         return this.neighbors;
