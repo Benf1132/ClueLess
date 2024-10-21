@@ -86,6 +86,14 @@ body {
     bottom: 5px;
     right: 5px; 
 }
+.character-image { 
+    position: absolute; 
+    width: 50px;
+    height: 50px; 
+    top: 50%;
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+}
 
 /* Background images for each tile class */
 .out-of-bounds {
@@ -139,11 +147,10 @@ body {
 /* Positioning for weapon image in the bottom-right corner */
 .weapon-image {
     position: absolute;
-    bottom: 5px;
-    right: 5px;
-    width: 30px; /* Smaller size for visualization */
+    bottom: 2.5px;
+    right: 2.5px;
+    width: 20px;
     height: auto;
-    z-index: 1; /* Ensure it appears on top of the tile */
 }
 /* Hand Dialog Styles */
 .hand-dialog {
