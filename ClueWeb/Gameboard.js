@@ -95,44 +95,40 @@ class Gameboard {
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.columns; col++) {
                 const current = this.tiles[row][col];
-                const up = this.getTile(row - 1, col);
-                const down = this.getTile(row + 1, col);
-                const left = this.getTile(row, col - 1);
-                const right = this.getTile(row, col + 1);
-
-                if (current instanceof StartSquare) {
-                    this.assignStartSquareNeighbors(current, up, down, left, right);
-                } else if (current instanceof Hallway) {
-                    this.assignHallwayNeighbors(current, up, down, left, right);
-                } else if (current instanceof Room) {
-                    this.assignRoomNeighbors(current, up, down, left, right);
-                }
+                const neighbors = {
+                    'up': this.getTile(row - 1, col),
+                    'down': this.getTile(row + 1, col),
+                    'left': this.getTile(row, col - 1),
+                    'right': this.getTile(row, col + 1)
+                };
+    
+                this.assignNeighbors(current, neighbors);
             }
         }
     }
-
-    assignStartSquareNeighbors(square, up, down, left, right) {
-        const neighbors = [up, down, left, right]
-            .filter(tile => tile instanceof Hallway); 
-        square.setNeighbors(neighbors[0]);
-    }
-
-    assignHallwayNeighbors(hallway, up, down, left, right) {
-        const neighbors = [up, down, left, right]
-            .filter(tile => tile instanceof Room);
-        hallway.setNeighbors(...neighbors); 
-    }
-
-    assignRoomNeighbors(room, up, down, left, right) {
-        let neighbors = [up, down, left, right]
-            .filter(tile => tile instanceof Hallway);
-
-        // Special case for corner rooms
-        if (room.isCornerRoom) {
-            const oppositeCorner = this.getOppositeCornerRoom(room);
-                neighbors.push(oppositeCorner);
+    
+    assignNeighbors(tile, neighbors) {
+        const validNeighbors = {};
+    
+        for (const [direction, neighborTile] of Object.entries(neighbors)) {
+            if (tile instanceof StartSquare && neighborTile instanceof Hallway) {
+                validNeighbors[direction] = neighborTile;
+            } else if (tile instanceof Hallway && (neighborTile instanceof Room || neighborTile instanceof Hallway)) {
+                validNeighbors[direction] = neighborTile;
+            } else if (tile instanceof Room && neighborTile instanceof Hallway) {
+                validNeighbors[direction] = neighborTile;
+            }
         }
-        room.setNeighbors(...neighbors);
+    
+        // Handle secret passages or corner rooms for Room tiles
+        if (tile instanceof Room && tile.isCorner()) {
+            const oppositeRoom = this.getOppositeCornerRoom(tile);
+            if (oppositeRoom) {
+                validNeighbors['secret'] = oppositeRoom;
+            }
+        }
+    
+        tile.setNeighbors(validNeighbors);
     }
 
     getOppositeCornerRoom(room) {
