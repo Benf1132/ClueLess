@@ -5,22 +5,22 @@ class Room extends Tile {
     constructor(row, column, roomType) {
         super(row, column, TileType.ROOM);
         this.roomType = roomType;
-
-        // Get the room's display name and image path from the RoomName enum
-        if (RoomName[this.roomType]) {
-            this.name = RoomName[this.roomType].name;
-            this.imagePath = RoomName[this.roomType].imagePath;
-        } else {
-            console.error(`Room type ${this.roomType} not found in RoomName enum.`);
-            this.name = 'Unknown Room';
-            this.imagePath = 'images/tiles/default.jpg';
-        }
-
+        this.name = RoomName[this.roomType].name;            
+        this.imagePath = RoomName[this.roomType].imagePath;
+        this.isCorner = this.checkIfCornerRoom(row, column);
         this.characters = [];
         this.weapons = [];
-
-        // Optionally, set the background image of the room tile
         this.setRoomBackgroundImage();
+    }
+    checkIfCornerRoom(row, column) {
+        // Define the corner room positions
+        const cornerPositions = [
+            { row: 1, col: 1 },
+            { row: 1, col: 5 },
+            { row: 5, col: 1 },
+            { row: 5, col: 5 }
+        ];
+        return cornerPositions.some(pos => pos.row === row && pos.col === column);
     }
 
     getRoomName() {
