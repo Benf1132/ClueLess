@@ -21,6 +21,10 @@ class Room extends Tile {
         ];
         return cornerPositions.some(pos => pos.row === row && pos.col === column);
     }
+ 
+    getRoomName() {
+        return this.name;
+    }
 
     addCharacter(character) {
         this.characters.push(character);
