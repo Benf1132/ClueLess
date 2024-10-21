@@ -19,9 +19,7 @@ class Controller {
         this.accusationMade = false;
 
     }
-
-    import { CharacterName } from './GameEnums.js'; // Ensure you import CharacterName from GameEnums.js
-
+    
     async initializePlayers() {
         const startingSquares = [
             this.gameBoard.getTile(0, 4),  // Miss Scarlet
