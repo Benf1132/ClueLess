@@ -164,26 +164,15 @@ class Controller {
                 this.showErrorAlert("Invalid Move", "You can only move to a nearby room.");
                 return;
             }
-        } else if (currentTile instanceof Room) {
-            if (newTile instanceof Hallway && newTile.isOccupied()) {
+        } 
+        if (newTile.isOccupied()) {
                 this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
                 return;
-            }
         }
-
-        if (newTile) {
-            character.move(newTile);
-            this.tileMoved = true;
-            this.updateCharacterPosition(character);
-        } else {
-            this.showErrorAlert("Invalid Move", "You cannot move outside the grid.");
-        }
-    }
-
-    findNewTile(currentTile, dx, dy) {
-        const row = currentTile.row + dy;
-        const col = currentTile.column + dx;
-        return this.gameBoard.getTile(row, col);
+        
+        character.move(newTile);
+        this.tileMoved = true;
+        this.updateCharacterPosition(character);
     }
 
     updateCharacterPosition(character) {
@@ -223,11 +212,13 @@ class Controller {
         }
 
         if (currentTile instanceof Hallway && !this.tileMoved) {
-            this.showErrorAlert("Invalid End Turn", "You must move to a nearby room before ending your turn.");
+            this.showErrorAlert("Invalid End Turn", "You must move to a nearby room or make an accusation before ending your turn.");
             return;
         }
 
-        if (currentTile instanceof Room && !this.tileMoved && !this.suggestionMade && !this.accusationMade) {
+        if (currentTile instanceof Room && 
+            !this.tileMoved && 
+            !this.suggestionMade) {
             this.showErrorAlert("Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
             return;
         }
@@ -443,45 +434,26 @@ class Controller {
     showErrorAlert(title, message) {
         alert(`${title}: ${message}`);
     }
-
+    
     shortcutButton() {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.getCharacter();
         const currentTile = character.getCurrentTile();
-
+    
         if (this.tileMoved) {
-            this.showErrorAlert("Move Already Made", "You have already moved. Please undo your previous move if you want to change it.");
+            this.showErrorAlert("Move Already Made", "You have already moved. Wait until next turn to access the shortcut!");
             return;
         }
-
-        if (!(currentTile instanceof Room) || !currentTile.isCorner()) {
+    
+        if (!(currentTile instanceof Room) || !currentTile.isCornerRoom) {
             this.showErrorAlert("Invalid Move", "You must be in a corner room to use the shortcut.");
             return;
         }
-
-        const oppositeRoom = this.findOppositeCornerRoom(currentTile);
-        if (oppositeRoom) {
-            character.move(oppositeRoom);
-            this.tileMoved = true;
-            this.updateCharacterPosition(character);
-        } else {
-            this.showErrorAlert("Invalid Move", "No opposite corner room found.");
-        }
-    }
-
-    findOppositeCornerRoom(currentRoom) {
-        const cornerRooms = {
-            'STUDY': 'KITCHEN',
-            'KITCHEN': 'STUDY',
-            'LOUNGE': 'CONSERVATORY',
-            'CONSERVATORY': 'LOUNGE'
-        };
-
-        const oppositeRoomName = cornerRooms[currentRoom.getRoomName()];
-        if (oppositeRoomName) {
-            return this.gameBoard.rooms.find(room => room.getRoomName() === oppositeRoomName);
-        }
-        return null;
+    
+        const secretNeighbor = currentTile.getNeighbor('secret');
+        character.move(secretNeighbor);
+        this.tileMoved = true;
+        this.updateCharacterPosition(character);
     }
 
     logoutButton() {
