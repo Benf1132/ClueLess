@@ -308,8 +308,8 @@ class Controller {
         });
     
         // Append elements to the dialog
-        dialog.appendChild(closeButton);
         dialog.appendChild(cardsContainer);
+        dialog.appendChild(closeButton);
     
         // Append the dialog to the overlay
         overlay.appendChild(dialog);
