@@ -63,10 +63,10 @@ class Controller {
     }
 
     initializeButtons() {
-        document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer(0, -1));
-        document.getElementById('downButton').addEventListener('click', () => this.moveCurrentPlayer(0, 1));
-        document.getElementById('leftButton').addEventListener('click', () => this.moveCurrentPlayer(-1, 0));
-        document.getElementById('rightButton').addEventListener('click', () => this.moveCurrentPlayer(1, 0));
+        document.getElementById('upButton').addEventListener('click', () => this.moveCurrentPlayer('up'));
+        document.getElementById('downButton').addEventListener('click', () => this.moveCurrentPlayer('down'));
+        document.getElementById('leftButton').addEventListener('click', () => this.moveCurrentPlayer('left'));
+        document.getElementById('rightButton').addEventListener('click', () => this.moveCurrentPlayer('right'));
         document.getElementById('backButton').addEventListener('click', () => this.backButton());
         document.getElementById('endTurnButton').addEventListener('click', () => this.endTurnButton());
         document.getElementById('showHandButton').addEventListener('click', () => this.showHandButton());
@@ -138,11 +138,11 @@ class Controller {
         return currentPlayer;
     }
 
-    moveCurrentPlayer(dx, dy) {
+    moveCurrentPlayer(direction) {
         const currentPlayer = this.getCurrentPlayer();
         const character = currentPlayer.getCharacter();
         const currentTile = character.getCurrentTile();
-        const newTile = this.findNewTile(currentTile, dx, dy);
+        const newTile = currentTile.getNeighbor(direction);
 
         if (this.tileMoved) {
             this.showErrorAlert("Move Already Made", "You have already moved. Undo your previous move to change it.");
