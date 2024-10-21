@@ -128,7 +128,7 @@ class Gameboard {
             .filter(tile => tile instanceof Hallway);
 
         // Special case for corner rooms
-        if (room.isCorner()) {
+        if (room.isCornerRoom) {
             const oppositeCorner = this.getOppositeCornerRoom(room);
                 neighbors.push(oppositeCorner);
         }
