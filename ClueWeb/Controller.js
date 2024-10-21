@@ -275,40 +275,48 @@ class Controller {
         this.updateTurnIndicator();
     }
 
-    showHandButton() {
+   showHandButton() {
         const currentPlayer = this.getCurrentPlayer();
         const playerHand = currentPlayer.getHand().getCards();
-
-        const dialog = document.createElement('dialog');
-        dialog.classList.add('dialog');
-        dialog.setAttribute('open', '');
-
-        const hbox = document.createElement('div');
-        hbox.classList.add('hbox');
-        hbox.style.display = 'flex';
-        hbox.style.gap = '10px';
-
+    
+        // Create the modal overlay
+        const overlay = document.createElement('div');
+        overlay.classList.add('modal-overlay');
+    
+        // Create the dialog
+        const dialog = document.createElement('div');
+        dialog.classList.add('hand-dialog');
+    
+        // Create the cards container
+        const cardsContainer = document.createElement('div');
+        cardsContainer.classList.add('cards-container');
+    
         playerHand.forEach(card => {
             const img = document.createElement('img');
             img.src = card.getImagePath();
             img.alt = card.getName();
-            img.style.height = '150px';
-            img.style.width = '150px';
-            hbox.appendChild(img);
+            img.classList.add('card-image');
+            cardsContainer.appendChild(img);
         });
-
+    
+        // Create the close button
         const closeButton = document.createElement('button');
         closeButton.textContent = 'Close';
+        closeButton.classList.add('close-button');
         closeButton.addEventListener('click', () => {
-            dialog.close();
-            document.body.removeChild(dialog);
+            document.body.removeChild(overlay);
         });
-
-        dialog.appendChild(hbox);
+    
+        // Append elements to the dialog
         dialog.appendChild(closeButton);
-        document.body.appendChild(dialog);
+        dialog.appendChild(cardsContainer);
+    
+        // Append the dialog to the overlay
+        overlay.appendChild(dialog);
+    
+        // Append the overlay to the body
+        document.body.appendChild(overlay);
     }
-
     suggestionButton() {
         if (this.suggestionMade) {
             this.showErrorAlert("Invalid Suggestion", "You have already made a suggestion this turn.");
