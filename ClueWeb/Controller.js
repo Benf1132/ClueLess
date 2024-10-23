@@ -223,9 +223,12 @@ class Controller {
             return;
         }
 
-        this.resetTurnFlags();
-        this.nextPlayer();
-        this.updateTurnIndicator();
+        if (confirm("Are you sure you want to end your turn?")) {
+            // Reset turn flags and move to next player
+            this.resetTurnFlags();
+            this.nextPlayer();
+            this.updateTurnIndicator();
+        }
     }
 
    showHandButton() {
