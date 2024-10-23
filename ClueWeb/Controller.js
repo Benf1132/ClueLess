@@ -605,7 +605,7 @@ class Controller {
 }
 
 // Wait for the DOM to load before initializing the game
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Wrap the initialization in an async function
     const initGame = async () => {
         const gridPane = document.getElementById('grid-container');
