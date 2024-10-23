@@ -441,7 +441,11 @@ class Controller {
         const currentTile = character.getCurrentTile();
     
         if (this.tileMoved) {
-            this.showErrorAlert("Move Already Made", "You have already moved. Wait until next turn to access the shortcut!");
+            if (!(currentTile instanceof Room)) {
+                 this.showErrorAlert("Invalid Move", "You must be in a corner room to use the shortcut.");
+            } else {
+                this.showErrorAlert("Move Already Made", "You have already moved. Wait until next turn to access the shortcut!");
+            }
             return;
         }
     
