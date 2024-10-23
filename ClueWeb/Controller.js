@@ -604,7 +604,6 @@ class Controller {
     }
 }
 
-// Wait for the DOM to load before initializing the game
 document.addEventListener('DOMContentLoaded', () => {
     // Wrap the initialization in an async function
     const initGame = async () => {
@@ -629,4 +628,4 @@ document.addEventListener('DOMContentLoaded', () => {
     initGame();
 });
 
-export { Controller };
+export { Controller }; 
