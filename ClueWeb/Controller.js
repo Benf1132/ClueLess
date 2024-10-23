@@ -604,29 +604,20 @@ class Controller {
     }
 }
 
-// Wait for the DOM to load before initializing the game
-document.addEventListener('DOMContentLoaded', async () => {
-    // Wrap the initialization in an async function
-    const initGame = async () => {
+document.addEventListener('DOMContentLoaded', function() {
+    // Async initialization inside a self-executing function
+    (async function() {
         const gridPane = document.getElementById('grid-container');
         const turnIndicator = document.getElementById('turnIndicator');
 
         const gameBoard = new Gameboard(7, 7);
-
         const controller = new Controller(gameBoard, gridPane, turnIndicator);
 
-        // Await the asynchronous initialization of players
         await controller.initializePlayers();
-
-        // Initialize buttons after players have been set up
         controller.initializeButtons();
-
-        // Update the turn indicator
         controller.updateTurnIndicator();
-    };
-
-    // Call the async initialization function
-    initGame();
+    })();
 });
 
 export { Controller };
+
