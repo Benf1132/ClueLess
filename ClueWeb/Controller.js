@@ -144,6 +144,9 @@ class Controller {
         const currentTile = character.getCurrentTile();
         const newTile = currentTile.getNeighbor(direction);
 
+        const neighbors = currentTile.getNeighbors();
+        const allNeighborsOccupied = neighbors.every(neighbor => neighbor.isOccupied());
+
         if (this.tileMoved) {
             this.showErrorAlert("Move Already Made", "You have already moved. Undo your previous move to change it.");
             return;
@@ -165,7 +168,11 @@ class Controller {
                 return;
             }
         } 
-        if (newTile.isOccupied()) {
+        
+        if(allNeighborsOccupied) {
+            this.showErrorAlert("No Valid Moves", "All available hallways are blocked. Either end your turn without moving or make an accusation/suggestion first.");
+            return;
+        } else if (newTile.isOccupied()) {
                 this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
                 return;
         }
@@ -222,8 +229,15 @@ class Controller {
             this.showErrorAlert("Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
             return;
         }
-
-        if (confirm("Are you sure you want to end your turn?")) {
+       
+        // Combine both confirmation checks into one dialog
+        let confirmationMessage = "Are you sure you want to end your turn?";
+        if (currentTile instanceof Room && !this.suggestionMade) {
+            confirmationMessage = "Are you sure you would like to end your turn without making a suggestion/accusation first?";
+        }
+    
+        // Single confirmation dialog
+        if (confirm(confirmationMessage)) {
             // Reset turn flags and move to next player
             this.resetTurnFlags();
             this.nextPlayer();
