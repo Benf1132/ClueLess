@@ -78,35 +78,28 @@ class Controller {
 
     askForPlayerDetails(availableCharacters) {
         return new Promise((resolve) => {
+            // Use the createDropdown() method to create the dropdown for characters
             const characterNames = availableCharacters.map(character => character.getCharacterName().toString());
-            const select = document.createElement('select');
-
-            characterNames.forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                select.appendChild(option);
-            });
-
+            const select = this.createDropdown(characterNames); // Replaces the dropdown creation logic
+    
             const dialog = document.createElement('div');
             dialog.classList.add('player-setup-dialog');
-
-            const usernameLabel = document.createElement('label');
-            usernameLabel.textContent = 'Enter username:';
+    
+            // Use the createLabel() method to create labels
+            const usernameLabel = this.createLabel('Enter username:');
             const usernameInput = document.createElement('input');
             usernameInput.type = 'text';
-
-            const passwordLabel = document.createElement('label');
-            passwordLabel.textContent = 'Enter password:';
+    
+            const passwordLabel = this.createLabel('Enter password:');
             const passwordInput = document.createElement('input');
             passwordInput.type = 'password';
-
-            const characterLabel = document.createElement('label');
-            characterLabel.textContent = 'Choose your character:';
-
+    
+            const characterLabel = this.createLabel('Choose your character:');
+    
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Confirm';
-
+    
+            // Append labels, inputs, and button to the dialog
             dialog.appendChild(usernameLabel);
             dialog.appendChild(usernameInput);
             dialog.appendChild(passwordLabel);
@@ -114,13 +107,13 @@ class Controller {
             dialog.appendChild(characterLabel);
             dialog.appendChild(select);
             dialog.appendChild(confirmButton);
-
+    
             confirmButton.addEventListener('click', () => {
                 const username = usernameInput.value.trim();
                 const password = passwordInput.value.trim();
                 const chosenCharacterName = select.value;
                 const chosenCharacter = availableCharacters.find(character => character.getCharacterName().toString() === chosenCharacterName);
-
+    
                 if (username && password && chosenCharacter) {
                     document.body.removeChild(dialog);
                     resolve({ username, password, chosenCharacter });
@@ -128,7 +121,7 @@ class Controller {
                     alert('You must enter a username, password, and select a character!');
                 }
             });
-
+    
             document.body.appendChild(dialog);
         });
     }
@@ -287,16 +280,31 @@ class Controller {
         // Append the overlay to the body
         document.body.appendChild(overlay);
     }
+
     suggestionButton() {
         if (this.suggestionMade) {
             this.showErrorAlert("Invalid Suggestion", "You have already made a suggestion this turn.");
             return;
         }
-
+    
         const currentPlayer = this.getCurrentPlayer();
         const currentTile = currentPlayer.getCharacter().getCurrentTile();
+    
         if (currentTile instanceof Room) {
-            this.showSuggestionDialog(currentPlayer, currentTile);
+            if (currentPlayer.wasPulledBySuggestion) {
+                currentPlayer.setPulledBySuggestion(false);
+                this.showSuggestionDialog(currentPlayer, currentTile);
+            } else {
+                if (this.tileMoved) {
+                    this.showSuggestionDialog(currentPlayer, currentTile);
+                } else {
+                    if (currentTile.isCornerRoom) {
+                        this.showErrorAlert("Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway or take a shortcut to the opposite room.");
+                    } else {
+                        this.showErrorAlert("Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway.");
+                    }
+                }
+            }
         } else {
             this.showErrorAlert("Invalid Suggestion", "You must be in a room to make a suggestion.");
         }
@@ -325,7 +333,7 @@ class Controller {
             const suggestion = new Suggestion(this.gameBoard.getPlayers(), room, weapon, suspect);
             this.suggestionMade = true;
             this.tileMoved = true;
-            this.showErrorAlert("Suggestion Made", "Your suggestion has been made.");
+            this.disproveSuggestionOrAccusation(player, suspect, weapon, room, true);
             dialog.close();
             document.body.removeChild(dialog);
         });
@@ -343,18 +351,15 @@ class Controller {
     }
 
     accusationButton() {
-        if (this.accusationMade) {
-            this.showErrorAlert("Invalid Accusation", "You have already made an accusation.");
-            return;
-        }
-
         const currentPlayer = this.getCurrentPlayer();
         const currentTile = currentPlayer.getCharacter().getCurrentTile();
-        if (!(currentTile instanceof StartSquare)) {
-            this.showAccusationDialog(currentPlayer, currentTile);
-        } else {
+
+        if (currentTile instanceof StartSquare) {
             this.showErrorAlert("Invalid Accusation", "You cannot make an accusation from a start square.");
+            return;
         }
+    
+        this.showAccusationDialog(currentPlayer, currentTile);
     }
 
     showAccusationDialog(player, room) {
@@ -386,7 +391,7 @@ class Controller {
             if (accusation.isAccusationCorrect()) {
                 this.endGame(player, suspect, weapon, room);
             } else {
-                this.showErrorAlert("Wrong Accusation", "You are out of the game!");
+                this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
                 player.setInactive();
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
                 this.endTurnButton();
@@ -406,14 +411,115 @@ class Controller {
 
         document.body.appendChild(dialog);
     }
-
-    endGame(player, suspect, weapon, room) {
-        alert(`${player.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
-        this.resetGame();
+    
+    async disproveSuggestionOrAccusation(suggestor, suspect, weapon, room, isSuggestion) {
+        const players = this.gameBoard.getPlayers();
+        const suggestorIndex = players.indexOf(suggestor);
+    
+        let disproven = false;
+        let disproofPlayer = null;
+        let disproofCard = null;
+    
+        // Loop through players starting from the one after the suggestor
+        for (let i = 1; i < players.length; i++) {
+            const currentIndex = (suggestorIndex + i) % players.length;
+            const player = players[currentIndex];
+    
+            if (player === suggestor) continue;
+    
+            // Ask for password to verify player identity
+            await this.checkPlayerPassword(player);
+    
+            // Change the theory message based on whether it's a suggestion or an accusation
+            const theoryMessage = isSuggestion
+                ? `${suggestor.getUsername()} suggests that ${suspect.getCharacterName()} committed the crime with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`
+                : `${suggestor.getUsername()} accuses ${suspect.getCharacterName()} of committing the crime with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`;
+    
+            // Check if the current player has cards to disprove the theory
+            const matchingCards = player.getMatchingCards(suspect, weapon, room);
+    
+            if (matchingCards.length > 0) {
+                // Player has matching cards to disprove the theory
+                const selectedCard = await this.showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage);
+                disproofCard = selectedCard;
+                disproofPlayer = player;
+                disproven = true;
+    
+                // Notify the suggestor of the disproven card
+                this.showInfoAlert('Theory Disproved', `${disproofPlayer.getUsername()} disproved your theory with the card: ${disproofCard.getName()}`);
+                break; // Stop after the first disproof
+            } else {
+                // No matching cards; show the theory and "no cards" message in the same dialog
+                await this.showTheoryAndCardChoiceDialog(player, [], theoryMessage, true); // Passing true to indicate no cards
+            }
+        }
+    
+        // If no players could disprove the theory
+        if (!disproven) {
+            this.showInfoAlert('Theory Not Disproven', "No players could disprove your theory.");
+        }
+    
+        // End turn and move to the next player
+        this.resetTurnFlags();
+        this.nextPlayer();
+        this.updateTurnIndicator();
+    }
+    
+    showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage) {
+        return new Promise((resolve) => {
+            // Create a dialog allowing the player to choose one card to disprove the theory
+            const dialog = document.createElement('dialog');
+            dialog.classList.add('dialog');
+            dialog.setAttribute('open', '');
+    
+            // Display the theory message
+            const theoryLabel = this.createLabel(theoryMessage);
+            dialog.appendChild(theoryLabel);
+    
+            // Dropdown for selecting a card
+            const cardDropdown = this.createDropdown(matchingCards.map(card => card.getName()));
+            dialog.appendChild(this.createLabel(`${player.getUsername()}, choose a card to disprove:`));
+            dialog.appendChild(cardDropdown);
+    
+            // Confirm button to submit the chosen card
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Confirm';
+            dialog.appendChild(confirmButton);
+    
+            confirmButton.addEventListener('click', () => {
+                const selectedCard = matchingCards.find(card => card.getName() === cardDropdown.value);
+                resolve(selectedCard);
+                dialog.close();
+                document.body.removeChild(dialog);
+            });
+    
+            document.body.appendChild(dialog);
+        });
     }
 
-    resetGame() {
-        window.location.reload();
+    async endGame(winningPlayer, suspect, weapon, room) {
+        // Loop through each player to display the winner message
+        for (let i = 0; i < players.length; i++) {
+            const currentIndex = (suggestorIndex + i) % players.length;
+            const player = players[currentIndex];
+            
+            // Display the winner message to the current player
+            await this.showWinnerMessage(winningPlayer, suspect, weapon, room, currentPlayer);
+        }
+    
+        // After showing the message to all players, reset the game
+        this.resetGame();
+    }
+    
+    // Helper function to display the winner message asynchronously
+    showWinnerMessage(winningPlayer, suspect, weapon, room, currentPlayer) {
+        return new Promise((resolve) => {
+            // Show an alert with the winning message
+            alert(`${currentPlayer.username}, ${winningPlayer.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
+            
+            // Resolve the promise to continue to the next player
+            resolve();
+        });
     }
 
     resetTurnFlags() {
@@ -485,15 +591,15 @@ class Controller {
         }
     }
 
-    checkPlayerPassword(currentPlayer) {
+    async checkPlayerPassword(currentPlayer) {
         let passwordCorrect = false;
+    
         while (!passwordCorrect) {
             const password = prompt(`${currentPlayer.getUsername()}, please enter your password:`);
             if (password === currentPlayer.getPassword()) {
                 passwordCorrect = true;
             } else {
                 alert("The password you entered is incorrect. Please try again.");
-            }
         }
     }
 }
