@@ -400,7 +400,7 @@ class Controller {
             const room = this.gameBoard.matchRoom(roomDropdown.value);
             const accusation = new Accusation(this.gameBoard.getPlayers(), room, weapon, suspect, this.gameBoard.envelope);
     
-            if (accusation.isAccusationCorrect()) {
+            if (accusation.isAccusationValid()) {
                 this.endGame(player, suspect, weapon, room);
             } else {
                 this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
