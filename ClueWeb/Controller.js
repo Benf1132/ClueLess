@@ -409,7 +409,9 @@ class Controller {
                 this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
                 player.setInactivity();
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
-                this.endTurnButton();
+                this.resetTurnFlags();
+                this.nextPlayer();
+                this.updateTurnIndicator();
             }
         });
     
@@ -438,7 +440,13 @@ class Controller {
             const player = players[currentIndex];
     
             if (player === suggestor) continue;
-    
+
+            // Ensure any existing overlay is removed before prompting for password
+            const activeOverlay = document.querySelector('.modal-overlay');
+            if (activeOverlay) document.body.removeChild(activeOverlay);
+            // Wait a brief moment to ensure dialog is removed before the password prompt
+            await new Promise(resolve => setTimeout(resolve, 50));
+            
             await this.checkPlayerPassword(player);
     
             const theoryMessage = isSuggestion
@@ -486,7 +494,7 @@ class Controller {
                 dialog.appendChild(this.createLabel(`${player.getUsername()}, choose a card to disprove:`));
                 dialog.appendChild(cardDropdown);
             } else {
-                dialog.appendChild(this.createLabel("No matching cards to disprove the theory."));
+                dialog.appendChild(this.createLabel("You have no cards to disprove the theory."));
             }
     
             const confirmButton = document.createElement('button');
