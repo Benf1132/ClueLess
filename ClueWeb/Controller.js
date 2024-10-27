@@ -404,7 +404,7 @@ class Controller {
                 this.endGame(player, suspect, weapon, room);
             } else {
                 this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
-                player.setInactive();
+                player.setInactivity();
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
                 this.endTurnButton();
             }
