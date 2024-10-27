@@ -500,17 +500,16 @@ class Controller {
             confirmButton.textContent = 'Confirm';
             dialog.appendChild(confirmButton);
     
-            confirmButton.addEventListener('click', () => {
+            confirmButton.addEventListener('click', async () => {
                 let selectedCard = null;
                 if (!noCards) {
                     selectedCard = matchingCards.find(card => card.getName() === cardDropdown.value);
                 }
                 document.body.removeChild(dialog);
                 document.body.removeChild(overlay);
-                
-                // Add a short delay to ensure the elements are fully removed
-                await new Promise(resolve => setTimeout(resolve, 50));
-                resolve(selectedCard);
+    
+                // Wait a brief moment to ensure the dialog is fully removed before resolving
+                setTimeout(() => resolve(selectedCard), 50);
             });
     
             document.body.appendChild(dialog);
