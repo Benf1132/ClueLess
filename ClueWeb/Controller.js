@@ -600,6 +600,7 @@ class Controller {
                 passwordCorrect = true;
             } else {
                 alert("The password you entered is incorrect. Please try again.");
+            }
         }
     }
 }
