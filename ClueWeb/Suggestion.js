@@ -64,7 +64,7 @@ class Suggestion {
     
         // Adjust weapon positions by adding classes
         for (const weapon of weaponsInRoom) {
-            const weaponElement = document.querySelector(`.weapon-${weapon.getWeaponName()}`);
+            const weaponElement = weapon.weaponImage; // Direct access to weaponImage element
             if (weaponElement) {
                 weaponElement.classList.add(`position-${positionIndex}`);
                 positionIndex++;
