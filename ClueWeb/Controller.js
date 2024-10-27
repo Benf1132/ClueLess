@@ -327,8 +327,12 @@ class Controller {
     }
 
     showSuggestionDialog(player, room) {
+        const overlay = document.createElement('div');
+        overlay.classList.add('modal-overlay');
+        document.body.appendChild(overlay);
+    
         const dialog = document.createElement('div');
-        dialog.classList.add('centered-dialog'); // Apply centered styling
+        dialog.classList.add('centered-dialog');
     
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
@@ -349,6 +353,7 @@ class Controller {
             this.suggestionMade = true;
             this.tileMoved = true;
             document.body.removeChild(dialog);
+            document.body.removeChild(overlay);
             this.disproveSuggestionOrAccusation(player, suspect, weapon, room, true);
         });
     
@@ -358,6 +363,7 @@ class Controller {
     
         cancelButton.addEventListener('click', () => {
             document.body.removeChild(dialog);
+            document.body.removeChild(overlay);
         });
     
         document.body.appendChild(dialog);
@@ -376,8 +382,12 @@ class Controller {
     }
 
     showAccusationDialog(player, room) {
+        const overlay = document.createElement('div');
+        overlay.classList.add('modal-overlay');
+        document.body.appendChild(overlay);
+    
         const dialog = document.createElement('div');
-        dialog.classList.add('centered-dialog'); // Apply centered styling
+        dialog.classList.add('centered-dialog');
     
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
@@ -404,6 +414,7 @@ class Controller {
                 this.endGame(player, suspect, weapon, room);
             } else {
                 document.body.removeChild(dialog);
+                document.body.removeChild(overlay);
                 this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
                 player.setInactivity();
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
@@ -417,6 +428,7 @@ class Controller {
     
         cancelButton.addEventListener('click', () => {
             document.body.removeChild(dialog);
+            document.body.removeChild(overlay);
         });
     
         document.body.appendChild(dialog);
@@ -440,36 +452,29 @@ class Controller {
             // Ask for password to verify player identity
             await this.checkPlayerPassword(player);
     
-            // Change the theory message based on whether it's a suggestion or an accusation
             const theoryMessage = isSuggestion
                 ? `${suggestor.getUsername()} suggests that ${suspect.getCharacterName()} committed the crime with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`
                 : `${suggestor.getUsername()} accuses ${suspect.getCharacterName()} of committing the crime with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`;
     
-            // Check if the current player has cards to disprove the theory
             const matchingCards = player.getMatchingCards(suspect, weapon, room);
     
             if (matchingCards.length > 0) {
-                // Player has matching cards to disprove the theory
                 const selectedCard = await this.showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage);
                 disproofCard = selectedCard;
                 disproofPlayer = player;
                 disproven = true;
     
-                // Notify the suggestor of the disproven card
                 this.showInfoAlert('Theory Disproved', `${disproofPlayer.getUsername()} disproved your theory with the card: ${disproofCard.getName()}`);
-                break; // Stop after the first disproof
+                break;
             } else {
-                // No matching cards; show the theory and "no cards" message in the same dialog
                 await this.showTheoryAndCardChoiceDialog(player, [], theoryMessage, true); // Passing true to indicate no cards
             }
         }
     
-        // If no players could disprove the theory
         if (!disproven) {
             this.showInfoAlert('Theory Not Disproven', "No players could disprove your theory.");
         }
     
-        // End turn and move to the next player
         this.resetTurnFlags();
         this.nextPlayer();
         this.updateTurnIndicator();
@@ -477,11 +482,13 @@ class Controller {
     
     showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage, noCards = false) {
         return new Promise((resolve) => {
-            // Create the dialog and apply centered styling
-            const dialog = document.createElement('div');
-            dialog.classList.add('centered-dialog'); // Apply centered styling
+            const overlay = document.createElement('div');
+            overlay.classList.add('modal-overlay');
+            document.body.appendChild(overlay);
     
-            // Display the theory message
+            const dialog = document.createElement('div');
+            dialog.classList.add('centered-dialog');
+    
             const theoryLabel = this.createLabel(theoryMessage);
             dialog.appendChild(theoryLabel);
     
@@ -505,6 +512,7 @@ class Controller {
                     resolve(null);
                 }
                 document.body.removeChild(dialog);
+                document.body.removeChild(overlay);
             });
     
             document.body.appendChild(dialog);
