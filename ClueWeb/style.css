@@ -95,6 +95,30 @@ body {
     transform: translate(-50%, -50%); 
     z-index: 1;
 }
+/* Position classes for character images with 5px incremental offsets */
+.character-image.position-1 {
+    transform: translate(-50%, -50%);
+}
+
+.character-image.position-2 {
+    transform: translate(calc(-50% + 5px), calc(-50% + 5px));
+}
+
+.character-image.position-3 {
+    transform: translate(calc(-50% + 10px), calc(-50% + 10px));
+}
+
+.character-image.position-4 {
+    transform: translate(calc(-50% + 15px), calc(-50% + 15px));
+}
+
+.character-image.position-5 {
+    transform: translate(calc(-50% + 20px), calc(-50% + 20px));
+}
+
+.character-image.position-6 {
+    transform: translate(calc(-50% + 25px), calc(-50% + 25px));
+}
 
 /* Background images for each tile class */
 .out-of-bounds {
