@@ -136,52 +136,48 @@ class Controller {
         const character = currentPlayer.getCharacter();
         const currentTile = character.getCurrentTile();
         const newTile = currentTile.getNeighbor(direction);
-    
         const neighbors = currentTile.getNeighbors();
     
         if (this.tileMoved) {
-            this.showErrorAlert("Move Already Made", "You have already moved. Undo your previous move to change it.");
+            this.showAlert("error", "Move Already Made", "You have already moved. Undo your previous move to change it.");
             return;
         }
     
         if (newTile instanceof OutOfBounds) {
-            this.showErrorAlert("Invalid Move", "You cannot move to an out-of-bounds area.");
+            this.showAlert("error", "Invalid Move", "You cannot move to an out-of-bounds area.");
             return;
         }
     
         if (currentTile instanceof StartSquare) {
             if (!(newTile instanceof Hallway)) {
-                this.showErrorAlert("Invalid Move", "Your first move must be to the nearest hallway.");
+                this.showAlert("error", "Invalid Move", "Your first move must be to the nearest hallway.");
                 return;
             }
         } else if (currentTile instanceof Hallway) {
             if (!(newTile instanceof Room)) {
-                this.showErrorAlert("Invalid Move", "You can only move to a nearby room.");
+                this.showAlert("error", "Invalid Move", "You can only move to a nearby room.");
                 return;
             }
         }
     
-        // Check for neighbor occupation based on corner room status
         let allNeighborsOccupied = false;
         if (currentTile instanceof Room && currentTile.isCornerRoom) {
-            // Current tile is a corner room, check if all hallway neighbors are occupied
             const hallwayNeighborsOccupied = neighbors
                 .filter(neighbor => neighbor instanceof Hallway)
                 .every(hallway => hallway.isOccupied());
     
             if (hallwayNeighborsOccupied) {
-                this.showErrorAlert("Invalid Move", "All available hallways are blocked. Use the shortcut button to access the other corner room.");
+                this.showAlert("error", "Invalid Move", "All available hallways are blocked. Use the shortcut button to access the other corner room.");
                 return;
             }
-        } else if(currentTile instanceof Room) {
-            // Current tile is not a corner room, check if all neighbors are occupied
+        } else if (currentTile instanceof Room) {
             allNeighborsOccupied = neighbors.every(neighbor => neighbor.isOccupied());
             
             if (allNeighborsOccupied) {
-                this.showErrorAlert("No Valid Moves", "All available hallways are blocked. Either end your turn without moving or make an accusation first.");
+                this.showAlert("error", "No Valid Moves", "All available hallways are blocked. Either end your turn without moving or make an accusation first.");
                 return;
             } else {
-                this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
+                this.showAlert("error", "Invalid Move", "You cannot move to an occupied hallway.");
                 return;
             }
         }
@@ -214,40 +210,35 @@ class Controller {
             this.tileMoved = false;
             this.updateCharacterPosition(character);
         } else {
-            this.showErrorAlert("Nothing to Undo", "You haven't made a move yet.");
+            this.showAlert("error", "Nothing to Undo", "You haven't made a move yet.");
         }
     }
 
     endTurnButton() {
         const currentPlayer = this.getCurrentPlayer();
         const currentTile = currentPlayer.getCharacter().getCurrentTile();
-
+    
         if (currentTile instanceof StartSquare) {
-            this.showErrorAlert("Invalid End Turn", "You must move to the nearest hallway before ending your turn.");
+            this.showAlert("error", "Invalid End Turn", "You must move to the nearest hallway before ending your turn.");
             return;
         }
-
+    
         if (currentTile instanceof Hallway && !this.tileMoved) {
-            this.showErrorAlert("Invalid End Turn", "You must move to a nearby room or make an accusation before ending your turn.");
+            this.showAlert("error", "Invalid End Turn", "You must move to a nearby room or make an accusation before ending your turn.");
             return;
         }
-
-        if (currentTile instanceof Room && 
-            !this.tileMoved && 
-            !this.suggestionMade) {
-            this.showErrorAlert("Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
+    
+        if (currentTile instanceof Room && !this.tileMoved && !this.suggestionMade) {
+            this.showAlert("error", "Invalid End Turn", "You must move to a hallway or make a suggestion/accusation before ending your turn.");
             return;
         }
-       
-        // Combine both confirmation checks into one dialog
+    
         let confirmationMessage = "Are you sure you want to end your turn?";
         if (currentTile instanceof Room && !this.suggestionMade) {
             confirmationMessage = "Are you sure you would like to end your turn without making a suggestion/accusation first?";
         }
     
-        // Single confirmation dialog
         if (confirm(confirmationMessage)) {
-            // Reset turn flags and move to next player
             this.resetTurnFlags();
             this.nextPlayer();
             this.updateTurnIndicator();
@@ -299,7 +290,7 @@ class Controller {
 
     suggestionButton() {
         if (this.suggestionMade) {
-            this.showErrorAlert("Invalid Suggestion", "You have already made a suggestion this turn.");
+            this.showAlert("error", "Invalid Suggestion", "You have already made a suggestion this turn.");
             return;
         }
     
@@ -315,14 +306,14 @@ class Controller {
                     this.showSuggestionDialog(currentPlayer, currentTile);
                 } else {
                     if (currentTile.isCornerRoom) {
-                        this.showErrorAlert("Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway or take a shortcut to the opposite room.");
+                        this.showAlert("error", "Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway or take a shortcut to the opposite room.");
                     } else {
-                        this.showErrorAlert("Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway.");
+                        this.showAlert("error", "Invalid Suggestion", "To make a suggestion here you must re-enter the room via a hallway.");
                     }
                 }
             }
         } else {
-            this.showErrorAlert("Invalid Suggestion", "You must be in a room to make a suggestion.");
+            this.showAlert("error", "Invalid Suggestion", "You must be in a room to make a suggestion.");
         }
     }
 
@@ -374,7 +365,7 @@ class Controller {
         const currentTile = currentPlayer.getCharacter().getCurrentTile();
 
         if (currentTile instanceof StartSquare) {
-            this.showErrorAlert("Invalid Accusation", "You cannot make an accusation from a start square.");
+            this.showAlert("error", "Invalid Accusation", "You cannot make an accusation from a start square.");
             return;
         }
     
@@ -442,14 +433,12 @@ class Controller {
         let disproofPlayer = null;
         let disproofCard = null;
     
-        // Loop through players starting from the one after the suggestor
         for (let i = 1; i < players.length; i++) {
             const currentIndex = (suggestorIndex + i) % players.length;
             const player = players[currentIndex];
     
             if (player === suggestor) continue;
     
-            // Ask for password to verify player identity
             await this.checkPlayerPassword(player);
     
             const theoryMessage = isSuggestion
@@ -464,15 +453,15 @@ class Controller {
                 disproofPlayer = player;
                 disproven = true;
     
-                this.showInfoAlert('Theory Disproved', `${disproofPlayer.getUsername()} disproved your theory with the card: ${disproofCard.getName()}`);
+                this.showAlert("info", "Theory Disproved", `${disproofPlayer.getUsername()} disproved your theory with the card: ${disproofCard.getName()}`);
                 break;
             } else {
-                await this.showTheoryAndCardChoiceDialog(player, [], theoryMessage, true); // Passing true to indicate no cards
+                await this.showTheoryAndCardChoiceDialog(player, [], theoryMessage, true);
             }
         }
     
         if (!disproven) {
-            this.showInfoAlert('Theory Not Disproven', "No players could disprove your theory.");
+            this.showAlert("info", "Theory Not Disproven", "No players could disprove your theory.");
         }
     
         this.resetTurnFlags();
@@ -580,8 +569,9 @@ class Controller {
         return label;
     }
 
-    showErrorAlert(title, message) {
-        alert(`${title}: ${message}`);
+    showAlert(type, title, message) {
+        const alertType = type === "error" ? "Error" : "Info";
+        alert(`${alertType} - ${title}: ${message}`);
     }
     
     shortcutButton() {
