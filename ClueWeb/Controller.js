@@ -83,7 +83,7 @@ class Controller {
             const select = this.createDropdown(characterNames); // Replaces the dropdown creation logic
     
             const dialog = document.createElement('div');
-            dialog.classList.add('player-setup-dialog');
+            dialog.classList.add('centered-dialog');
     
             // Use the createLabel() method to create labels
             const usernameLabel = this.createLabel('Enter username:');
@@ -327,22 +327,21 @@ class Controller {
     }
 
     showSuggestionDialog(player, room) {
-        const dialog = document.createElement('dialog');
-        dialog.classList.add('dialog');
-        dialog.setAttribute('open', '');
-
+        const dialog = document.createElement('div');
+        dialog.classList.add('centered-dialog'); // Apply centered styling
+    
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
-
+    
         dialog.appendChild(this.createLabel('Suspect:'));
         dialog.appendChild(suspectDropdown);
         dialog.appendChild(this.createLabel('Weapon:'));
         dialog.appendChild(weaponDropdown);
-
+    
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
         dialog.appendChild(confirmButton);
-
+    
         confirmButton.addEventListener('click', () => {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
@@ -350,19 +349,17 @@ class Controller {
             this.suggestionMade = true;
             this.tileMoved = true;
             this.disproveSuggestionOrAccusation(player, suspect, weapon, room, true);
-            dialog.close();
             document.body.removeChild(dialog);
         });
-
+    
         const cancelButton = document.createElement('button');
         cancelButton.textContent = 'Cancel';
         dialog.appendChild(cancelButton);
-
+    
         cancelButton.addEventListener('click', () => {
-            dialog.close();
             document.body.removeChild(dialog);
         });
-
+    
         document.body.appendChild(dialog);
     }
 
@@ -379,31 +376,30 @@ class Controller {
     }
 
     showAccusationDialog(player, room) {
-        const dialog = document.createElement('dialog');
-        dialog.classList.add('dialog');
-        dialog.setAttribute('open', '');
-
+        const dialog = document.createElement('div');
+        dialog.classList.add('centered-dialog'); // Apply centered styling
+    
         const suspectDropdown = this.createDropdown(this.gameBoard.getCharacterNames());
         const weaponDropdown = this.createDropdown(this.gameBoard.getWeaponNames());
         const roomDropdown = this.createDropdown(this.gameBoard.getRoomNames());
-
+    
         dialog.appendChild(this.createLabel('Suspect:'));
         dialog.appendChild(suspectDropdown);
         dialog.appendChild(this.createLabel('Weapon:'));
         dialog.appendChild(weaponDropdown);
         dialog.appendChild(this.createLabel('Room:'));
         dialog.appendChild(roomDropdown);
-
+    
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirm';
         dialog.appendChild(confirmButton);
-
+    
         confirmButton.addEventListener('click', () => {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
             const room = this.gameBoard.matchRoom(roomDropdown.value);
             const accusation = new Accusation(this.gameBoard.getPlayers(), room, weapon, suspect, this.gameBoard.envelope);
-
+    
             if (accusation.isAccusationCorrect()) {
                 this.endGame(player, suspect, weapon, room);
             } else {
@@ -412,19 +408,17 @@ class Controller {
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
                 this.endTurnButton();
             }
-            dialog.close();
             document.body.removeChild(dialog);
         });
-
+    
         const cancelButton = document.createElement('button');
         cancelButton.textContent = 'Cancel';
         dialog.appendChild(cancelButton);
-
+    
         cancelButton.addEventListener('click', () => {
-            dialog.close();
             document.body.removeChild(dialog);
         });
-
+    
         document.body.appendChild(dialog);
     }
     
