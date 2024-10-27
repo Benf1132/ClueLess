@@ -29,11 +29,6 @@ class Character {
     }
 
     move(newTile) {
-        if (newTile instanceof Hallway && newTile.isOccupied()) {
-            console.warn(`Cannot move ${this.name} to an occupied hallway.`);
-            return;
-        }
-
         if (this.currentTile instanceof Room) {
             this.currentTile.removeCharacter(this);
         }
