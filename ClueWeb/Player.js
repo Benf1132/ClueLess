@@ -55,6 +55,14 @@ class Player {
     getHand() {
         return this.hand;
     }
+    // New method to get matching cards
+    getMatchingCards(suspect, weapon, room) {
+        return this.hand.filter(card => 
+            card.getName() === suspect.getCharacterName() ||
+            card.getName() === weapon.getWeaponName() ||
+            card.getName() === room.getRoomName()
+        );
+    }
 
     // Set the player's username
     setUsername(username) {
