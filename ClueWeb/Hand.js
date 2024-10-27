@@ -18,6 +18,10 @@ class Hand {
             throw new Error(`Invalid card index: ${index}`);
         }
     }
+    
+    getCardByType(type) {
+        return this.cards.find(card => card.type === type);
+    }
 
     getCards() {
         return this.cards;
