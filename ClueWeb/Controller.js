@@ -508,10 +508,14 @@ class Controller {
     }
 
     async endGame(winningPlayer, suspect, weapon, room) {
+        // Retrieve all players and set initial indices
+        const players = this.gameBoard.getPlayers();
+        const suggestorIndex = players.indexOf(winningPlayer); // Assuming winningPlayer made the correct accusation
+    
         // Loop through each player to display the winner message
         for (let i = 0; i < players.length; i++) {
             const currentIndex = (suggestorIndex + i) % players.length;
-            const player = players[currentIndex];
+            const currentPlayer = players[currentIndex];
             
             // Display the winner message to the current player
             await this.showWinnerMessage(winningPlayer, suspect, weapon, room, currentPlayer);
