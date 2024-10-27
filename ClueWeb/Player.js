@@ -57,7 +57,7 @@ class Player {
     }
     // New method to get matching cards
     getMatchingCards(suspect, weapon, room) {
-        return this.hand.filter(card => 
+        return this.hand.getCards().filter(card => 
             card.getName() === suspect.getCharacterName() ||
             card.getName() === weapon.getWeaponName() ||
             card.getName() === room.getRoomName()
