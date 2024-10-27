@@ -161,15 +161,9 @@ class Controller {
             }
         }
     
-        // Check if the current tile is a room and the new tile is an occupied hallway
-        if (currentTile instanceof Room && newTile instanceof Hallway && newTile.isOccupied()) {
-            this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
-            return;
-        }
-    
         // Check for neighbor occupation based on corner room status
         let allNeighborsOccupied = false;
-        if (currentTile.isCornerRoom) {
+        if (currentTile instanceof Room && currentTile.isCornerRoom) {
             // Current tile is a corner room, check if all hallway neighbors are occupied
             const hallwayNeighborsOccupied = neighbors
                 .filter(neighbor => neighbor instanceof Hallway)
@@ -179,19 +173,17 @@ class Controller {
                 this.showErrorAlert("Invalid Move", "All available hallways are blocked. Use the shortcut button to access the other corner room.");
                 return;
             }
-        } else {
+        } else if(currentTile instanceof Room) {
             // Current tile is not a corner room, check if all neighbors are occupied
             allNeighborsOccupied = neighbors.every(neighbor => neighbor.isOccupied());
             
             if (allNeighborsOccupied) {
                 this.showErrorAlert("No Valid Moves", "All available hallways are blocked. Either end your turn without moving or make an accusation first.");
                 return;
+            } else {
+                this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
+                return;
             }
-        }
-    
-        if (newTile.isOccupied()) {
-            this.showErrorAlert("Invalid Move", "You cannot move to an occupied hallway.");
-            return;
         }
     
         character.move(newTile);
