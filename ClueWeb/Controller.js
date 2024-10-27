@@ -475,31 +475,35 @@ class Controller {
         this.updateTurnIndicator();
     }
     
-    showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage) {
+    showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage, noCards = false) {
         return new Promise((resolve) => {
-            // Create a dialog allowing the player to choose one card to disprove the theory
-            const dialog = document.createElement('dialog');
-            dialog.classList.add('dialog');
-            dialog.setAttribute('open', '');
+            // Create the dialog and apply centered styling
+            const dialog = document.createElement('div');
+            dialog.classList.add('centered-dialog'); // Apply centered styling
     
             // Display the theory message
             const theoryLabel = this.createLabel(theoryMessage);
             dialog.appendChild(theoryLabel);
     
-            // Dropdown for selecting a card
-            const cardDropdown = this.createDropdown(matchingCards.map(card => card.getName()));
-            dialog.appendChild(this.createLabel(`${player.getUsername()}, choose a card to disprove:`));
-            dialog.appendChild(cardDropdown);
+            if (!noCards) {
+                const cardDropdown = this.createDropdown(matchingCards.map(card => card.getName()));
+                dialog.appendChild(this.createLabel(`${player.getUsername()}, choose a card to disprove:`));
+                dialog.appendChild(cardDropdown);
+            } else {
+                dialog.appendChild(this.createLabel("No matching cards to disprove the theory."));
+            }
     
-            // Confirm button to submit the chosen card
             const confirmButton = document.createElement('button');
             confirmButton.textContent = 'Confirm';
             dialog.appendChild(confirmButton);
     
             confirmButton.addEventListener('click', () => {
-                const selectedCard = matchingCards.find(card => card.getName() === cardDropdown.value);
-                resolve(selectedCard);
-                dialog.close();
+                if (!noCards) {
+                    const selectedCard = matchingCards.find(card => card.getName() === cardDropdown.value);
+                    resolve(selectedCard);
+                } else {
+                    resolve(null);
+                }
                 document.body.removeChild(dialog);
             });
     
