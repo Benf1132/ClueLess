@@ -348,8 +348,8 @@ class Controller {
             const suggestion = new Suggestion(this.gameBoard.getPlayers(), room, weapon, suspect);
             this.suggestionMade = true;
             this.tileMoved = true;
-            this.disproveSuggestionOrAccusation(player, suspect, weapon, room, true);
             document.body.removeChild(dialog);
+            this.disproveSuggestionOrAccusation(player, suspect, weapon, room, true);
         });
     
         const cancelButton = document.createElement('button');
@@ -403,12 +403,12 @@ class Controller {
             if (accusation.isAccusationValid()) {
                 this.endGame(player, suspect, weapon, room);
             } else {
+                document.body.removeChild(dialog);
                 this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
                 player.setInactivity();
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
                 this.endTurnButton();
             }
-            document.body.removeChild(dialog);
         });
     
         const cancelButton = document.createElement('button');
