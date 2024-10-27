@@ -36,8 +36,6 @@ class Suggestion {
                     break;
                 }
             }
-        } else {
-            console.log(`${this.suspect.getCharacterName()} is already in the room.`);
         }
     }
     
@@ -49,8 +47,6 @@ class Suggestion {
         if (!weaponsInRoom.includes(this.weapon)) {
             this.weapon.setCurrentTile(this.room);
             this.room.addWeapon(this.weapon);
-        } else {
-            console.log(`${this.weapon.getWeaponName()} is already in the room.`);
         }
     }
 
@@ -58,20 +54,13 @@ class Suggestion {
         const charactersInRoom = this.room.getCharacters();
         const weaponsInRoom = this.room.getWeapons();
     
-        console.log("Characters in Room:", charactersInRoom.map(character => character.getCharacterName()));
-        console.log("Weapons in Room:", weaponsInRoom.map(weapon => weapon.getWeaponName()));
-    
         let positionIndex = 1;
     
         // Adjust character positions by adding classes
         for (const character of charactersInRoom) {
             const characterElement = character.characterImageElement;
-            if (characterElement) {
-                characterElement.classList.add(`position-${positionIndex}`);
-                positionIndex++;
-            } else {
-                console.warn(`Character element for ${character.getCharacterName()} not found.`);
-            }
+            characterElement.classList.add(`position-${positionIndex}`);
+            positionIndex++;
         }
     
         // Reset position index for weapons
@@ -80,12 +69,9 @@ class Suggestion {
         // Adjust weapon positions by adding classes
         for (const weapon of weaponsInRoom) {
             const weaponElement = weapon.weaponImage; // Direct access to weaponImage element
-            if (weaponElement) {
-                weaponElement.classList.add(`position-${positionIndex}`);
-                positionIndex++;
-            } else {
-                console.warn(`Weapon element for ${weapon.getWeaponName()} not found.`);
-            }
+            weaponElement.classList.add(`position-${positionIndex}`);
+            positionIndex++;
+
         }
     }
 }
