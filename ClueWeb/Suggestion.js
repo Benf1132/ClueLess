@@ -71,7 +71,6 @@ class Suggestion {
             const weaponElement = weapon.weaponImage; // Direct access to weaponImage element
             weaponElement.classList.add(`position-${positionIndex}`);
             positionIndex++;
-
         }
     }
 }
