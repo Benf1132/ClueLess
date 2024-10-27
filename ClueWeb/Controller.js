@@ -454,7 +454,8 @@ class Controller {
                 : `${suggestor.getUsername()} accuses ${suspect.getCharacterName()} of committing the crime with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`;
     
             const matchingCards = player.getMatchingCards(suspect, weapon, room);
-    
+            console.log(`Player ${player.getUsername()} has matching cards:`, matchingCards.map(card => card.getName()));
+
             if (matchingCards.length > 0) {
                 const selectedCard = await this.showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage);
                 disproofCard = selectedCard;
