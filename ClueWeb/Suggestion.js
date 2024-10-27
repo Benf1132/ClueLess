@@ -40,41 +40,39 @@ class Suggestion {
     }
 
     adjustRoomLayout() {
-    const charactersInRoom = this.room.getCharacters();
-    const weaponsInRoom = this.room.getWeapons();
-
-    console.log("Characters in Room:", charactersInRoom.map(character => character.getCharacterName()));
-    console.log("Weapons in Room:", weaponsInRoom.map(weapon => weapon.getWeaponName()));
-
-    const offsetStep = 10;
-    let characterOffsetX = 0;
-    let characterOffsetY = 0;
-    let weaponOffsetX = 0;
-    let weaponOffsetY = 0;
-
-    // Adjust player positions
-    for (const character of charactersInRoom) {
-        const characterElement = document.getElementById(`character-${character.getCharacterName()}`);
-        if (characterElement) { // Check if element exists
-            characterElement.style.transform = `translate(${characterOffsetX}px, ${characterOffsetY}px)`;
-            characterOffsetX += offsetStep;
-            characterOffsetY += offsetStep;
-        } else {
-            console.warn(`Character element for ${character.getCharacterName()} not found.`);
+        const charactersInRoom = this.room.getCharacters();
+        const weaponsInRoom = this.room.getWeapons();
+    
+        console.log("Characters in Room:", charactersInRoom.map(character => character.getCharacterName()));
+        console.log("Weapons in Room:", weaponsInRoom.map(weapon => weapon.getWeaponName()));
+    
+        let positionIndex = 1;
+    
+        // Adjust character positions by adding classes
+        for (const character of charactersInRoom) {
+            const characterElement = character.characterImageElement;
+            if (characterElement) {
+                characterElement.classList.add(`position-${positionIndex}`);
+                positionIndex++;
+            } else {
+                console.warn(`Character element for ${character.getCharacterName()} not found.`);
+            }
+        }
+    
+        // Reset position index for weapons
+        positionIndex = 1;
+    
+        // Adjust weapon positions by adding classes
+        for (const weapon of weaponsInRoom) {
+            const weaponElement = document.querySelector(`.weapon-${weapon.getWeaponName()}`);
+            if (weaponElement) {
+                weaponElement.classList.add(`position-${positionIndex}`);
+                positionIndex++;
+            } else {
+                console.warn(`Weapon element for ${weapon.getWeaponName()} not found.`);
+            }
         }
     }
 
-    // Adjust weapon positions
-    for (const weapon of weaponsInRoom) {
-        const weaponElement = document.getElementById(`weapon-${weapon.getWeaponName()}`);
-        if (weaponElement) { // Check if element exists
-            weaponElement.style.transform = `translate(${weaponOffsetX}px, ${weaponOffsetY}px)`;
-            weaponOffsetX += offsetStep;
-            weaponOffsetY += offsetStep;
-        } else {
-            console.warn(`Weapon element for ${weapon.getWeaponName()} not found.`);
-        }
-    }
-}
 
 export { Suggestion };
