@@ -72,7 +72,5 @@ class Suggestion {
                 console.warn(`Weapon element for ${weapon.getWeaponName()} not found.`);
             }
         }
-    }
-
 
 export { Suggestion };
