@@ -163,7 +163,7 @@ class Controller {
         let allNeighborsOccupied = false;
         if (currentTile instanceof Room && currentTile.isCornerRoom) {
             const hallwayNeighborsOccupied = neighbors
-                .filter(neighbor => neighbor instanceof Hallway)
+                .filter(tile => tile instanceof Hallway)
                 .every(hallway => hallway.isOccupied());
     
             if (hallwayNeighborsOccupied) {
@@ -171,7 +171,7 @@ class Controller {
                 return;
             }
         } else if (currentTile instanceof Room) {
-            allNeighborsOccupied = neighbors.every(neighbor => neighbor.isOccupied());
+            allNeighborsOccupied = neighbors.every(tile => tile.isOccupied());
             
             if (allNeighborsOccupied) {
                 this.showAlert("error", "No Valid Moves", "All available hallways are blocked. Either end your turn without moving or make an accusation first.");
@@ -460,7 +460,6 @@ class Controller {
                 disproofCard = selectedCard;
                 disproofPlayer = player;
                 disproven = true;
-    
                 this.showAlert("info", "Theory Disproved", `${disproofPlayer.getUsername()} disproved your theory with the card: ${disproofCard.getName()}`);
                 break;
             } else {
@@ -502,14 +501,16 @@ class Controller {
             dialog.appendChild(confirmButton);
     
             confirmButton.addEventListener('click', () => {
+                let selectedCard = null;
                 if (!noCards) {
-                    const selectedCard = matchingCards.find(card => card.getName() === cardDropdown.value);
-                    resolve(selectedCard);
-                } else {
-                    resolve(null);
+                    selectedCard = matchingCards.find(card => card.getName() === cardDropdown.value);
                 }
                 document.body.removeChild(dialog);
                 document.body.removeChild(overlay);
+                
+                // Add a short delay to ensure the elements are fully removed
+                await new Promise(resolve => setTimeout(resolve, 50));
+                resolve(selectedCard);
             });
     
             document.body.appendChild(dialog);
