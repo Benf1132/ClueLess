@@ -9,9 +9,9 @@ class Accusation extends Suggestion {
 
     // Check if the suspect, weapon, and room match the envelope
     checkAccusation() {
-        const suspectMatches = this.envelope.getSuspectCard().getName() === this.suspect.getCharacterName();
-        const weaponMatches = this.envelope.getWeaponCard().getName() === this.weapon.getWeaponName();
-        const roomMatches = this.envelope.getRoomCard().getName() === this.room.getRoomName();
+        const suspectMatches = this.envelope.getSuspectCard().getName() === this.suspect;
+        const weaponMatches = this.envelope.getWeaponCard().getName() === this.weapon;
+        const roomMatches = this.envelope.getRoomCard().getName() === this.room;
 
         return suspectMatches && weaponMatches && roomMatches;
     }
