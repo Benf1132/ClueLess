@@ -1,9 +1,6 @@
 import { Gameboard } from './Gameboard.js';
 import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
-import { Gameboard } from './Gameboard.js';
-import { Suggestion } from './Suggestion.js';
-import { Accusation } from './Accusation.js';
 import { CharacterName, WeaponName, RoomName, getEnumName } from './GameEnums.js';
 import Character from './Character.js';
 import StartSquare from './StartSquare.js';
