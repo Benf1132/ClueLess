@@ -467,7 +467,8 @@ class Controller {
                 await this.showTheoryAndCardChoiceDialog(player, [], theoryMessage, true);
             }
         }
-    
+
+        await this.checkPlayerPassword(player);
         if (!disproven) {
             this.showAlert("info", "Theory Not Disproven", "No players could disprove your theory.");
         }
