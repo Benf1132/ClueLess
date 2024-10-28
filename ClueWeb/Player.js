@@ -49,16 +49,13 @@ class Player {
         return this.hand;
     }
 
-    // Enhanced getMatchingCards method with standardized enum names
     getMatchingCards(suspect, weapon, room) {
-        const suspectName = getEnumName(CharacterName, suspect);
-        const weaponName = getEnumName(WeaponName, weapon);
-        const roomName = getEnumName(RoomName, room);
-
         return this.hand.getCards().filter(card => {
-            const matchesSuspect = card.getName() === suspectName;
-            const matchesWeapon = card.getName() === weaponName;
-            const matchesRoom = card.getName() === roomName;
+            return (
+                card.getName() === suspect ||
+                card.getName() === weapon ||
+                card.getName() === room
+            );
         });
     }
 
