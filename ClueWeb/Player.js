@@ -62,7 +62,7 @@ class Player {
             const matchesWeapon = card.getName() === weapon.getWeaponName();
             const matchesRoom = card.getName() === room.getRoomName();
     
-            console.log(`Checking card ${card.getName()} against suspect: ${matchesSuspect}, weapon: ${matchesWeapon}, room: ${matchesRoom}`);
+            console.log(`Checking card ${card.getName()} against ${suspect.getCharacterName()} suspect: ${matchesSuspect}, ${weapon.getWeaponName()} weapon: ${matchesWeapon}, ${room.getRoomName()} room: ${matchesRoom}`);
             return matchesSuspect || matchesWeapon || matchesRoom;
         });
     }
