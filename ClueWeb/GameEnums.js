@@ -94,6 +94,11 @@ const WeaponName = {
     }
 };
 
+// Helper function to get a standardized name from an enum
+function getEnumName(enumType, key) {
+    return enumType[key]?.name || key;
+}
+
 // TileType Enum
 const TileType = {
     ROOM: 'ROOM',
