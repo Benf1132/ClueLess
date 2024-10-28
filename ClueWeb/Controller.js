@@ -495,7 +495,7 @@ class Controller {
             }
         }
 
-        await this.checkPlayerPassword(getCurrentPlayer());
+        await this.checkPlayerPassword(this.getCurrentPlayer());
         if (!disproven) {
             this.showAlert("info", "Theory Not Disproven", "No players could disprove your theory.");
         }
