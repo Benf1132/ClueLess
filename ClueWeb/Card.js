@@ -1,4 +1,4 @@
-import { CardType, CharacterName, WeaponName, RoomName } from './GameEnums.js';
+import { CardType, CharacterName, WeaponName, RoomName, getEnumName } from './GameEnums.js';
 
 class Card {
     constructor(type, name) {
@@ -11,9 +11,18 @@ class Card {
         return this.type;
     }
 
-    // Getter for name
+    // Enhanced getter for name to return the enum display name using getEnumName
     getName() {
-        return this.name;
+        switch (this.type) {
+            case CardType.SUSPECT:
+                return getEnumName(CharacterName, this.name);
+            case CardType.WEAPON:
+                return getEnumName(WeaponName, this.name);
+            case CardType.ROOM:
+                return getEnumName(RoomName, this.name);
+            default:
+                return this.name;  // Fallback in case type doesn't match any known enum
+        }
     }
 
     // Method to get the image path
