@@ -1,10 +1,6 @@
 import Hand from './Hand.js';
 import Hallway from './Hallway.js';
-import { CharacterName, WeaponName, RoomName } from './GameEnums.js';
-
-function getEnumName(enumType, key) {
-    return enumType[key]?.name || key;
-}
+import { CharacterName, WeaponName, RoomName, getEnumName } from './GameEnums.js';
 
 class Player {
     constructor(username = '', password = '', character = null) {
@@ -63,9 +59,6 @@ class Player {
             const matchesSuspect = card.getName() === suspectName;
             const matchesWeapon = card.getName() === weaponName;
             const matchesRoom = card.getName() === roomName;
-
-            console.log(`Checking card ${card.getName()} against suspect: ${matchesSuspect}, weapon: ${matchesWeapon}, room: ${matchesRoom}`);
-            return matchesSuspect || matchesWeapon || matchesRoom;
         });
     }
 
