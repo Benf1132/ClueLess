@@ -471,10 +471,6 @@ class Controller {
         if (!disproven) {
             this.showAlert("info", "Theory Not Disproven", "No players could disprove your theory.");
         }
-    
-        this.resetTurnFlags();
-        this.nextPlayer();
-        this.updateTurnIndicator();
     }
     
     showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage, noCards = false) {
