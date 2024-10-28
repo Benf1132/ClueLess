@@ -114,4 +114,4 @@ const CardType = {
     ROOM: 'ROOM'
 };
 
-export { CharacterName, RoomName, TileType, WeaponName, CardType };
+export { CharacterName, RoomName, TileType, WeaponName, CardType, getEnumName };
