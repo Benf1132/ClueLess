@@ -162,10 +162,13 @@ class Controller {
     
         let allNeighborsOccupied = false;
         if (currentTile instanceof Room && currentTile.isCornerRoom) {
-            const hallwayNeighborsOccupied = neighbors
-                .filter(tile => tile instanceof Hallway)
-                .every(hallway => hallway.isOccupied());
-    
+            let hallwayNeighborsOccupied = true;
+            for (const tile of neighbors) {
+                if (tile instanceof Hallway && !tile.isOccupied()) {
+                    hallwayNeighborsOccupied = false;
+                    break;
+                }
+            }   
             if (hallwayNeighborsOccupied) {
                 this.showAlert("error", "Invalid Move", "All available hallways are blocked. Use the shortcut button to access the other corner room.");
                 return;
