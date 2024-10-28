@@ -13,7 +13,10 @@ class Suggestion {
     // Method to find the player that matches the suspect's name
     matchSuspectToPlayer(suspect) {
         for (const player of this.playerList) {
-            if (player.character === suspect) {
+            // Get the display name for player.character.characterName
+            const characterDisplayName = getEnumName(CharacterName, player.character.characterName);
+            
+            if (characterDisplayName === suspect) {
                 return player.character;
             }
         }
