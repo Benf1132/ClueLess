@@ -341,21 +341,21 @@ class Controller {
         dialog.appendChild(confirmButton);
     
         confirmButton.addEventListener('click', () => {
-            const suspectName = getEnumName(CharacterName, suspectDropdown.value);
-            const weaponName = getEnumName(WeaponName, weaponDropdown.value);
-            const roomName = getEnumName(RoomName, room);
-    
+            const suspect = suspectDropdown.value;
+            const weapon = weaponDropdown.value;
+            const room = roomDropdown.value;
+        
             const suggestion = new Suggestion(
                 this.gameBoard.getPlayers(),
-                roomName,
-                weaponName,
-                suspectName
+                room,
+                weapon,
+                suspect
             );
             this.suggestionMade = true;
             this.tileMoved = true;
             document.body.removeChild(dialog);
             document.body.removeChild(overlay);
-            this.disproveSuggestionOrAccusation(player, suspectName, weaponName, roomName, true);
+            this.disproveSuggestionOrAccusation(player, suspect, weapon, room, true);
         });
     
         const cancelButton = document.createElement('button');
@@ -406,24 +406,24 @@ class Controller {
         dialog.appendChild(confirmButton);
     
         confirmButton.addEventListener('click', () => {
-            const suspectName = getEnumName(CharacterName, suspectDropdown.value);
-            const weaponName = getEnumName(WeaponName, weaponDropdown.value);
-            const roomName = getEnumName(RoomName, roomDropdown.value);
+            const suspect = suspectDropdown.value;
+            const weapon = weaponDropdown.value;
+            const room = roomDropdown.value;
             
             const accusation = new Accusation(
                 this.gameBoard.getPlayers(),
-                roomName,
-                weaponName,
-                suspectName,
+                room,
+                weapon,
+                suspect,
                 this.gameBoard.envelope
             );
             
             if (accusation.isAccusationValid()) {
-                this.endGame(player, suspectName, weaponName, roomName);
+                this.endGame(player, suspect, weapon, room);
             } else {
                 document.body.removeChild(dialog);
                 document.body.removeChild(overlay);
-                this.disproveSuggestionOrAccusation(player, suspectName, weaponName, roomName, false);
+                this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
                 player.setInactivity();
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
                 this.resetTurnFlags();
@@ -468,8 +468,7 @@ class Controller {
                 : `${suggestor.getUsername()} accuses ${suspect} of committing the crime with the ${weapon} in the ${room}.`;
     
             const matchingCards = player.getMatchingCards(suspect, weapon, room);
-            console.log(`Player ${player.getUsername()} has matching cards:`, matchingCards.map(card => card.getName()));
-    
+            
             if (matchingCards.length > 0) {
                 const selectedCard = await this.showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage);
                 disproofCard = selectedCard;
