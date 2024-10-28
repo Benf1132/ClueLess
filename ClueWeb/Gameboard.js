@@ -1,4 +1,4 @@
-import { RoomName, TileType, WeaponName } from './GameEnums.js';
+import { RoomName, TileType, WeaponName, CharacterName, getEnumName } from './GameEnums.js';
 import Deck from './Deck.js';
 import Player from './Player.js';
 import Room from './Room.js';
@@ -11,10 +11,7 @@ class Gameboard {
     constructor(rows, columns) {
         this.rows = rows;
         this.columns = columns;
-        // Initialize all positions with OutOfBounds tiles
-        this.tiles = new Array(rows).fill(null).map((_, row) =>
-            new Array(columns).fill(null).map((_, col) => new OutOfBounds(row, col))
-        );
+        this.tiles = new Array(rows).fill(null).map(() => new Array(columns).fill(null));
         this.players = [];
         this.weapons = [];
         this.rooms = [];
@@ -28,35 +25,31 @@ class Gameboard {
         this.deck.dealCards(this.players);
     }
 
-    getPlayers() {
-        return this.players;
-    }
-
+    // Access all character names directly from CharacterName enum
     getCharacterNames() {
-        return this.players
-            .filter(player => player.getCharacter() !== null)
-            .map(player => player.getCharacter().getCharacterName());
+        return Object.keys(CharacterName).map(key => getEnumName(CharacterName, key));
     }
 
+    // Access all weapon names directly from WeaponName enum
     getWeaponNames() {
-        return this.weapons.map(weapon => weapon.getWeaponName());
+        return Object.keys(WeaponName).map(key => getEnumName(WeaponName, key));
     }
 
+    // Access all room names directly from RoomName enum
     getRoomNames() {
-        return this.rooms.map(room => room.getRoomName());
+        return Object.keys(RoomName).map(key => getEnumName(RoomName, key));
     }
 
     matchCharacter(characterName) {
-        const player = this.players.find(player => player.getCharacter() && player.getCharacter().getCharacterName() === characterName);
-        return player ? player.getCharacter() : null;
+        return Object.values(CharacterName).find(character => getEnumName(CharacterName, character.name) === characterName) || null;
     }
 
     matchWeapon(weaponName) {
-        return this.weapons.find(weapon => weapon.getWeaponName() === weaponName);
+        return Object.values(WeaponName).find(weapon => getEnumName(WeaponName, weapon.name) === weaponName) || null;
     }
 
     matchRoom(roomName) {
-        return this.rooms.find(room => room.getRoomName() === roomName);
+        return Object.values(RoomName).find(room => getEnumName(RoomName, room.name) === roomName) || null;
     }
 
     initializePlaceholderPlayers() {
@@ -101,15 +94,15 @@ class Gameboard {
                     'left': this.getTile(row, col - 1),
                     'right': this.getTile(row, col + 1)
                 };
-    
+
                 this.assignNeighbors(current, neighbors);
             }
         }
     }
-    
+
     assignNeighbors(tile, neighbors) {
         const validNeighbors = {};
-    
+
         for (const [direction, neighborTile] of Object.entries(neighbors)) {
             if (tile instanceof StartSquare && neighborTile instanceof Hallway) {
                 validNeighbors[direction] = neighborTile;
@@ -119,7 +112,7 @@ class Gameboard {
                 validNeighbors[direction] = neighborTile;
             }
         }
-    
+
         // Handle secret passages or corner rooms for Room tiles
         if (tile instanceof Room && tile.isCornerRoom) {
             const oppositeRoom = this.getOppositeCornerRoom(tile);
@@ -127,7 +120,7 @@ class Gameboard {
                 validNeighbors['secret'] = oppositeRoom;
             }
         }
-    
+
         tile.setNeighbors(validNeighbors);
     }
 
@@ -138,13 +131,13 @@ class Gameboard {
             '5,1': { row: 1, col: 5 },
             '5,5': { row: 1, col: 1 }
         };
-    
+
         const key = `${room.row},${room.column}`;
         const oppositeCoord = oppositePositions[key];
-    
+
         return this.getRoomByPosition(oppositeCoord.row, oppositeCoord.col);
     }
-    
+
     getRoomByPosition(row, col) {
         return this.rooms.find(room => room.row === row && room.column === col);
     }
