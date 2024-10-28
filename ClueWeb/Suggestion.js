@@ -6,6 +6,7 @@ class Suggestion {
         this.room = getEnumName(RoomName, room);
         this.weapon = getEnumName(WeaponName, weapon);
         this.suspect = getEnumName(CharacterName, suspect);
+        
         this.moveSuspectToRoom();
         this.moveWeaponToRoom();
         this.adjustRoomLayout();
@@ -14,17 +15,26 @@ class Suggestion {
     // Move the suspect's character to the room's tile only if not already present
     moveSuspectToRoom() {
         const charactersInRoom = this.room.getCharacters();
+        
+        // Find if the suspect (by name) is already in the room
+        const isSuspectInRoom = charactersInRoom.some(character => {
+            const characterDisplayName = getEnumName(CharacterName, character.characterName);
+            return characterDisplayName === this.suspect;
+        });
     
-        // Check if the suspect is already in the room
-        if (!charactersInRoom.includes(this.suspect)) {
-            this.suspect.move(this.room);
-            this.room.addCharacter(this.suspect);
-    
-            // Mark the player as "pulled by suggestion"
-            for (const player of this.playerList) {
-                if (player.character === this.suspect) {
-                    player.pulledBySuggestion = true;
-                    break;
+        if (!isSuspectInRoom) {
+            const suspectCharacter = this.playerList.find(player => {
+                return getEnumName(CharacterName, player.character.characterName) === this.suspect;
+            })?.character;
+
+            if (suspectCharacter) {
+                suspectCharacter.move(this.room);
+                this.room.addCharacter(suspectCharacter);
+
+                // Mark the player as "pulled by suggestion"
+                const pulledPlayer = this.playerList.find(player => player.character === suspectCharacter);
+                if (pulledPlayer) {
+                    pulledPlayer.pulledBySuggestion = true;
                 }
             }
         }
@@ -33,11 +43,19 @@ class Suggestion {
     // Move the weapon to the room's tile only if not already present
     moveWeaponToRoom() {
         const weaponsInRoom = this.room.getWeapons();
-    
-        // Check if the weapon is already in the room
-        if (!weaponsInRoom.includes(this.weapon)) {
-            this.weapon.setCurrentTile(this.room);
-            this.room.addWeapon(this.weapon);
+
+        // Check if the weapon (by name) is already in the room
+        const isWeaponInRoom = weaponsInRoom.some(roomWeapon => {
+            const weaponDisplayName = getEnumName(WeaponName, roomWeapon.weaponName);
+            return weaponDisplayName === this.weapon;
+        });
+        
+        if (!isWeaponInRoom) {
+            const weaponObject = this.room.matchWeapon(this.weapon); // Method to retrieve weapon instance by name
+            if (weaponObject) {
+                weaponObject.setCurrentTile(this.room);
+                this.room.addWeapon(weaponObject);
+            }
         }
     }
 
@@ -59,7 +77,7 @@ class Suggestion {
     
         // Adjust weapon positions by adding classes
         for (const weapon of weaponsInRoom) {
-            const weaponElement = weapon.weaponImage; // Direct access to weaponImage element
+            const weaponElement = weapon.weaponImage;
             weaponElement.classList.add(`position-${positionIndex}`);
             positionIndex++;
         }
