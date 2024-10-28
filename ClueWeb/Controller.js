@@ -137,6 +137,20 @@ class Controller {
         const currentTile = character.getCurrentTile();
         const newTile = currentTile.getNeighbor(direction);
         const neighbors = currentTile.getNeighbors();
+
+        
+        // Debugging: Check what getNeighbors() is returning
+        console.log("Debug: Neighbors of currentTile:", neighbors);
+        if (neighbors && Array.isArray(neighbors)) {
+            neighbors.forEach((tile, index) => {
+                console.log(`Neighbor ${index}:`, {
+                    type: tile.constructor.name, // Display the class/type of tile
+                    isOccupied: tile.isOccupied ? tile.isOccupied() : "No isOccupied method"
+                });
+            });
+        } else {
+            console.log("Debug: getNeighbors() returned an invalid or empty result.", neighbors);
+        }
     
         if (this.tileMoved) {
             this.showAlert("error", "Move Already Made", "You have already moved. Undo your previous move to change it.");
