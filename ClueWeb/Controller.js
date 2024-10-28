@@ -137,20 +137,6 @@ class Controller {
         const currentTile = character.getCurrentTile();
         const newTile = currentTile.getNeighbor(direction);
         const neighbors = currentTile.getNeighbors();
-
-        
-        // Debugging: Check what getNeighbors() is returning
-        console.log("Debug: Neighbors of currentTile:", neighbors);
-        if (neighbors && Array.isArray(neighbors)) {
-            neighbors.forEach((tile, index) => {
-                console.log(`Neighbor ${index}:`, {
-                    type: tile.constructor.name, // Display the class/type of tile
-                    isOccupied: tile.isOccupied ? tile.isOccupied() : "No isOccupied method"
-                });
-            });
-        } else {
-            console.log("Debug: getNeighbors() returned an invalid or empty result.", neighbors);
-        }
     
         if (this.tileMoved) {
             this.showAlert("error", "Move Already Made", "You have already moved. Undo your previous move to change it.");
@@ -177,7 +163,7 @@ class Controller {
         let allNeighborsOccupied = false;
         if (currentTile instanceof Room && currentTile.isCornerRoom) {
             let hallwayNeighborsOccupied = true;
-            for (const tile of neighbors) {
+            for (const tile of Object.values(neighbors)) {
                 if (tile instanceof Hallway && !tile.isOccupied()) {
                     hallwayNeighborsOccupied = false;
                     break;
@@ -355,19 +341,21 @@ class Controller {
         dialog.appendChild(confirmButton);
     
         confirmButton.addEventListener('click', () => {
-            const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
-            const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
+            const suspectName = getEnumName(CharacterName, suspectDropdown.value);
+            const weaponName = getEnumName(WeaponName, weaponDropdown.value);
+            const roomName = getEnumName(RoomName, room);
+    
             const suggestion = new Suggestion(
                 this.gameBoard.getPlayers(),
-                getEnumName(RoomName, room),
-                getEnumName(WeaponName, weapon),
-                getEnumName(CharacterName, suspect)
+                roomName,
+                weaponName,
+                suspectName
             );
             this.suggestionMade = true;
             this.tileMoved = true;
             document.body.removeChild(dialog);
             document.body.removeChild(overlay);
-            this.disproveSuggestionOrAccusation(player, suspect, weapon, room, true);
+            this.disproveSuggestionOrAccusation(player, suspectName, weaponName, roomName, true);
         });
     
         const cancelButton = document.createElement('button');
@@ -394,7 +382,7 @@ class Controller {
         this.showAccusationDialog(currentPlayer, currentTile);
     }
 
-    showAccusationDialog(player, room) {
+    showAccusationDialog(player, room) { 
         const overlay = document.createElement('div');
         overlay.classList.add('modal-overlay');
         document.body.appendChild(overlay);
@@ -418,23 +406,24 @@ class Controller {
         dialog.appendChild(confirmButton);
     
         confirmButton.addEventListener('click', () => {
-            const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
-            const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
-            const room = this.gameBoard.matchRoom(roomDropdown.value);
+            const suspectName = getEnumName(CharacterName, suspectDropdown.value);
+            const weaponName = getEnumName(WeaponName, weaponDropdown.value);
+            const roomName = getEnumName(RoomName, roomDropdown.value);
+            
             const accusation = new Accusation(
                 this.gameBoard.getPlayers(),
-                getEnumName(RoomName, room),
-                getEnumName(WeaponName, weapon),
-                getEnumName(CharacterName, suspect),
+                roomName,
+                weaponName,
+                suspectName,
                 this.gameBoard.envelope
             );
             
             if (accusation.isAccusationValid()) {
-                this.endGame(player, suspect, weapon, room);
+                this.endGame(player, suspectName, weaponName, roomName);
             } else {
                 document.body.removeChild(dialog);
                 document.body.removeChild(overlay);
-                this.disproveSuggestionOrAccusation(player, suspect, weapon, room, false);
+                this.disproveSuggestionOrAccusation(player, suspectName, weaponName, roomName, false);
                 player.setInactivity();
                 this.gameBoard.players = this.gameBoard.players.filter(p => p !== player);
                 this.resetTurnFlags();
@@ -454,7 +443,7 @@ class Controller {
     
         document.body.appendChild(dialog);
     }
-    
+        
     async disproveSuggestionOrAccusation(suggestor, suspect, weapon, room, isSuggestion) {
         const players = this.gameBoard.getPlayers();
         const suggestorIndex = players.indexOf(suggestor);
@@ -467,22 +456,20 @@ class Controller {
             const player = players[currentIndex];
     
             if (player === suggestor) continue;
-
-            // Ensure any existing overlay is removed before prompting for password
+    
             const activeOverlay = document.querySelector('.modal-overlay');
             if (activeOverlay) document.body.removeChild(activeOverlay);
-            // Wait a brief moment to ensure dialog is removed before the password prompt
             await new Promise(resolve => setTimeout(resolve, 50));
             
             await this.checkPlayerPassword(player);
     
             const theoryMessage = isSuggestion
-                ? `${suggestor.getUsername()} suggests that ${getEnumName(CharacterName, suspect)} committed the crime with the ${getEnumName(WeaponName, weapon)} in the ${getEnumName(RoomName, room)}.`
-                : `${suggestor.getUsername()} accuses ${getEnumName(CharacterName, suspect)} of committing the crime with the ${getEnumName(WeaponName, weapon)} in the ${getEnumName(RoomName, room)}.`;
- 
+                ? `${suggestor.getUsername()} suggests that ${suspect} committed the crime with the ${weapon} in the ${room}.`
+                : `${suggestor.getUsername()} accuses ${suspect} of committing the crime with the ${weapon} in the ${room}.`;
+    
             const matchingCards = player.getMatchingCards(suspect, weapon, room);
             console.log(`Player ${player.getUsername()} has matching cards:`, matchingCards.map(card => card.getName()));
-
+    
             if (matchingCards.length > 0) {
                 const selectedCard = await this.showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage);
                 disproofCard = selectedCard;
@@ -494,7 +481,7 @@ class Controller {
                 await this.showTheoryAndCardChoiceDialog(player, [], theoryMessage, true);
             }
         }
-
+    
         await this.checkPlayerPassword(this.getCurrentPlayer());
         if (!disproven) {
             this.showAlert("info", "Theory Not Disproven", "No players could disprove your theory.");
@@ -559,7 +546,6 @@ class Controller {
         this.resetGame();
     }
     
-    // Helper function to display the winner message asynchronously
     showWinnerMessage(winningPlayer, suspect, weapon, room, currentPlayer) {
         return new Promise((resolve) => {
             const suspectName = getEnumName(CharacterName, suspect);
