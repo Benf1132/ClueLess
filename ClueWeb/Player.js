@@ -58,12 +58,14 @@ class Player {
     // Enhanced getMatchingCards method with debug logs
     getMatchingCards(suspect, weapon, room) {
         return this.hand.getCards().filter(card => {
-            const matchesSuspect = card.getName() === suspect.getCharacterName();
-            const matchesWeapon = card.getName() === weapon.getWeaponName();
-            const matchesRoom = card.getName() === room.getRoomName();
-    
-            console.log(`Checking card ${card.getName()} against ${suspect.getCharacterName()} suspect: ${matchesSuspect}, ${weapon.getWeaponName()} weapon: ${matchesWeapon}, ${room.getRoomName()} room: ${matchesRoom}`);
-            return matchesSuspect || matchesWeapon || matchesRoom;
+            // Retrieve the actual names for comparison
+            const suspectName = CharacterName[suspect]?.name;
+            const weaponName = WeaponName[weapon]?.name;
+            const roomName = RoomName[room]?.name;
+
+            const matchesSuspect = card.getName() === suspectName;
+            const matchesWeapon = card.getName() === weaponName;
+            const matchesRoom = card.getName() === roomName;
         });
     }
 
