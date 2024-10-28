@@ -1,28 +1,14 @@
 class Suggestion {
     constructor(playerList, room, weapon, suspect) {
         this.playerList = playerList;
-        this.room = room;
-        this.weapon = weapon;
-        this.suspect = this.matchSuspectToPlayer(suspect);
-
+        this.room = getEnumName(RoomName, room);
+        this.weapon = getEnumName(WeaponName, weapon);
+        this.suspect = getEnumName(CharacterName, suspect);
         this.moveSuspectToRoom();
         this.moveWeaponToRoom();
         this.adjustRoomLayout();
     }
-
-    // Method to find the player that matches the suspect's name
-    matchSuspectToPlayer(suspect) {
-        for (const player of this.playerList) {
-            // Get the display name for player.character.characterName
-            const characterDisplayName = getEnumName(CharacterName, player.character.characterName);
-            
-            if (characterDisplayName === suspect) {
-                return player.character;
-            }
-        }
-        throw new Error("No matching player found for the suspect.");
-    }
-
+    
     // Move the suspect's character to the room's tile only if not already present
     moveSuspectToRoom() {
         const charactersInRoom = this.room.getCharacters();
