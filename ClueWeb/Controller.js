@@ -1,7 +1,75 @@
 import { Gameboard } from './Gameboard.js';
 import { Suggestion } from './Suggestion.js';
 import { Accusation } from './Accusation.js';
-import { CharacterName, WeaponName, RoomName, TileType } from './GameEnums.js';
+import { Gameboard } from './Gameboard.js';
+import { Suggestion } from './Suggestion.js';
+import { Accusation } from './Accusation.js';
+import { CharacterName, WeaponName, RoomName, getEnumName } from './GameEnums.js';
+import Character from './Character.js';
+import StartSquare from './StartSquare.js';
+import Hallway from './Hallway.js';
+import Room from './Room.js';
+import OutOfBounds from './OutOfBounds.js';
+
+class Controller {
+    constructor(gameBoard, gridPane, turnIndicator) {
+        this.gameBoard = gameBoard;
+        this.gridPane = gridPane;
+        this.turnIndicator = turnIndicator;
+        this.currentPlayerIndex = 0;
+        this.tileMoved = false;
+        this.suggestionMade = false;
+        this.accusationMade = false;
+    }
+
+    async disproveSuggestionOrAccusation(suggestor, suspect, weapon, room, isSuggestion) {
+        const players = this.gameBoard.getPlayers();
+        const suggestorIndex = players.indexOf(suggestor);
+        let disproven = false;
+        let disproofPlayer = null;
+        let disproofCard = null;
+
+        for (let i = 1; i < players.length; i++) {
+            const currentIndex = (suggestorIndex + i) % players.length;
+            const player = players[currentIndex];
+
+            if (player === suggestor) continue;
+
+            const activeOverlay = document.querySelector('.modal-overlay');
+            if (activeOverlay) document.body.removeChild(activeOverlay);
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            await this.checkPlayerPassword(player);
+
+            const theoryMessage = isSuggestion
+                ? `${suggestor.getUsername()} suggests that ${getEnumName(CharacterName, suspect)} committed the crime with the ${getEnumName(WeaponName, weapon)} in the ${getEnumName(RoomName, room)}.`
+                : `${suggestor.getUsername()} accuses ${getEnumName(CharacterName, suspect)} of committing the crime with the ${getEnumName(WeaponName, weapon)} in the ${getEnumName(RoomName, room)}.`;
+
+            const matchingCards = player.getMatchingCards(suspect, weapon, room);
+            console.log(`Player ${player.getUsername()} has matching cards:`, matchingCards.map(card => card.getName()));
+
+            if (matchingCards.length > 0) {
+                const selectedCard = await this.showTheoryAndCardChoiceDialog(player, matchingCards, theoryMessage);
+                disproofCard = selectedCard;
+                disproofPlayer = player;
+                disproven = true;
+                this.showAlert("info", "Theory Disproved", `${disproofPlayer.getUsername()} disproved your theory with the card: ${disproofCard.getName()}`);
+                break;
+            } else {
+                await this.showTheoryAndCardChoiceDialog(player, [], theoryMessage, true);
+            }
+        }
+
+        if (!disproven) {
+            this.showAlert("info", "Theory Not Disproven", "No players could disprove your theory.");
+        }
+    }
+
+    // ... other methods and properties
+}
+
+export { Controller };
+
 import Character from './Character.js';
 import StartSquare from './StartSquare.js';
 import Hallway from './Hallway.js';
@@ -357,7 +425,12 @@ class Controller {
         confirmButton.addEventListener('click', () => {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
-            const suggestion = new Suggestion(this.gameBoard.getPlayers(), room, weapon, suspect);
+            const suggestion = new Suggestion(
+                this.gameBoard.getPlayers(),
+                getEnumName(RoomName, room),
+                getEnumName(WeaponName, weapon),
+                getEnumName(CharacterName, suspect)
+            );
             this.suggestionMade = true;
             this.tileMoved = true;
             document.body.removeChild(dialog);
@@ -416,8 +489,14 @@ class Controller {
             const suspect = this.gameBoard.matchCharacter(suspectDropdown.value);
             const weapon = this.gameBoard.matchWeapon(weaponDropdown.value);
             const room = this.gameBoard.matchRoom(roomDropdown.value);
-            const accusation = new Accusation(this.gameBoard.getPlayers(), room, weapon, suspect, this.gameBoard.envelope);
-    
+            const accusation = new Accusation(
+                this.gameBoard.getPlayers(),
+                getEnumName(RoomName, room),
+                getEnumName(WeaponName, weapon),
+                getEnumName(CharacterName, suspect),
+                this.gameBoard.envelope
+            );
+            
             if (accusation.isAccusationValid()) {
                 this.endGame(player, suspect, weapon, room);
             } else {
@@ -447,7 +526,6 @@ class Controller {
     async disproveSuggestionOrAccusation(suggestor, suspect, weapon, room, isSuggestion) {
         const players = this.gameBoard.getPlayers();
         const suggestorIndex = players.indexOf(suggestor);
-    
         let disproven = false;
         let disproofPlayer = null;
         let disproofCard = null;
@@ -467,9 +545,9 @@ class Controller {
             await this.checkPlayerPassword(player);
     
             const theoryMessage = isSuggestion
-                ? `${suggestor.getUsername()} suggests that ${suspect.getCharacterName()} committed the crime with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`
-                : `${suggestor.getUsername()} accuses ${suspect.getCharacterName()} of committing the crime with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`;
-    
+                ? `${suggestor.getUsername()} suggests that ${getEnumName(CharacterName, suspect)} committed the crime with the ${getEnumName(WeaponName, weapon)} in the ${getEnumName(RoomName, room)}.`
+                : `${suggestor.getUsername()} accuses ${getEnumName(CharacterName, suspect)} of committing the crime with the ${getEnumName(WeaponName, weapon)} in the ${getEnumName(RoomName, room)}.`;
+ 
             const matchingCards = player.getMatchingCards(suspect, weapon, room);
             console.log(`Player ${player.getUsername()} has matching cards:`, matchingCards.map(card => card.getName()));
 
@@ -552,10 +630,12 @@ class Controller {
     // Helper function to display the winner message asynchronously
     showWinnerMessage(winningPlayer, suspect, weapon, room, currentPlayer) {
         return new Promise((resolve) => {
-            // Show an alert with the winning message
-            alert(`${currentPlayer.username}, ${winningPlayer.username} wins! The crime was committed by ${suspect.getCharacterName()} with the ${weapon.getWeaponName()} in the ${room.getRoomName()}.`);
+            const suspectName = getEnumName(CharacterName, suspect);
+            const weaponName = getEnumName(WeaponName, weapon);
+            const roomName = getEnumName(RoomName, room);
+    
+            alert(`${currentPlayer.username}, ${winningPlayer.username} wins! The crime was committed by ${suspectName} with the ${weaponName} in the ${roomName}.`);
             
-            // Resolve the promise to continue to the next player
             resolve();
         });
     }
