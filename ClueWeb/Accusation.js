@@ -1,5 +1,3 @@
-import { Suggestion } from './Suggestion.js';
-
 class Accusation extends Suggestion {
     constructor(playerList, room, weapon, suspect, envelope) {
         super(playerList, room, weapon, suspect);
@@ -7,17 +5,16 @@ class Accusation extends Suggestion {
         this.isAccusationCorrect = this.checkAccusation();
     }
 
-    // Check if the suspect, weapon, and room match the envelope
+    // Check if the suspect, weapon, and room match the envelope (using object comparison)
     checkAccusation() {
-        const suspectMatches = this.envelope.getSuspectCard().getName() === this.suspect;
-        const weaponMatches = this.envelope.getWeaponCard().getName() === this.weapon;
-        const roomMatches = this.envelope.getRoomCard().getName() === this.room;
+        const suspectMatches = this.envelope.getSuspectCard() === this.suspect.getCharacter();
+        const weaponMatches = this.envelope.getWeaponCard() === this.weapon;
+        const roomMatches = this.envelope.getRoomCard() === this.room;
 
         return suspectMatches && weaponMatches && roomMatches;
     }
 
-    // Method to determine if the accusation is correct
-    isAccusationValid() {  // Changed the method name to avoid confusion with the property
+    isAccusationValid() {
         return this.isAccusationCorrect;
     }
 }
