@@ -1,3 +1,5 @@
+import { CharacterName, RoomName, WeaponName, getEnumName } from './GameEnums.js';
+
 class Suggestion {
     constructor(playerList, room, weapon, suspect) {
         this.playerList = playerList;
