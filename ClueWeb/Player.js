@@ -55,13 +55,16 @@ class Player {
     getHand() {
         return this.hand;
     }
-    // New method to get matching cards
+    // Enhanced getMatchingCards method with debug logs
     getMatchingCards(suspect, weapon, room) {
-        return this.hand.getCards().filter(card => 
-            card.getName() === suspect.getCharacterName() ||
-            card.getName() === weapon.getWeaponName() ||
-            card.getName() === room.getRoomName()
-        );
+        return this.hand.getCards().filter(card => {
+            const matchesSuspect = card.getName() === suspect.getCharacterName();
+            const matchesWeapon = card.getName() === weapon.getWeaponName();
+            const matchesRoom = card.getName() === room.getRoomName();
+    
+            console.log(`Checking card ${card.getName()} against suspect: ${matchesSuspect}, weapon: ${matchesWeapon}, room: ${matchesRoom}`);
+            return matchesSuspect || matchesWeapon || matchesRoom;
+        });
     }
 
     // Set the player's username
